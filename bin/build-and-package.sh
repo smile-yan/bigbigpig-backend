@@ -75,10 +75,17 @@ if [ "$BINARY" = "target/$TARGET/release/$APP_NAME" ]; then
     echo "ERROR: musl binary is not statically linked" >&2
     exit 1
   fi
-  if ldd "$BINARY" >/dev/null 2>&1; then
-    echo "ERROR: musl binary is dynamically linked:" >&2
-    ldd "$BINARY" >&2 || true
-    exit 1
+  # Do not use `ldd` here: on Ubuntu 24.04 (glibc 2.39) it exits 0 for a
+  # static-pie binary after printing "statically linked". DT_NEEDED is the
+  # authoritative signal (CI always runs this check; readelf is binutils).
+  if command -v readelf >/dev/null 2>&1; then
+    if readelf -d "$BINARY" | grep -q NEEDED; then
+      echo "ERROR: musl binary is dynamically linked:" >&2
+      readelf -d "$BINARY" | grep NEEDED >&2
+      exit 1
+    fi
+  else
+    echo "WARNING: readelf not found; skipping the DT_NEEDED check" >&2
   fi
 fi
 

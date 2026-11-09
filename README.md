@@ -269,7 +269,8 @@ deploy-remote.sh      # 服务端部署脚本
 
 `prod` 包的 `config.yaml` 为 `mode: prod`，`staging` 包为 `server.port: 8081`。
 如果本机没有 cross/zigbuild，脚本会回退到 host 构建并明确提示，该二进制只适合
-本地测试。CI 的 release workflow 会额外检查静态链接、`ldd` 和 80 MiB 大小上限。
+本地测试。CI 的 release workflow 会额外检查静态链接（`readelf -d` 无
+`NEEDED`）和 80 MiB 大小上限。
 
 ## 测试与质量检查
 
@@ -470,7 +471,7 @@ cargo deny check
 `.github/workflows/release.yml` 由 `v*.*.*` tag 触发：
 
 - 使用 `cross` 构建 `x86_64-unknown-linux-musl` 静态二进制；
-- 校验 `file` 为静态链接、`ldd` 无动态依赖、大小 ≤ 80 MiB；
+- 校验 `file` 为静态链接、`readelf -d` 无 `NEEDED` 动态依赖、大小 ≤ 80 MiB；
 - 生成恰好三个文件的制品：`smileyan-backend`、`config.yaml`（`mode: prod`）、
   `deploy-remote.sh`，并检查 `.env` 泄漏；
 - 发布 `smileyan-backend-prod.tar.gz`；stable tag 会按 `SERVERS_CONFIG`

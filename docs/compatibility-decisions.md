@@ -547,7 +547,7 @@ TTS：前端使用浏览器 `speechSynthesis`，没有调用 `/v1/audio/speech`�
 
 | 项 | 结果 |
 |---|---|
-| release workflow | `cross` 构建 `x86_64-unknown-linux-musl`；`file` 接受 `statically linked`/`static-pie linked`，`ldd` 必须非 0；80 MiB 上限；三件套清单 + `.env` 泄漏检查；stable tag 自动部署 |
+| release workflow | `cross` 构建 `x86_64-unknown-linux-musl`；`file` 接受 `statically linked`/`static-pie linked`，`readelf -d` 必须无 `NEEDED`（`ldd` 对 static-pie 退出 0，不可用）；80 MiB 上限；三件套清单 + `.env` 泄漏检查；stable tag 自动部署 |
 | staging workflow | 手动 `workflow_dispatch` 输入 tag；`STAGING_SERVERS_CONFIG`；复用 prod tarball，部署到 8081；部署后运行 `smoke.sh` |
 | `deploy-remote.sh` | 原子 `.env`（TTS 三变量仅非空写入）；PID 命令行校验后停止；无 PID 时回退旧 `stop.sh`；解压前备份 `smileyan-backend.prev`/`config.yaml.prev`；生成 `rollback.sh`；`APP_PORT` 改写 `server.port`；30 s 健康检查 |
 | 进程隔离 | 生成的 `stop.sh` 只按本目录 PID + 本端口（lsof，Linux 回退 fuser），不再 `pkill -f`；staging 8081 与生产 8080 可同机 |

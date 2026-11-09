@@ -31,9 +31,12 @@ cargo zigbuild --locked --release --target x86_64-unknown-linux-musl
 ```bash
 file target/x86_64-unknown-linux-musl/release/smileyan-backend
 # ... statically linked
-ldd target/x86_64-unknown-linux-musl/release/smileyan-backend
-# not a dynamic executable
+readelf -d target/x86_64-unknown-linux-musl/release/smileyan-backend | grep NEEDED
+# 无输出：没有动态依赖
 ```
+
+不要用 `ldd` 判断：Ubuntu 24.04 的 `ldd` 对 static-pie 二进制会打印
+`statically linked` 并以 0 退出，看起来像“动态链接”。`DT_NEEDED` 才是可靠信号。
 
 CI 的 release workflow 会执行同样的检查，并额外限制二进制 ≤ 80 MiB。
 
@@ -101,7 +104,7 @@ release/deploy-remote.sh      # 服务端部署脚本
 
 - tag `v*.*.*` 触发；release job 不需要任何应用 Secret（Rust 在运行时读配置）。
 - `cross build --locked --release --target x86_64-unknown-linux-musl`。
-- 静态链接检查（`file` + `ldd`）、80 MiB 大小上限、三件套清单检查、
+- 静态链接检查（`file` + `readelf -d` 的 `DT_NEEDED`）、80 MiB 大小上限、三件套清单检查、
   `.env` 泄漏检查。
 - 发布 `smileyan-backend-prod.tar.gz`；stable tag 自动部署到
   `SERVERS_CONFIG` 中的每台机器（SSH 端口 `port`，应用端口 `app_port`，
@@ -288,7 +291,7 @@ cd /opt/smileyan-backend
 | 项 | 结果 |
 |---|---|
 | 分支 | `phase8/deploy-cutover` |
-| release workflow | `.github/workflows/release.yml`：cross musl、静态/`ldd` 检查、80 MiB 上限、三件套清单、tag 部署、TTS Secret 转发、`app_port` 支持 |
+| release workflow | `.github/workflows/release.yml`：cross musl、静态/`DT_NEEDED` 检查、80 MiB 上限、三件套清单、tag 部署、TTS Secret 转发、`app_port` 支持 |
 | staging workflow | `.github/workflows/staging.yml`：手动 tag、`STAGING_SERVERS_CONFIG`、8081、部署后 smoke |
 | 部署脚本 | `scripts/deploy-remote.sh`：原子 `.env`（TTS 可选）、PID/端口隔离停止、`.prev`/`config.yaml.prev` 备份、`rollback.sh`、端口改写、30 s 健康检查 |
 | 本地脚本 | `bin/start|stop|restart|dev|build-and-package.sh`；打包输出三件套（dev/prod/staging），本地验证 staging 配置为 8081 |

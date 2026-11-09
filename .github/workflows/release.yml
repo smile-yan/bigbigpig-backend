@@ -70,17 +70,25 @@ jobs:
           ls -lh "$BIN"
           file "$BIN"
 
-          # A static musl binary must not depend on the host libc. `ldd` exits
-          # non-zero for static executables; a zero exit means dynamic linking.
+          # A static musl binary must not depend on the host libc.
           # Recent Rust emits "static-pie linked"; accept both spellings.
           if ! file "$BIN" | grep -Eq 'statically linked|static-pie linked'; then
             echo "ERROR: binary is not statically linked" >&2
             file "$BIN" >&2
             exit 1
           fi
-          if ldd "$BIN" >/dev/null 2>&1; then
+          # Do NOT gate on `ldd`: on Ubuntu 24.04 (glibc 2.39) it falls back
+          # to the host ld.so for static-pie files, which prints "statically
+          # linked" and exits 0 — a valid static musl binary would be flagged
+          # as dynamic. DT_NEEDED entries are the authoritative signal; static
+          # and static-pie binaries carry none.
+          if ! command -v readelf >/dev/null; then
+            echo "ERROR: readelf not found; install binutils to verify static linking" >&2
+            exit 1
+          fi
+          if readelf -d "$BIN" | grep -q NEEDED; then
             echo "ERROR: binary is dynamically linked:" >&2
-            ldd "$BIN" >&2 || true
+            readelf -d "$BIN" | grep NEEDED >&2
             exit 1
           fi
 
