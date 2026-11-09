@@ -9,7 +9,9 @@ name: Release
 #   smileyan-backend, deploy-remote.sh and config.yaml (mode: prod).
 # - Auto-generates a changelog from grouped PRs / commits since the previous tag.
 # - For stable (non-prerelease) tags, deploys to every server in the
-#   SERVERS_CONFIG repository variable over SSH, in parallel.
+#   SERVERS_CONFIG repository variable over SSH, in parallel. The deploy job
+#   bundles the release tarball with deploy-remote.sh, logs the compressed
+#   size in MB, and streams it to the server with a pv progress bar.
 #
 # No application secret is needed to build: the Rust binary resolves
 # DB/Redis/email/TTS configuration at runtime. DEPLOY_SSH_KEY is consumed by
@@ -380,6 +382,25 @@ jobs:
             --dir dist
           ls -la dist
 
+      - name: Prepare compressed upload bundle
+        # Upload a single compressed file instead of two: the release tarball
+        # plus the deploy script. The size is logged in MB so an unexpectedly
+        # large bundle is visible before the transfer starts.
+        run: |
+          set -euo pipefail
+          rm -rf upload-bundle
+          mkdir -p upload-bundle
+          cp dist/smileyan-backend-prod.tar.gz upload-bundle/
+          cp scripts/deploy-remote.sh upload-bundle/
+          chmod +x upload-bundle/deploy-remote.sh
+          tar --no-xattr -czf dist/smileyan-backend-deploy.tar.gz -C upload-bundle .
+
+          SIZE_BYTES=$(stat -c '%s' dist/smileyan-backend-deploy.tar.gz)
+          SIZE_MB=$(awk -v b="$SIZE_BYTES" 'BEGIN { printf "%.2f", b / 1048576 }')
+          echo "Compressed upload bundle: dist/smileyan-backend-deploy.tar.gz"
+          echo "Compressed size: ${SIZE_MB} MB (${SIZE_BYTES} bytes)"
+          tar -tzf dist/smileyan-backend-deploy.tar.gz
+
       - name: Set up SSH key
         uses: webfactory/ssh-agent@v0.10.0
         with:
@@ -391,12 +412,55 @@ jobs:
           ssh-keyscan -p "${{ matrix.server.port }}" \
             -H "${{ matrix.server.addr }}" >> ~/.ssh/known_hosts
 
-      - name: Upload tarball to server
+      - name: Upload compressed bundle
+        env:
+          SERVER_NAME: ${{ matrix.server.name }}
         run: |
-          set -e
-          echo ">>> [${{ matrix.server.name }}] Uploading tarball"
-          scp -P "${{ matrix.server.port }}" dist/smileyan-backend-prod.tar.gz \
-            "${{ matrix.server.user }}@${{ matrix.server.addr }}:/tmp/smileyan-backend-prod.tar.gz"
+          set -euo pipefail
+          BUNDLE=dist/smileyan-backend-deploy.tar.gz
+          SIZE_BYTES=$(stat -c '%s' "$BUNDLE")
+          SIZE_MB=$(awk -v b="$SIZE_BYTES" 'BEGIN { printf "%.2f", b / 1048576 }')
+          echo ">>> [$SERVER_NAME] Uploading ${SIZE_MB} MB to /tmp/smileyan-backend-deploy.tar.gz"
+
+          # pv is not preinstalled on the GitHub-hosted runner image. A failed
+          # install must not block a release, so fall back to scp below.
+          if ! command -v pv >/dev/null 2>&1; then
+            sudo apt-get update -qq || true
+            sudo apt-get install -y -qq pv || true
+          fi
+
+          if command -v pv >/dev/null 2>&1; then
+            # File bytes go over stdin; pv writes percentage/ETA progress to
+            # stderr, which the Actions log captures line by line.
+            pv -f -p -e -r -b -i 0.5 -s "$SIZE_BYTES" "$BUNDLE" | \
+              ssh -p "${{ matrix.server.port }}" \
+                -o ServerAliveInterval=30 -o ServerAliveCountMax=10 \
+                "${{ matrix.server.user }}@${{ matrix.server.addr }}" \
+                'cat > /tmp/smileyan-backend-deploy.tar.gz'
+          else
+            echo "WARN: pv unavailable; uploading without a progress bar"
+            scp -P "${{ matrix.server.port }}" "$BUNDLE" \
+              "${{ matrix.server.user }}@${{ matrix.server.addr }}:/tmp/smileyan-backend-deploy.tar.gz"
+          fi
+          echo ">>> [$SERVER_NAME] Upload complete (${SIZE_MB} MB)"
+
+      - name: Unpack upload bundle
+        env:
+          SERVER_NAME: ${{ matrix.server.name }}
+        run: |
+          set -euo pipefail
+          echo ">>> [$SERVER_NAME] Unpacking upload bundle"
+          ssh -p "${{ matrix.server.port }}" \
+            -o ServerAliveInterval=30 -o ServerAliveCountMax=10 \
+            "${{ matrix.server.user }}@${{ matrix.server.addr }}" \
+            bash -s <<'REMOTE'
+          set -euo pipefail
+          rm -rf /tmp/smileyan-backend-deploy
+          mkdir -p /tmp/smileyan-backend-deploy
+          tar -xzf /tmp/smileyan-backend-deploy.tar.gz -C /tmp/smileyan-backend-deploy
+          chmod +x /tmp/smileyan-backend-deploy/deploy-remote.sh
+          ls -la /tmp/smileyan-backend-deploy
+          REMOTE
 
       - name: Run remote deploy script
         env:
@@ -420,16 +484,6 @@ jobs:
         run: |
           set -euo pipefail
 
-          echo ">>> [$SERVER_NAME] Extracting deploy-remote.sh from the tarball"
-          mkdir -p /tmp/deploy-tools
-          tar -xzf dist/smileyan-backend-prod.tar.gz -C /tmp/deploy-tools ./deploy-remote.sh
-          chmod +x /tmp/deploy-tools/deploy-remote.sh
-
-          echo ">>> [$SERVER_NAME] Uploading deploy script"
-          scp -P "${{ matrix.server.port }}" \
-            /tmp/deploy-tools/deploy-remote.sh \
-            "${{ matrix.server.user }}@${{ matrix.server.addr }}:/tmp/deploy-remote.sh"
-
           echo ">>> [$SERVER_NAME] Running deploy-remote.sh (streaming output)"
           # Single-quoted body: no re-expansion on the server.
           ssh -p "${{ matrix.server.port }}" \
@@ -438,7 +492,7 @@ jobs:
             "DEPLOY_PATH='$SERVER_DEPLOY_PATH' \
              RELEASE_TAG='$RELEASE_TAG' \
              APP_PORT='$APP_PORT' \
-             TARBALL_PATH='/tmp/smileyan-backend-prod.tar.gz' \
+             TARBALL_PATH='/tmp/smileyan-backend-deploy/smileyan-backend-prod.tar.gz' \
              S_DB_HOST='$S_DB_HOST' \
              S_DB_USER='$S_DB_USER' \
              S_DB_PASSWORD='$S_DB_PASSWORD' \
@@ -451,7 +505,7 @@ jobs:
              S_TTS_BASE_URL='$S_TTS_BASE_URL' \
              S_TTS_API_KEY='$S_TTS_API_KEY' \
              S_TTS_MODEL='$S_TTS_MODEL' \
-             bash -x /tmp/deploy-remote.sh"
+             bash -x /tmp/smileyan-backend-deploy/deploy-remote.sh"
 
       - name: Inspect server-side state
         env:
