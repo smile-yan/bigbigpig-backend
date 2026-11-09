@@ -470,6 +470,8 @@ cargo deny check
 
 `.github/workflows/release.yml` 由 `v*.*.*` tag 触发：
 
+- 构建前先执行 preflight：校验 `SERVERS_CONFIG`，再逐台 SSH 验证连通性，并
+  确认 `deploy_path` 存在且部署用户可写；任何一台失败都不会开始构建；
 - 使用 `cross` 构建 `x86_64-unknown-linux-musl` 静态二进制；
 - 校验 `file` 为静态链接、`readelf -d` 无 `NEEDED` 动态依赖、大小 ≤ 80 MiB；
 - 生成恰好三个文件的制品：`smileyan-backend`、`config.yaml`（`mode: prod`）、
@@ -525,9 +527,10 @@ cargo deny check
 ]
 ```
 
-变量必须是合法 JSON 数组，所有字段写成字符串。`STAGING_SERVERS_CONFIG` 可省略
-`app_port`（回退到 workflow 输入的 8081）。变量为空或缺失时 matrix 为空，部署
-job 会跳过而不是报错。
+变量必须是合法 JSON 数组，所有字段写成字符串。`SERVERS_CONFIG` 还必须是非空
+数组：release workflow 的 `Validate deployment config` job 会在构建前校验，
+空值、非法 JSON 或缺少必填字段都会直接失败，不会开始编译。
+`STAGING_SERVERS_CONFIG` 可省略 `app_port`（回退到 workflow 输入的 8081）。
 
 **Repository Secrets**
 

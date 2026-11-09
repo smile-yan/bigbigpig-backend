@@ -1,6 +1,9 @@
 name: Release
 
 # Triggers on pushes of tags matching vX.Y.Z (e.g. v1.0.0, v2.3.1-rc1).
+# - Preflight: validates SERVERS_CONFIG, then verifies over SSH that every
+#   listed server is reachable and that its deploy_path exists and is
+#   writable. The build job does not start until preflight passes.
 # - Builds the static x86_64-unknown-linux-musl binary with cross.
 # - Publishes a GitHub Release containing a three-file prod tarball:
 #   smileyan-backend, deploy-remote.sh and config.yaml (mode: prod).
@@ -9,8 +12,9 @@ name: Release
 #   SERVERS_CONFIG repository variable over SSH, in parallel.
 #
 # No application secret is needed to build: the Rust binary resolves
-# DB/Redis/email/TTS configuration at runtime. Secrets are only consumed by
-# the deploy job, which writes them into the server-side .env.
+# DB/Redis/email/TTS configuration at runtime. DEPLOY_SSH_KEY is consumed by
+# the config/preflight jobs; the application secrets are only written into the
+# server-side .env by the deploy job.
 
 on:
   push:
@@ -21,23 +25,21 @@ permissions:
   contents: write   # create the GitHub Release and upload the asset
 
 jobs:
-  release:
-    name: Build and publish release
+  validate-config:
+    name: Validate deployment config
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout source
-        uses: actions/checkout@v5
-        with:
-          fetch-depth: 0   # full history for changelog generation
-
-      - name: Print SERVERS_CONFIG (debug)
-        # Surface the raw value as the runner sees it. Always runs (even when
-        # unset), so a misconfigured variable is obvious in the log instead of
-        # failing strategy evaluation with an opaque fromJSON error.
+      - name: Check SERVERS_CONFIG and deploy key
+        # Surface the raw value as the runner sees it before validating it.
+        # This runs without a matrix so a malformed SERVERS_CONFIG fails with
+        # a readable message instead of an opaque fromJSON error on the
+        # preflight matrix.
         env:
           RAW: ${{ vars.SERVERS_CONFIG }}
+          S_SSH_KEY: ${{ secrets.DEPLOY_SSH_KEY }}
         run: |
+          set -euo pipefail
           echo "=== vars.SERVERS_CONFIG (raw, repr) ==="
           printf '%s\n' "${RAW:-<unset>}" | python3 -c "import sys; data=sys.stdin.read(); print(repr(data))"
           echo
@@ -47,6 +49,145 @@ jobs:
           else
             printf 'bytes=%d  lines=%d\n' "${#RAW}" "$(printf '%s' "$RAW" | wc -l | tr -d ' ')"
           fi
+          echo
+          echo "=== validation ==="
+
+          python3 - <<'PY'
+          import json, os, sys
+
+          raw = os.environ.get("RAW", "").strip()
+          if not raw:
+              print("ERROR: repository variable SERVERS_CONFIG is empty", file=sys.stderr)
+              sys.exit(1)
+
+          try:
+              servers = json.loads(raw)
+          except json.JSONDecodeError as exc:
+              print(f"ERROR: SERVERS_CONFIG is not valid JSON: {exc}", file=sys.stderr)
+              sys.exit(1)
+
+          if not isinstance(servers, list) or not servers:
+              print("ERROR: SERVERS_CONFIG must be a non-empty JSON array", file=sys.stderr)
+              sys.exit(1)
+
+          required = ("name", "addr", "port", "user", "deploy_path")
+          failed = False
+          for index, server in enumerate(servers):
+              if not isinstance(server, dict):
+                  print(f"ERROR: SERVERS_CONFIG[{index}] is not an object", file=sys.stderr)
+                  failed = True
+                  continue
+              missing = [key for key in required if not str(server.get(key, "")).strip()]
+              if missing:
+                  print(
+                      f"ERROR: SERVERS_CONFIG[{index}] "
+                      f"({server.get('name', '<unnamed>')}) is missing: {', '.join(missing)}",
+                      file=sys.stderr,
+                  )
+                  failed = True
+
+          if failed:
+              sys.exit(1)
+
+          print(f"OK: {len(servers)} server(s) configured")
+          PY
+
+          if [ -z "$S_SSH_KEY" ]; then
+            echo "ERROR: DEPLOY_SSH_KEY is empty; preflight cannot verify SSH" >&2
+            exit 1
+          fi
+          echo "DEPLOY_SSH_KEY is present."
+
+  preflight:
+    name: Preflight ${{ matrix.server.name }}
+    # Gate the build on SSH access and an existing deploy directory. Runs for
+    # every release tag so a bad server entry fails in seconds, not after the
+    # musl build.
+    needs: validate-config
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        # Same matrix as the deploy job, so we verify exactly the servers the
+        # deploy will touch.
+        server: ${{ fromJSON(vars.SERVERS_CONFIG || '[]') }}
+
+    steps:
+      - name: Set up SSH key
+        uses: webfactory/ssh-agent@v0.10.0
+        with:
+          ssh-private-key: ${{ secrets.DEPLOY_SSH_KEY }}
+
+      - name: Add server to known_hosts
+        env:
+          SSH_ADDR: ${{ matrix.server.addr }}
+          SSH_PORT: ${{ matrix.server.port }}
+        run: |
+          set -euo pipefail
+          mkdir -p ~/.ssh
+          ssh-keyscan -T 10 -p "$SSH_PORT" -H "$SSH_ADDR" >> ~/.ssh/known_hosts
+
+      - name: Check SSH connectivity
+        env:
+          SERVER_NAME: ${{ matrix.server.name }}
+          SSH_ADDR: ${{ matrix.server.addr }}
+          SSH_PORT: ${{ matrix.server.port }}
+          SSH_USER: ${{ matrix.server.user }}
+        run: |
+          set -euo pipefail
+          echo ">>> [$SERVER_NAME] Checking SSH to $SSH_USER@$SSH_ADDR:$SSH_PORT"
+          ssh -p "$SSH_PORT" \
+            -o BatchMode=yes \
+            -o ConnectTimeout=15 \
+            -o StrictHostKeyChecking=yes \
+            -o ServerAliveInterval=15 -o ServerAliveCountMax=4 \
+            "$SSH_USER@$SSH_ADDR" \
+            'echo "SSH OK: $(hostname) as $(id -un)"'
+          echo ">>> [$SERVER_NAME] SSH connection OK"
+
+      - name: Check deploy path exists
+        env:
+          SERVER_NAME: ${{ matrix.server.name }}
+          SSH_ADDR: ${{ matrix.server.addr }}
+          SSH_PORT: ${{ matrix.server.port }}
+          SSH_USER: ${{ matrix.server.user }}
+          DEPLOY_PATH: ${{ matrix.server.deploy_path }}
+        run: |
+          set -euo pipefail
+          echo ">>> [$SERVER_NAME] Checking deploy path: $DEPLOY_PATH"
+          REMOTE_PATH=$(printf '%q' "$DEPLOY_PATH")
+          ssh -p "$SSH_PORT" \
+            -o BatchMode=yes \
+            -o ConnectTimeout=15 \
+            -o StrictHostKeyChecking=yes \
+            -o ServerAliveInterval=15 -o ServerAliveCountMax=4 \
+            "$SSH_USER@$SSH_ADDR" \
+            "DEPLOY_PATH=$REMOTE_PATH bash -s" <<'REMOTE'
+          set -euo pipefail
+          HOST="$(hostname)"
+          if [ ! -d "$DEPLOY_PATH" ]; then
+            echo "ERROR: deploy path does not exist on $HOST: $DEPLOY_PATH" >&2
+            echo "Create it and grant ownership to $(id -un) before releasing." >&2
+            exit 1
+          fi
+          if [ ! -w "$DEPLOY_PATH" ] || [ ! -x "$DEPLOY_PATH" ]; then
+            echo "ERROR: deploy path is not writable by $(id -un) on $HOST: $DEPLOY_PATH" >&2
+            exit 1
+          fi
+          echo "OK: $DEPLOY_PATH exists and is writable on $HOST"
+          REMOTE
+          echo ">>> [$SERVER_NAME] Deploy path OK"
+
+  release:
+    name: Build and publish release
+    needs: preflight
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@v5
+        with:
+          fetch-depth: 0   # full history for changelog generation
 
       - name: Install Rust
         uses: dtolnay/rust-toolchain@master
@@ -150,7 +291,7 @@ jobs:
   deploy:
     name: Deploy to ${{ matrix.server.name }}
     # Stable tags only; pre-releases go to staging via staging.yml.
-    needs: release
+    needs: [validate-config, preflight, release]
     if: github.event_name == 'push' && !contains(github.ref_name, '-rc') && !contains(github.ref_name, '-alpha') && !contains(github.ref_name, '-beta')
     runs-on: ubuntu-latest
     continue-on-error: false

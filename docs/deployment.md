@@ -103,12 +103,18 @@ release/deploy-remote.sh      # 服务端部署脚本
 ### 4.1 `.github/workflows/release.yml`
 
 - tag `v*.*.*` 触发；release job 不需要任何应用 Secret（Rust 在运行时读配置）。
+- `Validate deployment config`：无 matrix，先打印并校验 `SERVERS_CONFIG`
+  （非空 JSON 数组、`name/addr/port/user/deploy_path` 必填）与
+  `DEPLOY_SSH_KEY`；失败则整个流水线在构建前终止。
+- `Preflight <server>`：按 `SERVERS_CONFIG` 逐台 SSH（`fail-fast: false`），
+  验证密钥登录成功，并检查 `deploy_path` 存在、当前用户可写可进入。
+  构建 job `needs: preflight`，任一机器失败都不会开始 cross 构建。
 - `cross build --locked --release --target x86_64-unknown-linux-musl`。
 - 静态链接检查（`file` + `readelf -d` 的 `DT_NEEDED`）、80 MiB 大小上限、三件套清单检查、
   `.env` 泄漏检查。
 - 发布 `smileyan-backend-prod.tar.gz`；stable tag 自动部署到
   `SERVERS_CONFIG` 中的每台机器（SSH 端口 `port`，应用端口 `app_port`，
-  缺省 8080）。
+  缺省 8080）；deploy job 依赖 `preflight` 与 `release`。
 - 部署前检查 9 个应用 Secret + `DEPLOY_SSH_KEY` 非空；TTS 三个 Secret
   可选，空值不会写进 `.env`。
 - 部署后检查日志、进程、`:app_port` 监听、`.prev`/`rollback.sh` 是否存在，
