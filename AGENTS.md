@@ -24,7 +24,6 @@ tests/
   fixtures/              Phase 0 冻结夹具（不要手改，用 scripts/capture_*.sh 重生成）
 migrations/0001_baseline.sql
 bin/                     start/stop/restart/dev、build-and-package.sh
-deploy/nginx/            灰度 location 块 + 切换/回滚/巡检手册
 scripts/                 capture_*（Phase 0）、bench.sh（Phase 7）、
                          deploy-remote.sh、smoke.sh、rollback_drill.sh（Phase 8）
 docs/                    决策表、前端核查、API 差异、性能、安全、部署
@@ -107,8 +106,6 @@ Q23、Q24、Q25、Q26、Q27，以及 `tag_ids: []` 加载全部标签。详见
   `deploy-remote.sh`；`config.yaml` 为 `mode: prod`，staging 的 8081 由
   `APP_PORT` 在服务端改写。
 - TTS 三个环境变量只在非空时写入 `.env`，不要把空 key 或 key 值写进日志。
-- 灰度期间 `/api/search` 固定走 Go，写请求（非 GET/HEAD/OPTIONS）也走 Go；
-  两个进程各自维护内存索引。详见 `deploy/nginx/README.md`。
 - 回滚不需要动数据库/Redis；migrations 只做 `CREATE TABLE IF NOT EXISTS`。
 
 ## 文档索引

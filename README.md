@@ -52,7 +52,7 @@
   上游错误透传、连接/总超时控制。
 - **静态文件**：`/uploads` 直接提供头像、封面等上传文件。
 - **运维能力**：musl 静态制品、staging（8081）、原子部署与回滚脚本、
-  Nginx 灰度配置、冒烟测试、回滚演练。
+  冒烟测试、回滚演练。
 
 ## 实现状态
 
@@ -66,7 +66,7 @@
 | Phase 5 | 搜索：tantivy 索引、jieba/CJK、生命周期同步、`LIKE` 兜底 | 完成 |
 | Phase 6 | TTS 代理、上传模块拆分、`/uploads` 静态文件 | 完成 |
 | Phase 7 | 全量契约重放、Go/Rust 压测、`cargo audit`/`cargo deny`、前端 E2E、文档 | 完成 |
-| Phase 8 | musl release、staging、部署/回滚脚本、Nginx 灰度、冒烟与演练 | 完成（生产切换与 7 天观察为运维步骤） |
+| Phase 8 | musl release、staging、部署/回滚脚本、冒烟与演练 | 完成 |
 
 ## 技术栈
 
@@ -590,18 +590,6 @@ cd /opt/smileyan-backend
 - 登录、发文、评论任一核心链路失败；
 - Markdown 渲染或搜索出现用户可见异常。
 
-### Nginx 灰度
-
-配置见 [`deploy/nginx/smileyan-backend-locations.conf`](deploy/nginx/smileyan-backend-locations.conf)，
-运行手册见 [`deploy/nginx/README.md`](deploy/nginx/README.md)：
-
-- `GET/HEAD/OPTIONS` 按 `split_clients` 权重进入 Rust：5% → 25% → 50% → 100%；
-- 灰度期间**非 GET 请求与 `/api/search` 固定走 Go**，因为两个进程各自维护内存
-  索引，Go 写入的新文章不会出现在 Rust 索引中；
-- 每次调整后执行 `nginx -t` + reload，观察 30 分钟–4 小时；
-- 100% 切换时停掉 Go，Rust 以 8080 配置重启，然后删除 `split_clients` 与
-  `/api/search` 覆盖，改为全量反代到 Rust。
-
 ### 冒烟与回滚演练
 
 ```bash
@@ -662,7 +650,6 @@ tests/
 bin/
   start stop restart dev        # 本地进程管理（按配置端口）
   build-and-package.sh          # cross/zigbuild/host 打包
-deploy/nginx/                   # 灰度 location 块 + 切换/回滚/巡检手册
 scripts/                        # capture_*、bench、deploy-remote、smoke、rollback_drill
 docs/                           # 决策、前端核查、API 差异、性能、安全、部署
 deny.toml                       # cargo-deny 许可证/公告/来源策略
@@ -677,8 +664,7 @@ deny.toml                       # cargo-deny 许可证/公告/来源策略
 | [`docs/api-differences.md`](docs/api-differences.md) | Rust 与 Go 的已批准差异、保留怪癖、新增差异 |
 | [`docs/performance.md`](docs/performance.md) | Go vs Rust 压测方法、明细与复现 |
 | [`docs/security-checklist.md`](docs/security-checklist.md) | 认证、SQL、上传、TTS、CORS、依赖审计与剩余风险 |
-| [`docs/deployment.md`](docs/deployment.md) | 构建、CI、staging、灰度、回滚演练、7 天观察 |
-| [`deploy/nginx/README.md`](deploy/nginx/README.md) | Nginx 灰度、切换、回滚与巡检操作手册 |
+| [`docs/deployment.md`](docs/deployment.md) | 构建、CI、staging、回滚演练、7 天观察 |
 | [`AGENTS.md`](AGENTS.md) | 面向 AI 编码助手的项目约束与常用命令 |
 
 ## 契约夹具（Phase 0）
@@ -721,7 +707,7 @@ cp .env.capture.example .env.capture
 
 - **上传文件类型**：目前只校验扩展名和大小，未校验文件魔数；后续可用 `infer`
   检查 PNG/JPEG/GIF 文件头。
-- **可信代理**：`X-Forwarded-For` 完全信任。生产在 Nginx 后面时应增加
+- **可信代理**：`X-Forwarded-For` 完全信任。生产在反向代理后面时应增加
   `trusted_proxies`，只接受来自代理的 XFF（当前保持 Go 行为）。
 - **限流窗口**：IP 限流每次 `INCR` 后都会 `EXPIRE`，窗口会被重置（Q12）；
   后续可用 Lua 实现原子固定窗口。
@@ -732,6 +718,6 @@ cp .env.capture.example .env.capture
   `DefaultBodyLimit` 或改用附件上传。
 - **搜索排序**：tantivy 与 Bleve 的相关性打分不同，命中集合与 `total` 一致但
   页内顺序可能不同。
-- **生产切换**：musl 构建由 CI 的 cross 执行；真实 staging/生产部署、Nginx
-  灰度与 7 天观察需要服务器权限，按 [`docs/deployment.md`](docs/deployment.md)
+- **生产切换**：musl 构建由 CI 的 cross 执行；真实 staging/生产部署与
+  7 天观察需要服务器权限，按 [`docs/deployment.md`](docs/deployment.md)
   执行。

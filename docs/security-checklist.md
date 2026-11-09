@@ -71,7 +71,7 @@ Phase 7 同时移除了 `comrak` 的默认 feature（`cli` + `syntect-onig`）�
    需要更大正文，调高 `DefaultBodyLimit` 或给编辑器加附件上传。
 2. **上传魔数**：目前只校验扩展名和大小。后续可用 `infer` 校验 PNG/JPEG/GIF
    文件头；注意这会改变 Q8 的已批准差异（`.jpeg` 扩展名 + PNG 内容当前会通过）。
-3. **可信代理**：`X-Forwarded-For` 完全信任。生产在 nginx 后面时应增加
+3. **可信代理**：`X-Forwarded-For` 完全信任。生产在反向代理后面时应增加
    `trusted_proxies` 配置，只接受来自代理的 XFF；本次保持 Go 行为。
 4. **限流窗口**：`INCR` 后每次 `EXPIRE` 会重置 IP 窗口（Q12）。建议后续用 Lua
    实现固定窗口；切换期保持现状，避免行为变化。

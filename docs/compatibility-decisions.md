@@ -555,9 +555,8 @@ TTS：前端使用浏览器 `speechSynthesis`，没有调用 `/v1/audio/speech`�
 | 本地脚本 | `bin/start|stop|restart|dev`；`bin/build-and-package.sh` 输出 dev/prod/staging 三件套（staging 8081） |
 | 冒烟 | `scripts/smoke.sh` 13 项：hello/categories/tags/posts/pages/comments/search/uploads 404，token 可选 |
 | 回滚演练 | 真实二进制 + MySQL 8.4/Redis 7.4：deploy v1 → deploy v2 → rollback，2 s；sha256 恢复、旧 JWT `/api/user` 200、`/api/posts` 可读、`/api/search` 命中（重启重建索引） |
-| Nginx | `deploy/nginx/`：GET/HEAD/OPTIONS 按 5/25/50/100 分流，写请求与 `/api/search` 固定 Go，含回滚与 7 天巡检手册 |
 | 门禁 | fmt/clippy/test（72 单元 + 全部集成）/release build 通过；`cargo audit --no-fetch`、`cargo deny --offline check` 通过（网络受限，使用本地 advisory DB；依赖未变） |
-| 未执行 | CI 的 musl 构建（首次 tag 触发）、真实 staging/生产部署、灰度、7 天观察、Go 归档 |
+| 未执行 | CI 的 musl 构建（首次 tag 触发）、真实 staging/生产部署、7 天观察、Go 归档 |
 
 **不变量**：数据库结构、Redis key/TTL、JWT secret 与 claims、`config.yaml`
 旧字段均未改变；回滚不需要数据迁移。

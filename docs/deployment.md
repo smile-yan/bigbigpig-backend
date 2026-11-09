@@ -3,10 +3,10 @@
 > Phase 8 交付：release workflow（musl 三件套 + 静态/大小检查 + 自动部署）、
 > staging workflow（8081）、`deploy-remote.sh`（`.prev` 备份、`rollback.sh`、
 > TTS 变量、端口隔离）、本地 `bin/` 脚本、`scripts/smoke.sh`、
-> `scripts/rollback_drill.sh`、Nginx 灰度配置与运行手册。
+> `scripts/rollback_drill.sh`。
 >
 > 生产切换、7 天观察需要真实服务器与运维授权，按本文步骤执行；脚本与配置
-> 已在本机用真实二进制 + MySQL/Redis 完成部署/回滚演练（见 §9）。
+> 已在本机用真实二进制 + MySQL/Redis 完成部署/回滚演练（见 §8）。
 
 ## 1. 构建
 
@@ -200,7 +200,7 @@ release/deploy-remote.sh      # 服务端部署脚本
    ```
 4. 手工补一遍写链路：登录（MailHog/真实 SMTP）、发文/编辑、评论、搜索、
    TTS（若启用）。
-5. 保留 `.prev` 与 `.env`，供灰度/回滚使用。
+5. 保留 `.prev` 与 `.env`，供回滚使用。
 
 ### 5.4 生产（维护窗口，首次推荐）
 
@@ -214,22 +214,10 @@ release/deploy-remote.sh      # 服务端部署脚本
      S_DB_HOST=... ... bash /tmp/deploy-remote.sh"
    ```
 3. 脚本会停旧进程、备份 `.prev`、启动 Rust 并健康检查。
-4. Nginx 仍指向 8080，无需改动；确认前端登录/发文/评论/搜索正常。
-5. 观察 30 分钟，异常执行 §7 回滚。
+4. 确认前端登录/发文/评论/搜索正常。
+5. 观察 30 分钟，异常执行 §6 回滚。
 
-## 6. 灰度
-
-配置见 `deploy/nginx/smileyan-backend-locations.conf`，运行手册见
-`deploy/nginx/README.md`。要点：
-
-- `GET/HEAD/OPTIONS` 按 `split_clients` 比例进入 Rust，其余方法留在 Go。
-- 灰度期间 `/api/search` 固定走 Go：两个进程各自维护内存索引，Go 写入的
-  新文章不会出现在 Rust 索引里。
-- 比例：5% → 25% → 50% → 100%；每次 `nginx -t` + reload，观察 30 min–4 h。
-- 100% 时：停 Go → Rust 用 8080 配置重启 → 删除 `split_clients` 与
-  `/api/search` 覆盖 → 全量 proxy 到 Rust。
-
-## 7. 回滚
+## 6. 回滚
 
 触发条件（计划 §9.4）：
 
@@ -238,12 +226,7 @@ release/deploy-remote.sh      # 服务端部署脚本
 - 登录/发文/评论任一核心链路失败；
 - Markdown 渲染或搜索出现用户可见异常。
 
-### 7.1 快速回滚（Go 仍在运行）
-
-把 Nginx location 块恢复为全部走 `127.0.0.1:8080`，`nginx -t` + reload。
-数据库/Redis/schema/JWT 均未变，无需迁移。
-
-### 7.2 二进制回滚（Rust 占用 8080）
+### 6.1 二进制回滚（Rust 占用 8080）
 
 ```bash
 cd /opt/smileyan-backend
@@ -260,7 +243,7 @@ cd /opt/smileyan-backend
 
 `.prev` 在回滚后仍保留，可重复尝试；重新部署会刷新它。
 
-### 7.3 回滚演练
+### 6.2 回滚演练
 
 ```bash
 ./scripts/rollback_drill.sh \
@@ -281,12 +264,11 @@ cd /opt/smileyan-backend
 
 演练后重新部署同一 tag 即回滚到新版本。
 
-## 8. 观察（7 天）
+## 7. 观察（7 天）
 
 - 健康检查：`curl -fsS http://127.0.0.1:8080/api/categories` 200。
 - 日志：`logs/YYYY-MM-DD.log` 中 5xx、`Failed to`、panic；请求字段
   `method/path/ip/status`。
-- Nginx：5xx 比例、`$upstream_response_time` p95、`/api/search` 命中。
 - 进程/内存：`ps -o pid,rss,etime,args -C smileyan-backend`；tantivy 索引
   常驻，Phase 7 实测空载约 22 MB、50 并发峰值约 61 MB。
 - 邮件：验证码、订阅确认、回复/通知；SMTP 失败日志。
@@ -295,7 +277,7 @@ cd /opt/smileyan-backend
 
 观察期内保留 Go 二进制、`.env`、`go-baseline-2026-11` tag。
 
-## 9. Phase 8 执行记录（2026-11-05）
+## 8. Phase 8 执行记录（2026-11-05）
 
 | 项 | 结果 |
 |---|---|
@@ -305,14 +287,13 @@ cd /opt/smileyan-backend
 | 部署脚本 | `scripts/deploy-remote.sh`：原子 `.env`（TTS 可选）、PID/端口隔离停止、`.prev`/`config.yaml.prev` 备份、`rollback.sh`、端口改写、30 s 健康检查 |
 | 本地脚本 | `bin/start|stop|restart|dev|build-and-package.sh`；打包输出三件套（dev/prod/staging），本地验证 staging 配置为 8081 |
 | 冒烟/演练 | `scripts/smoke.sh` 13 项全过；`scripts/rollback_drill.sh` 在真实二进制 + MySQL 8.4/Redis 7.4 上执行：部署 v1 → 部署 v2 → 回滚，2 s 完成，sha256 恢复、旧 JWT 200、搜索命中 1 条 |
-| Nginx | `deploy/nginx/smileyan-backend-locations.conf` + `deploy/nginx/README.md`：5/25/50/100 灰度、写请求与搜索固定 Go、回滚与 7 天巡检命令 |
 | 门禁 | `cargo fmt --all --check`、`cargo clippy --all-targets -D warnings`、`cargo test --all-targets`、`cargo build --locked --release`、`cargo audit` 全部通过 |
-| 未在本机执行 | musl 交叉编译（本机网络受限，未安装 musl target/cross；由 CI 的 cross 执行）；真实 staging/生产部署、Nginx 灰度、7 天观察需服务器权限 |
-| 待运维执行 | 打 stable tag 触发 release；`Deploy staging` 验证 8081；按 §6 灰度；§7 生产回滚演练；§8 观察 7 天；Go 仓库归档（保留 `go-baseline-2026-11`） |
+| 未在本机执行 | musl 交叉编译（本机网络受限，未安装 musl target/cross；由 CI 的 cross 执行）；真实 staging/生产部署、7 天观察需服务器权限 |
+| 待运维执行 | 打 stable tag 触发 release；`Deploy staging` 验证 8081；§6 生产回滚演练；§7 观察 7 天；Go 仓库归档（保留 `go-baseline-2026-11`） |
 
-## 10. Go 仓库归档
+## 9. Go 仓库归档
 
-灰度/观察结束后：
+观察结束后：
 
 ```bash
 # Go 仓库只保留回滚 tag，不再接受功能提交
