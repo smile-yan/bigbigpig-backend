@@ -1,0 +1,21 @@
+{
+  "name": "admin_post_by_id_soft_deleted_5",
+  "request": {
+    "method": "GET",
+    "path": "/api/admin/posts/_id/5",
+    "headers": {
+      "Authorization": "Bearer <admin>",
+      "X-Forwarded-For": "203.0.113.10"
+    }
+  },
+  "response": {
+    "status": 404,
+    "headers": {
+      "connection": "close",
+      "content-type": "application/json; charset=utf-8"
+    },
+    "json": {
+      "error": "Post not found"
+    }
+  }
+}

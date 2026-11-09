@@ -1,0 +1,13 @@
+# Security-audit configuration for `cargo audit` (used by CI).
+#
+# The ignored advisories are reachable only through algorithm support this
+# service does not use, and neither has a fixed release as of 2026-11-04:
+#
+# - RUSTSEC-2023-0071 (rsa Marvin attack): jsonwebtoken's `rust_crypto`
+#   backend links RSA/ECDSA code, but the service only signs and verifies
+#   HS256; sqlx's `mysql-rsa` uses RSA public-key encryption for the MySQL
+#   password exchange, while the Marvin attack targets private-key operations.
+# - RUSTSEC-2026-0387 (crypto-bigint timing): pulled in by jsonwebtoken's
+#   ECDSA dependencies (p256/p384), which are never used for HS256.
+[advisories]
+ignore = ["RUSTSEC-2023-0071", "RUSTSEC-2026-0387"]

@@ -1,0 +1,39 @@
+{
+  "name": "categories",
+  "request": {
+    "method": "GET",
+    "path": "/api/categories",
+    "headers": {
+      "X-Forwarded-For": "203.0.113.10"
+    }
+  },
+  "response": {
+    "status": 200,
+    "headers": {
+      "connection": "close",
+      "content-type": "application/json; charset=utf-8"
+    },
+    "json": [
+      {
+        "id": 1,
+        "created_at": "<timestamp>",
+        "updated_at": "<timestamp>",
+        "name": "技术",
+        "slug": "tech",
+        "description": "技术类文章",
+        "sort": 1,
+        "post_count": 2
+      },
+      {
+        "id": 2,
+        "created_at": "<timestamp>",
+        "updated_at": "<timestamp>",
+        "name": "生活",
+        "slug": "life",
+        "description": "生活随笔",
+        "sort": 2,
+        "post_count": 1
+      }
+    ]
+  }
+}

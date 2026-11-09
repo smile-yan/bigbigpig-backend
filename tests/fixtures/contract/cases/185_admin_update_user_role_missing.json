@@ -1,0 +1,25 @@
+{
+  "name": "admin_update_user_role_missing",
+  "request": {
+    "method": "PUT",
+    "path": "/api/admin/users/9999/role",
+    "headers": {
+      "Authorization": "Bearer <admin>",
+      "Content-Type": "application/json",
+      "X-Forwarded-For": "203.0.113.10"
+    },
+    "json": {
+      "role": "admin"
+    }
+  },
+  "response": {
+    "status": 404,
+    "headers": {
+      "connection": "close",
+      "content-type": "application/json; charset=utf-8"
+    },
+    "json": {
+      "error": "User not found"
+    }
+  }
+}

@@ -1,0 +1,14 @@
+{
+  "id": "special_01",
+  "kind": "special",
+  "keyword": "\"",
+  "page": 1,
+  "page_size": 10,
+  "status": 500,
+  "total": null,
+  "list_length": 0,
+  "slugs": [],
+  "body": {
+    "error": "Search failed"
+  }
+}

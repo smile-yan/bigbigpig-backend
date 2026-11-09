@@ -1,0 +1,8 @@
+{
+  "to": [
+    "admin@example.com"
+  ],
+  "from": "capture@example.com",
+  "subject": "Smileyan 验证码：<code>",
+  "body": "<html><body><h2>您的验证码是：</h2><h1><code></h1><p>有效期10分钟</p></body></html>"
+}

@@ -1,0 +1,29 @@
+{
+  "id": "mix_04",
+  "kind": "mixed",
+  "keyword": "Redis 缓存",
+  "page": 1,
+  "page_size": 10,
+  "status": 200,
+  "total": 1,
+  "list_length": 1,
+  "slugs": [
+    "published-no-category"
+  ],
+  "body": {
+    "list": [
+      {
+        "cover_image": "https://example.com/cover.png",
+        "created_at": "<timestamp>",
+        "excerpt": "固定摘要",
+        "id": 6,
+        "slug": "published-no-category",
+        "status": "published",
+        "title": "无分类文章",
+        "view_count": 11
+      }
+    ],
+    "page": 1,
+    "total": 1
+  }
+}

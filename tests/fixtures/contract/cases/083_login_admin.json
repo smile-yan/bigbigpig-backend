@@ -1,0 +1,32 @@
+{
+  "name": "login_admin",
+  "request": {
+    "method": "POST",
+    "path": "/api/login",
+    "headers": {
+      "Content-Type": "application/json",
+      "X-Forwarded-For": "203.0.113.10"
+    },
+    "json": {
+      "email": "admin@example.com",
+      "code": "<code>"
+    }
+  },
+  "response": {
+    "status": 200,
+    "headers": {
+      "connection": "close",
+      "content-type": "application/json; charset=utf-8"
+    },
+    "json": {
+      "token": "<jwt>",
+      "user": {
+        "avatar": "",
+        "email": "admin@example.com",
+        "id": 1,
+        "nickname": "Admin",
+        "role": "admin"
+      }
+    }
+  }
+}

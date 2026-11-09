@@ -1,0 +1,82 @@
+{
+  "name": "admin_create_post",
+  "request": {
+    "method": "POST",
+    "path": "/api/admin/posts",
+    "headers": {
+      "Authorization": "Bearer <admin>",
+      "Content-Type": "application/json",
+      "X-Forwarded-For": "203.0.113.10"
+    },
+    "json": {
+      "title": "契约测试文章 Contract Capture",
+      "content": "# 契约测试\n\n用于采集创建/更新/删除/恢复的响应。\n",
+      "excerpt": "",
+      "cover_image": "",
+      "category_id": 1,
+      "tag_ids": [
+        1,
+        2
+      ],
+      "status": "published"
+    }
+  },
+  "response": {
+    "status": 201,
+    "headers": {
+      "connection": "close",
+      "content-type": "application/json; charset=utf-8"
+    },
+    "json": {
+      "id": 100,
+      "created_at": "<timestamp>",
+      "updated_at": "<timestamp>",
+      "title": "契约测试文章 Contract Capture",
+      "slug": "契约测试文章-contract-capture",
+      "content": "# 契约测试\n\n用于采集创建/更新/删除/恢复的响应。\n",
+      "html_content": "<h1 class=\"article-h1\">契约测试</h1>\n<p class=\"article-p\">用于采集创建/更新/删除/恢复的响应。</p>\n",
+      "excerpt": "",
+      "cover_image": "",
+      "status": "published",
+      "view_count": 0,
+      "is_deleted": false,
+      "category_id": 1,
+      "category": {
+        "id": 0,
+        "created_at": "<timestamp>",
+        "updated_at": "<timestamp>",
+        "name": "",
+        "slug": "",
+        "description": "",
+        "sort": 0
+      },
+      "tags": [
+        {
+          "id": 1,
+          "created_at": "<timestamp>",
+          "updated_at": "<timestamp>",
+          "name": "Go",
+          "slug": "go"
+        },
+        {
+          "id": 2,
+          "created_at": "<timestamp>",
+          "updated_at": "<timestamp>",
+          "name": "Rust",
+          "slug": "rust"
+        }
+      ],
+      "author_id": 1,
+      "author": {
+        "id": 0,
+        "created_at": "<timestamp>",
+        "updated_at": "<timestamp>",
+        "email": "",
+        "nickname": "",
+        "avatar": "",
+        "role": "",
+        "status": ""
+      }
+    }
+  }
+}

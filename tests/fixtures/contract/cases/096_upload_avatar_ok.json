@@ -1,0 +1,27 @@
+{
+  "name": "upload_avatar_ok",
+  "request": {
+    "method": "POST",
+    "path": "/api/upload-avatar",
+    "headers": {
+      "Authorization": "Bearer <reader>",
+      "Content-Type": "multipart/form-data; boundary=----smileyan-capture-boundary",
+      "X-Forwarded-For": "203.0.113.10"
+    },
+    "multipart": {
+      "field": "avatar",
+      "filename": "capture-avatar.png",
+      "bytes": 70
+    }
+  },
+  "response": {
+    "status": 200,
+    "headers": {
+      "connection": "close",
+      "content-type": "application/json; charset=utf-8"
+    },
+    "json": {
+      "avatar": "/uploads/avatars/2_capture-avatar.png"
+    }
+  }
+}

@@ -1,0 +1,80 @@
+{
+  "name": "admin_update_post_clear_tags",
+  "request": {
+    "method": "PUT",
+    "path": "/api/admin/posts/_id/100",
+    "headers": {
+      "Authorization": "Bearer <admin>",
+      "Content-Type": "application/json",
+      "X-Forwarded-For": "203.0.113.10"
+    },
+    "json": {
+      "tag_ids": []
+    }
+  },
+  "response": {
+    "status": 200,
+    "headers": {
+      "connection": "close",
+      "content-type": "application/json; charset=utf-8"
+    },
+    "json": {
+      "id": 100,
+      "created_at": "<timestamp>",
+      "updated_at": "<timestamp>",
+      "title": "契约测试文章 Contract Capture Updated",
+      "slug": "契约测试文章-contract-capture",
+      "content": "# 更新后\n\n更新内容。\n",
+      "html_content": "<h1 class=\"article-h1\">更新后</h1>\n<p class=\"article-p\">更新内容。</p>\n",
+      "excerpt": "更新摘要",
+      "cover_image": "",
+      "status": "published",
+      "view_count": 0,
+      "is_deleted": false,
+      "category_id": 2,
+      "category": {
+        "id": 0,
+        "created_at": "<timestamp>",
+        "updated_at": "<timestamp>",
+        "name": "",
+        "slug": "",
+        "description": "",
+        "sort": 0
+      },
+      "tags": [
+        {
+          "id": 1,
+          "created_at": "<timestamp>",
+          "updated_at": "<timestamp>",
+          "name": "Go",
+          "slug": "go"
+        },
+        {
+          "id": 2,
+          "created_at": "<timestamp>",
+          "updated_at": "<timestamp>",
+          "name": "Rust",
+          "slug": "rust"
+        },
+        {
+          "id": 100,
+          "created_at": "<timestamp>",
+          "updated_at": "<timestamp>",
+          "name": "契约标签",
+          "slug": "契约标签"
+        }
+      ],
+      "author_id": 1,
+      "author": {
+        "id": 0,
+        "created_at": "<timestamp>",
+        "updated_at": "<timestamp>",
+        "email": "",
+        "nickname": "",
+        "avatar": "",
+        "role": "",
+        "status": ""
+      }
+    }
+  }
+}

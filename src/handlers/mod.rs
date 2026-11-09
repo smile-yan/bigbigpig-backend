@@ -1,0 +1,12 @@
+pub mod auth;
+pub mod categories;
+pub mod comments;
+pub mod hello;
+pub mod pages;
+pub mod posts;
+pub mod search;
+pub mod subscriptions;
+pub mod tags;
+pub mod tts;
+pub mod uploads;
+pub mod users;

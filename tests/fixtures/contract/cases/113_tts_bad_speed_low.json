@@ -1,0 +1,29 @@
+{
+  "name": "tts_bad_speed_low",
+  "request": {
+    "method": "POST",
+    "path": "/v1/audio/speech",
+    "headers": {
+      "Authorization": "Bearer <reader>",
+      "Content-Type": "application/json",
+      "X-Forwarded-For": "203.0.113.10"
+    },
+    "json": {
+      "model": "tts-capture",
+      "input": "你好，契约测试",
+      "voice": "alloy",
+      "response_format": "mp3",
+      "speed": 0.1
+    }
+  },
+  "response": {
+    "status": 400,
+    "headers": {
+      "connection": "close",
+      "content-type": "application/json; charset=utf-8"
+    },
+    "json": {
+      "error": "speed must be between 0.25 and 4.00"
+    }
+  }
+}

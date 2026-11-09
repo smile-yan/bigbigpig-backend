@@ -1,0 +1,39 @@
+{
+  "id": "special_06",
+  "kind": "special",
+  "keyword": "zzqpubdel",
+  "page": 1,
+  "page_size": 10,
+  "status": 200,
+  "total": 1,
+  "list_length": 1,
+  "slugs": [
+    "published-but-is-deleted"
+  ],
+  "body": {
+    "list": [
+      {
+        "category": {
+          "id": 1,
+          "name": "技术"
+        },
+        "cover_image": "",
+        "created_at": "<timestamp>",
+        "excerpt": "# Published But IsDeleted\n\npublished-is-deleted leak keyword zzqpubdel。\n",
+        "id": 9,
+        "slug": "published-but-is-deleted",
+        "status": "published",
+        "tags": [
+          {
+            "id": 1,
+            "name": "Go"
+          }
+        ],
+        "title": "Published But IsDeleted",
+        "view_count": 8
+      }
+    ],
+    "page": 1,
+    "total": 1
+  }
+}

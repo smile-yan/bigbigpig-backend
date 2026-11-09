@@ -1,0 +1,208 @@
+{
+  "generator": "smileyan-backend/cmd/render-md (utils.MarkdownToHTML)",
+  "backend_commit": "1f3a87f0ade6a80a37d67698f563238499695ce9",
+  "backend_tag": "go-baseline-2026-11",
+  "case_count": 25,
+  "cases": [
+    {
+      "name": "01-headings",
+      "corpus": "corpus/01-headings.md",
+      "corpus_sha256": "54a1a29707c96b6506f92435a6dbf1840b09f79f3ab361b7f9c91ebf8105b4d8",
+      "golden": "golden/01-headings.html",
+      "golden_sha256": "1f72d2a46449b03a965b2547fa7d336e8df75920be5091eb016644210d0b6799",
+      "bytes": 348
+    },
+    {
+      "name": "02-paragraphs-emphasis",
+      "corpus": "corpus/02-paragraphs-emphasis.md",
+      "corpus_sha256": "3c69c071092dd212b99cd9fb1e1745f6ea2f821a7336126d8e7498bbe59165a5",
+      "golden": "golden/02-paragraphs-emphasis.html",
+      "golden_sha256": "75f8eb9b016d0c08944673f6269e7e03071ab93ac5a3b63d956eb10e9c0db1f6",
+      "bytes": 491
+    },
+    {
+      "name": "03-inline-code",
+      "corpus": "corpus/03-inline-code.md",
+      "corpus_sha256": "23e46bce906315e373dff449238d7ccd8853d511ffb710c5133442016f0845c7",
+      "golden": "golden/03-inline-code.html",
+      "golden_sha256": "bcbebdad7f7df219678b8ea61f832b665654615e345443cd4ec66df38e5a686a",
+      "bytes": 260
+    },
+    {
+      "name": "04-code-block-language",
+      "corpus": "corpus/04-code-block-language.md",
+      "corpus_sha256": "b19d10cb2be3e7d33f5ad87e80b2d53619e775fb5b21d2f9aec5906b155f8724",
+      "golden": "golden/04-code-block-language.html",
+      "golden_sha256": "f79ad5470a6863cc0da5da1857d8a6f32a2b926b0a2453c9a351ff686c0d7463",
+      "bytes": 300
+    },
+    {
+      "name": "05-code-block-no-language",
+      "corpus": "corpus/05-code-block-no-language.md",
+      "corpus_sha256": "6228da07b1f589f5d0fd2a704a730fe9b55fa51b98f931831b98f33ed259f21c",
+      "golden": "golden/05-code-block-no-language.html",
+      "golden_sha256": "d74db750aa22fa9934dc168ec0a360ea854677555c9d3bdedf13d8708f99e89b",
+      "bytes": 182
+    },
+    {
+      "name": "06-lists",
+      "corpus": "corpus/06-lists.md",
+      "corpus_sha256": "a85965e8afb8bd6bbccb8021a173c9b4c3fd0888fcb6cba79a24acda3ae8f3ad",
+      "golden": "golden/06-lists.html",
+      "golden_sha256": "281d6dfe62374e88643119a216231dad646d7a0b582dc47ccc776d581b09f8c6",
+      "bytes": 552
+    },
+    {
+      "name": "07-nested-lists",
+      "corpus": "corpus/07-nested-lists.md",
+      "corpus_sha256": "158819c03e9543a43039e253153fb31594323a848eb41728c4cd8a14ad4c35af",
+      "golden": "golden/07-nested-lists.html",
+      "golden_sha256": "d525558e1b3931f297f8897936d4a858b9be097027f553e0c9dff3b92244ea6f",
+      "bytes": 894
+    },
+    {
+      "name": "08-blockquote",
+      "corpus": "corpus/08-blockquote.md",
+      "corpus_sha256": "6f2af42471ee539ad5792a8a356eb051c5fcc203662597f12d5196163cdcd744",
+      "golden": "golden/08-blockquote.html",
+      "golden_sha256": "57235a99d3d8c2546c523fcbe95d98a319f8378fc00f771d84369b1d58daee15",
+      "bytes": 607
+    },
+    {
+      "name": "09-links",
+      "corpus": "corpus/09-links.md",
+      "corpus_sha256": "b1df5ef533837ee6f7c530e0a124c583a55259e2c124e8bedf572e74d218f350",
+      "golden": "golden/09-links.html",
+      "golden_sha256": "8220b2dcf4202f29a6f912e229ad73e0157bde725ab51c3038d20405a8c004da",
+      "bytes": 862
+    },
+    {
+      "name": "10-autolink",
+      "corpus": "corpus/10-autolink.md",
+      "corpus_sha256": "7a5ab492edfeca9c61789749f8f54d7b59d2ba9da6ba920b28d9b1a33c051139",
+      "golden": "golden/10-autolink.html",
+      "golden_sha256": "ebfbed10d79bd0c331cb0e606e0ebcc5b13cea03873c64d19a829912338b53cc",
+      "bytes": 627
+    },
+    {
+      "name": "11-image",
+      "corpus": "corpus/11-image.md",
+      "corpus_sha256": "a2fd9f1b9411b707102386a965d5f05c103536e58100a7f251b5b4a526868505",
+      "golden": "golden/11-image.html",
+      "golden_sha256": "b5375979a5a6c9db4c94048f23ba1645e82cd2d5be8c5d9bdc16d8c2267fb01b",
+      "bytes": 451
+    },
+    {
+      "name": "12-image-title",
+      "corpus": "corpus/12-image-title.md",
+      "corpus_sha256": "0e05f324c9c4dc1189c8e225acce37c2a205467c54c2360c4504cc512d7d9602",
+      "golden": "golden/12-image-title.html",
+      "golden_sha256": "a3471f585a90efbe5fb75d4d9fbec68693a139efb8aded088a812b94a728b72b",
+      "bytes": 214
+    },
+    {
+      "name": "13-table",
+      "corpus": "corpus/13-table.md",
+      "corpus_sha256": "71788b5dc3a452e84fae684545c789b48ed7cd86a2b38adcdfdc089d81febda3",
+      "golden": "golden/13-table.html",
+      "golden_sha256": "2bc60b6a702265265674180c7280216148546842b56105d186c2ad146c00bf93",
+      "bytes": 902
+    },
+    {
+      "name": "14-raw-html-table",
+      "corpus": "corpus/14-raw-html-table.md",
+      "corpus_sha256": "97f500d7e097139d3859d5055166348ead3f9e13a9fda73c23a509964ee203da",
+      "golden": "golden/14-raw-html-table.html",
+      "golden_sha256": "eeb5aed8eb459f194a1b01adf730395c86c95239abff18e26824f6ccc78c6fc9",
+      "bytes": 335
+    },
+    {
+      "name": "15-hr",
+      "corpus": "corpus/15-hr.md",
+      "corpus_sha256": "fedce45b71db497d2fe4cb01c14053059cb57651b7fe488672795d36fe47b9dc",
+      "golden": "golden/15-hr.html",
+      "golden_sha256": "40a6d48962c69abf660bfcdf200340dbb9abea3f73c10ed042a7c9caf6033b7d",
+      "bytes": 173
+    },
+    {
+      "name": "16-strikethrough",
+      "corpus": "corpus/16-strikethrough.md",
+      "corpus_sha256": "c08f8140b689b24794d9b9f5a493fc1e3b669733972b52b58d31ab317d98fab8",
+      "golden": "golden/16-strikethrough.html",
+      "golden_sha256": "a93f6727850f115f1b588596c739e5c2bc434ffccf56bafb1e86b84d0ce7640b",
+      "bytes": 205
+    },
+    {
+      "name": "17-tasklist",
+      "corpus": "corpus/17-tasklist.md",
+      "corpus_sha256": "540f0da337b411d3da2997462cb4eb1f596475c3a7bfb011c2bea4ea5afd33fc",
+      "golden": "golden/17-tasklist.html",
+      "golden_sha256": "c03df25dedb4361f5d737539878eef5ad38f2933a8e4891f2dbaadd871fcea36",
+      "bytes": 571
+    },
+    {
+      "name": "18-smart-quotes",
+      "corpus": "corpus/18-smart-quotes.md",
+      "corpus_sha256": "fac9c90ae0febd7e9a6df0920dcc6ac33d4316533d736ca5774dd022f7da1947",
+      "golden": "golden/18-smart-quotes.html",
+      "golden_sha256": "90dd6de4182528bd249649191a93467bf14aa4085d844f38e2505d2f879d6747",
+      "bytes": 248
+    },
+    {
+      "name": "19-raw-html-svg",
+      "corpus": "corpus/19-raw-html-svg.md",
+      "corpus_sha256": "fada0975c76fbc85c55618e54c058f6ed319d8aa8ef079ec1cd99db03ee1985c",
+      "golden": "golden/19-raw-html-svg.html",
+      "golden_sha256": "9d4a13538b61c90acd5d63b95fc804a4a45fcf8746aa1494678effe7725976fb",
+      "bytes": 414
+    },
+    {
+      "name": "20-math-dollars",
+      "corpus": "corpus/20-math-dollars.md",
+      "corpus_sha256": "fd4eb985efcaebc162c3d0a00ac79fab9244a9285597baab034b6a552661c07a",
+      "golden": "golden/20-math-dollars.html",
+      "golden_sha256": "fcded5660bf3e8fb2f954bc7076c6dffa8977d62930ef5f6ef654b226acd93f9",
+      "bytes": 164
+    },
+    {
+      "name": "21-cjk-heading",
+      "corpus": "corpus/21-cjk-heading.md",
+      "corpus_sha256": "4fe8dedfdc68c05033eeec6046c7d8d7121509887f6e5eb3a8cc00a3ff0e2f3b",
+      "golden": "golden/21-cjk-heading.html",
+      "golden_sha256": "8e5e754218ef864c358bdba27be52e7a0fe8a7844d175b33923a0ebf43ec962d",
+      "bytes": 966
+    },
+    {
+      "name": "22-html-comment",
+      "corpus": "corpus/22-html-comment.md",
+      "corpus_sha256": "afac82d4f1802373327836b3d40a8d848f29eb42125a3cc0394f4355142b0408",
+      "golden": "golden/22-html-comment.html",
+      "golden_sha256": "febe62a4e2501084e5b09a22afb73742b3ddda52ad86e99874367cf4b0cbb3a9",
+      "bytes": 142
+    },
+    {
+      "name": "23-mixed-edge",
+      "corpus": "corpus/23-mixed-edge.md",
+      "corpus_sha256": "ed62bb1f5e295abf4e8dc8dc66be595ac80c83ef58fc550dbf430c8bac8d4289",
+      "golden": "golden/23-mixed-edge.html",
+      "golden_sha256": "b4e964254452260f805732a6be38c0f459b69e91e0d1e3abce1968e7834768e1",
+      "bytes": 1152
+    },
+    {
+      "name": "24-empty",
+      "corpus": "corpus/24-empty.md",
+      "corpus_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "golden": "golden/24-empty.html",
+      "golden_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "name": "markdown-example",
+      "corpus": "corpus/markdown-example.md",
+      "corpus_sha256": "cf18f9b225151173f136e6fb6f2761ab3e1fdad32cb5c1a655766da265a1298e",
+      "golden": "golden/markdown-example.html",
+      "golden_sha256": "50be5fc361b05ee7be38db825e46368e9dac3d43ebce3efda7f0acc44891a592",
+      "bytes": 15540
+    }
+  ]
+}

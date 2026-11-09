@@ -1,0 +1,27 @@
+{
+  "name": "tts_no_auth",
+  "request": {
+    "method": "POST",
+    "path": "/v1/audio/speech",
+    "headers": {
+      "Content-Type": "application/json",
+      "X-Forwarded-For": "203.0.113.10"
+    },
+    "json": {
+      "model": "tts-capture",
+      "input": "你好，契约测试",
+      "voice": "alloy",
+      "response_format": "mp3"
+    }
+  },
+  "response": {
+    "status": 401,
+    "headers": {
+      "connection": "close",
+      "content-type": "application/json; charset=utf-8"
+    },
+    "json": {
+      "error": "Authorization header is required"
+    }
+  }
+}

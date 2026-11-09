@@ -1,0 +1,14 @@
+{
+  "authorization_present": true,
+  "authorization_scheme": "Bearer",
+  "body": {
+    "input": "你好，契约测试",
+    "model": "tts-capture",
+    "response_format": "mp3",
+    "voice": "alloy"
+  },
+  "headers": {
+    "accept-encoding": "gzip",
+    "content-type": "application/json"
+  }
+}

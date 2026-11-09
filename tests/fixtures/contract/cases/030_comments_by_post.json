@@ -1,0 +1,360 @@
+{
+  "name": "comments_by_post",
+  "request": {
+    "method": "GET",
+    "path": "/api/comments?post_id=1",
+    "headers": {
+      "X-Forwarded-For": "203.0.113.10"
+    }
+  },
+  "response": {
+    "status": 200,
+    "headers": {
+      "connection": "close",
+      "content-type": "application/json; charset=utf-8",
+      "transfer-encoding": "chunked"
+    },
+    "json": [
+      {
+        "id": 8,
+        "created_at": "<timestamp>",
+        "updated_at": "<timestamp>",
+        "content": "对回复的二级回复 approved",
+        "status": "approved",
+        "post_id": 1,
+        "post": {
+          "id": 0,
+          "created_at": "<timestamp>",
+          "updated_at": "<timestamp>",
+          "title": "",
+          "slug": "",
+          "content": "",
+          "html_content": "",
+          "excerpt": "",
+          "cover_image": "",
+          "status": "",
+          "view_count": 0,
+          "is_deleted": false,
+          "category_id": null,
+          "category": {
+            "id": 0,
+            "created_at": "<timestamp>",
+            "updated_at": "<timestamp>",
+            "name": "",
+            "slug": "",
+            "description": "",
+            "sort": 0
+          },
+          "tags": null,
+          "author_id": 0,
+          "author": {
+            "id": 0,
+            "created_at": "<timestamp>",
+            "updated_at": "<timestamp>",
+            "email": "",
+            "nickname": "",
+            "avatar": "",
+            "role": "",
+            "status": ""
+          }
+        },
+        "user_id": 1,
+        "user": {
+          "id": 1,
+          "created_at": "<timestamp>",
+          "updated_at": "<timestamp>",
+          "email": "admin@example.com",
+          "nickname": "Admin",
+          "avatar": "",
+          "role": "admin",
+          "status": "active"
+        },
+        "parent_id": 3
+      },
+      {
+        "id": 3,
+        "created_at": "<timestamp>",
+        "updated_at": "<timestamp>",
+        "content": "对管理员评论的回复 approved",
+        "status": "approved",
+        "post_id": 1,
+        "post": {
+          "id": 0,
+          "created_at": "<timestamp>",
+          "updated_at": "<timestamp>",
+          "title": "",
+          "slug": "",
+          "content": "",
+          "html_content": "",
+          "excerpt": "",
+          "cover_image": "",
+          "status": "",
+          "view_count": 0,
+          "is_deleted": false,
+          "category_id": null,
+          "category": {
+            "id": 0,
+            "created_at": "<timestamp>",
+            "updated_at": "<timestamp>",
+            "name": "",
+            "slug": "",
+            "description": "",
+            "sort": 0
+          },
+          "tags": null,
+          "author_id": 0,
+          "author": {
+            "id": 0,
+            "created_at": "<timestamp>",
+            "updated_at": "<timestamp>",
+            "email": "",
+            "nickname": "",
+            "avatar": "",
+            "role": "",
+            "status": ""
+          }
+        },
+        "user_id": 2,
+        "user": {
+          "id": 2,
+          "created_at": "<timestamp>",
+          "updated_at": "<timestamp>",
+          "email": "reader@example.com",
+          "nickname": "Reader",
+          "avatar": "/uploads/avatars/2_seed.png",
+          "role": "reader",
+          "status": "active"
+        },
+        "parent_id": 2,
+        "children": [
+          {
+            "id": 8,
+            "created_at": "<timestamp>",
+            "updated_at": "<timestamp>",
+            "content": "对回复的二级回复 approved",
+            "status": "approved",
+            "post_id": 1,
+            "post": {
+              "id": 0,
+              "created_at": "<timestamp>",
+              "updated_at": "<timestamp>",
+              "title": "",
+              "slug": "",
+              "content": "",
+              "html_content": "",
+              "excerpt": "",
+              "cover_image": "",
+              "status": "",
+              "view_count": 0,
+              "is_deleted": false,
+              "category_id": null,
+              "category": {
+                "id": 0,
+                "created_at": "<timestamp>",
+                "updated_at": "<timestamp>",
+                "name": "",
+                "slug": "",
+                "description": "",
+                "sort": 0
+              },
+              "tags": null,
+              "author_id": 0,
+              "author": {
+                "id": 0,
+                "created_at": "<timestamp>",
+                "updated_at": "<timestamp>",
+                "email": "",
+                "nickname": "",
+                "avatar": "",
+                "role": "",
+                "status": ""
+              }
+            },
+            "user_id": 1,
+            "user": {
+              "id": 1,
+              "created_at": "<timestamp>",
+              "updated_at": "<timestamp>",
+              "email": "admin@example.com",
+              "nickname": "Admin",
+              "avatar": "",
+              "role": "admin",
+              "status": "active"
+            },
+            "parent_id": 3
+          }
+        ]
+      },
+      {
+        "id": 2,
+        "created_at": "<timestamp>",
+        "updated_at": "<timestamp>",
+        "content": "管理员评论 approved",
+        "status": "approved",
+        "post_id": 1,
+        "post": {
+          "id": 0,
+          "created_at": "<timestamp>",
+          "updated_at": "<timestamp>",
+          "title": "",
+          "slug": "",
+          "content": "",
+          "html_content": "",
+          "excerpt": "",
+          "cover_image": "",
+          "status": "",
+          "view_count": 0,
+          "is_deleted": false,
+          "category_id": null,
+          "category": {
+            "id": 0,
+            "created_at": "<timestamp>",
+            "updated_at": "<timestamp>",
+            "name": "",
+            "slug": "",
+            "description": "",
+            "sort": 0
+          },
+          "tags": null,
+          "author_id": 0,
+          "author": {
+            "id": 0,
+            "created_at": "<timestamp>",
+            "updated_at": "<timestamp>",
+            "email": "",
+            "nickname": "",
+            "avatar": "",
+            "role": "",
+            "status": ""
+          }
+        },
+        "user_id": 1,
+        "user": {
+          "id": 1,
+          "created_at": "<timestamp>",
+          "updated_at": "<timestamp>",
+          "email": "admin@example.com",
+          "nickname": "Admin",
+          "avatar": "",
+          "role": "admin",
+          "status": "active"
+        },
+        "parent_id": null,
+        "children": [
+          {
+            "id": 3,
+            "created_at": "<timestamp>",
+            "updated_at": "<timestamp>",
+            "content": "对管理员评论的回复 approved",
+            "status": "approved",
+            "post_id": 1,
+            "post": {
+              "id": 0,
+              "created_at": "<timestamp>",
+              "updated_at": "<timestamp>",
+              "title": "",
+              "slug": "",
+              "content": "",
+              "html_content": "",
+              "excerpt": "",
+              "cover_image": "",
+              "status": "",
+              "view_count": 0,
+              "is_deleted": false,
+              "category_id": null,
+              "category": {
+                "id": 0,
+                "created_at": "<timestamp>",
+                "updated_at": "<timestamp>",
+                "name": "",
+                "slug": "",
+                "description": "",
+                "sort": 0
+              },
+              "tags": null,
+              "author_id": 0,
+              "author": {
+                "id": 0,
+                "created_at": "<timestamp>",
+                "updated_at": "<timestamp>",
+                "email": "",
+                "nickname": "",
+                "avatar": "",
+                "role": "",
+                "status": ""
+              }
+            },
+            "user_id": 2,
+            "user": {
+              "id": 2,
+              "created_at": "<timestamp>",
+              "updated_at": "<timestamp>",
+              "email": "reader@example.com",
+              "nickname": "Reader",
+              "avatar": "/uploads/avatars/2_seed.png",
+              "role": "reader",
+              "status": "active"
+            },
+            "parent_id": 2
+          }
+        ]
+      },
+      {
+        "id": 1,
+        "created_at": "<timestamp>",
+        "updated_at": "<timestamp>",
+        "content": "读者评论 approved",
+        "status": "approved",
+        "post_id": 1,
+        "post": {
+          "id": 0,
+          "created_at": "<timestamp>",
+          "updated_at": "<timestamp>",
+          "title": "",
+          "slug": "",
+          "content": "",
+          "html_content": "",
+          "excerpt": "",
+          "cover_image": "",
+          "status": "",
+          "view_count": 0,
+          "is_deleted": false,
+          "category_id": null,
+          "category": {
+            "id": 0,
+            "created_at": "<timestamp>",
+            "updated_at": "<timestamp>",
+            "name": "",
+            "slug": "",
+            "description": "",
+            "sort": 0
+          },
+          "tags": null,
+          "author_id": 0,
+          "author": {
+            "id": 0,
+            "created_at": "<timestamp>",
+            "updated_at": "<timestamp>",
+            "email": "",
+            "nickname": "",
+            "avatar": "",
+            "role": "",
+            "status": ""
+          }
+        },
+        "user_id": 2,
+        "user": {
+          "id": 2,
+          "created_at": "<timestamp>",
+          "updated_at": "<timestamp>",
+          "email": "reader@example.com",
+          "nickname": "Reader",
+          "avatar": "/uploads/avatars/2_seed.png",
+          "role": "reader",
+          "status": "active"
+        },
+        "parent_id": null
+      }
+    ]
+  }
+}

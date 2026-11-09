@@ -1,0 +1,1525 @@
+{
+  "meta": {
+    "capture_client_ip": "203.0.113.10",
+    "backend_commit": "1f3a87f0ade6a80a37d67698f563238499695ce9",
+    "backend_tag": "go-baseline-2026-11",
+    "schema_sha256": "11973288e88a03942517b2a17e2392018607515146067fefcb242f8c716de3ae",
+    "seed_sha256": "5ba71a2a00a02aa947afe9fa43c99f14b7f09e0165230557fc27369c8a142cca"
+  },
+  "count": 193,
+  "cases": [
+    {
+      "kind": "http",
+      "name": "hello",
+      "file": "cases/001_hello.json",
+      "method": "GET",
+      "path": "/api/hello",
+      "status": 200
+    },
+    {
+      "kind": "http",
+      "name": "posts_default",
+      "file": "cases/002_posts_default.json",
+      "method": "GET",
+      "path": "/api/posts",
+      "status": 200
+    },
+    {
+      "kind": "http",
+      "name": "posts_page2_size2",
+      "file": "cases/003_posts_page2_size2.json",
+      "method": "GET",
+      "path": "/api/posts?page=2&page_size=2",
+      "status": 200
+    },
+    {
+      "kind": "http",
+      "name": "posts_category",
+      "file": "cases/004_posts_category.json",
+      "method": "GET",
+      "path": "/api/posts?category_id=1",
+      "status": 200
+    },
+    {
+      "kind": "http",
+      "name": "posts_tag",
+      "file": "cases/005_posts_tag.json",
+      "method": "GET",
+      "path": "/api/posts?tag_id=1",
+      "status": 200
+    },
+    {
+      "kind": "http",
+      "name": "posts_keyword",
+      "file": "cases/006_posts_keyword.json",
+      "method": "GET",
+      "path": "/api/posts?keyword=Published",
+      "status": 200
+    },
+    {
+      "kind": "http",
+      "name": "posts_date_range",
+      "file": "cases/007_posts_date_range.json",
+      "method": "GET",
+      "path": "/api/posts?start_date=2026-09-01&end_date=2026-09-30",
+      "status": 200
+    },
+    {
+      "kind": "http",
+      "name": "posts_invalid_page",
+      "file": "cases/008_posts_invalid_page.json",
+      "method": "GET",
+      "path": "/api/posts?page=abc&page_size=xyz",
+      "status": 200
+    },
+    {
+      "kind": "http",
+      "name": "posts_page_size_zero",
+      "file": "cases/009_posts_page_size_zero.json",
+      "method": "GET",
+      "path": "/api/posts?page=1&page_size=0",
+      "status": 200
+    },
+    {
+      "kind": "http",
+      "name": "posts_negative_page",
+      "file": "cases/010_posts_negative_page.json",
+      "method": "GET",
+      "path": "/api/posts?page=-1&page_size=10",
+      "status": 200
+    },
+    {
+      "kind": "http",
+      "name": "post_detail_published",
+      "file": "cases/011_post_detail_published.json",
+      "method": "GET",
+      "path": "/api/posts/published-post",
+      "status": 200
+    },
+    {
+      "kind": "note",
+      "name": "time_format_sample_seeded",
+      "file": "notes/012_time_format_sample_seeded.note.json"
+    },
+    {
+      "kind": "http",
+      "name": "post_detail_draft_public",
+      "file": "cases/013_post_detail_draft_public.json",
+      "method": "GET",
+      "path": "/api/posts/draft-post",
+      "status": 404
+    },
+    {
+      "kind": "http",
+      "name": "post_detail_draft_edit_public",
+      "file": "cases/014_post_detail_draft_edit_public.json",
+      "method": "GET",
+      "path": "/api/posts/draft-post?edit=true",
+      "status": 404
+    },
+    {
+      "kind": "http",
+      "name": "post_detail_draft_edit_admin_token",
+      "file": "cases/015_post_detail_draft_edit_admin_token.json",
+      "method": "GET",
+      "path": "/api/posts/draft-post?edit=true",
+      "status": 404
+    },
+    {
+      "kind": "http",
+      "name": "post_detail_hidden",
+      "file": "cases/016_post_detail_hidden.json",
+      "method": "GET",
+      "path": "/api/posts/hidden-post",
+      "status": 404
+    },
+    {
+      "kind": "http",
+      "name": "post_detail_is_deleted",
+      "file": "cases/017_post_detail_is_deleted.json",
+      "method": "GET",
+      "path": "/api/posts/deletedpost",
+      "status": 404
+    },
+    {
+      "kind": "http",
+      "name": "post_detail_published_is_deleted_leak",
+      "file": "cases/018_post_detail_published_is_deleted_leak.json",
+      "method": "GET",
+      "path": "/api/posts/published-but-is-deleted",
+      "status": 200
+    },
+    {
+      "kind": "http",
+      "name": "post_detail_soft_deleted",
+      "file": "cases/019_post_detail_soft_deleted.json",
+      "method": "GET",
+      "path": "/api/posts/soft-deleted-at-post",
+      "status": 404
+    },
+    {
+      "kind": "http",
+      "name": "post_detail_missing",
+      "file": "cases/020_post_detail_missing.json",
+      "method": "GET",
+      "path": "/api/posts/no-such-post",
+      "status": 404
+    },
+    {
+      "kind": "http",
+      "name": "categories",
+      "file": "cases/021_categories.json",
+      "method": "GET",
+      "path": "/api/categories",
+      "status": 200
+    },
+    {
+      "kind": "http",
+      "name": "tags",
+      "file": "cases/022_tags.json",
+      "method": "GET",
+      "path": "/api/tags",
+      "status": 200
+    },
+    {
+      "kind": "http",
+      "name": "pages_default",
+      "file": "cases/023_pages_default.json",
+      "method": "GET",
+      "path": "/api/pages",
+      "status": 200
+    },
+    {
+      "kind": "http",
+      "name": "pages_parse_int_quirk",
+      "file": "cases/024_pages_parse_int_quirk.json",
+      "method": "GET",
+      "path": "/api/pages?page=1abc&page_size=2xyz",
+      "status": 200
+    },
+    {
+      "kind": "http",
+      "name": "pages_page_size_zero",
+      "file": "cases/025_pages_page_size_zero.json",
+      "method": "GET",
+      "path": "/api/pages?page=1&page_size=0",
+      "status": 200
+    },
+    {
+      "kind": "http",
+      "name": "page_detail_published",
+      "file": "cases/026_page_detail_published.json",
+      "method": "GET",
+      "path": "/api/pages/about",
+      "status": 200
+    },
+    {
+      "kind": "http",
+      "name": "page_detail_draft_public",
+      "file": "cases/027_page_detail_draft_public.json",
+      "method": "GET",
+      "path": "/api/pages/draft-page",
+      "status": 404
+    },
+    {
+      "kind": "http",
+      "name": "page_detail_deleted",
+      "file": "cases/028_page_detail_deleted.json",
+      "method": "GET",
+      "path": "/api/pages/legacy-page",
+      "status": 404
+    },
+    {
+      "kind": "http",
+      "name": "page_detail_missing",
+      "file": "cases/029_page_detail_missing.json",
+      "method": "GET",
+      "path": "/api/pages/no-such-page",
+      "status": 404
+    },
+    {
+      "kind": "http",
+      "name": "comments_by_post",
+      "file": "cases/030_comments_by_post.json",
+      "method": "GET",
+      "path": "/api/comments?post_id=1",
+      "status": 200
+    },
+    {
+      "kind": "http",
+      "name": "comments_all",
+      "file": "cases/031_comments_all.json",
+      "method": "GET",
+      "path": "/api/comments",
+      "status": 200
+    },
+    {
+      "kind": "http",
+      "name": "comments_draft_post",
+      "file": "cases/032_comments_draft_post.json",
+      "method": "GET",
+      "path": "/api/comments?post_id=2",
+      "status": 200
+    },
+    {
+      "kind": "http",
+      "name": "comments_missing_post",
+      "file": "cases/033_comments_missing_post.json",
+      "method": "GET",
+      "path": "/api/comments?post_id=999",
+      "status": 200
+    },
+    {
+      "kind": "http",
+      "name": "search_missing_keyword",
+      "file": "cases/034_search_missing_keyword.json",
+      "method": "GET",
+      "path": "/api/search",
+      "status": 400
+    },
+    {
+      "kind": "http",
+      "name": "search_empty_keyword",
+      "file": "cases/035_search_empty_keyword.json",
+      "method": "GET",
+      "path": "/api/search?keyword=",
+      "status": 400
+    },
+    {
+      "kind": "http",
+      "name": "search_chinese_short",
+      "file": "cases/036_search_chinese_short.json",
+      "method": "GET",
+      "path": "/api/search?keyword=%E6%96%87",
+      "status": 200
+    },
+    {
+      "kind": "http",
+      "name": "search_english",
+      "file": "cases/037_search_english.json",
+      "method": "GET",
+      "path": "/api/search?keyword=September",
+      "status": 200
+    },
+    {
+      "kind": "http",
+      "name": "search_draft_leak",
+      "file": "cases/038_search_draft_leak.json",
+      "method": "GET",
+      "path": "/api/search?keyword=zzqdraft",
+      "status": 200
+    },
+    {
+      "kind": "http",
+      "name": "search_hidden_leak",
+      "file": "cases/039_search_hidden_leak.json",
+      "method": "GET",
+      "path": "/api/search?keyword=zzqhidden",
+      "status": 200
+    },
+    {
+      "kind": "http",
+      "name": "search_deleted_leak",
+      "file": "cases/040_search_deleted_leak.json",
+      "method": "GET",
+      "path": "/api/search?keyword=zzqdeleted",
+      "status": 200
+    },
+    {
+      "kind": "http",
+      "name": "search_published_is_deleted_leak",
+      "file": "cases/041_search_published_is_deleted_leak.json",
+      "method": "GET",
+      "path": "/api/search?keyword=zzqpubdel",
+      "status": 200
+    },
+    {
+      "kind": "http",
+      "name": "search_soft_deleted_at",
+      "file": "cases/042_search_soft_deleted_at.json",
+      "method": "GET",
+      "path": "/api/search?keyword=zzqsoft",
+      "status": 200
+    },
+    {
+      "kind": "http",
+      "name": "search_paging",
+      "file": "cases/043_search_paging.json",
+      "method": "GET",
+      "path": "/api/search?keyword=%E6%96%87%E7%AB%A0&page=2&page_size=1",
+      "status": 200
+    },
+    {
+      "kind": "http",
+      "name": "search_plus_operator",
+      "file": "cases/044_search_plus_operator.json",
+      "method": "GET",
+      "path": "/api/search?keyword=%2BGo",
+      "status": 200
+    },
+    {
+      "kind": "http",
+      "name": "subscribe_invalid_email",
+      "file": "cases/045_subscribe_invalid_email.json",
+      "method": "POST",
+      "path": "/api/subscribe",
+      "status": 400
+    },
+    {
+      "kind": "http",
+      "name": "subscribe_new",
+      "file": "cases/046_subscribe_new.json",
+      "method": "POST",
+      "path": "/api/subscribe",
+      "status": 200
+    },
+    {
+      "kind": "email",
+      "name": "email_subscribe_confirmation",
+      "file": "emails/047_email_subscribe_confirmation.email.json",
+      "to": [
+        "newsub@example.com"
+      ],
+      "subject": "欢迎订阅 Smileyan 博客"
+    },
+    {
+      "kind": "http",
+      "name": "subscribe_duplicate",
+      "file": "cases/048_subscribe_duplicate.json",
+      "method": "POST",
+      "path": "/api/subscribe",
+      "status": 400
+    },
+    {
+      "kind": "http",
+      "name": "subscribe_soft_deleted_duplicate",
+      "file": "cases/049_subscribe_soft_deleted_duplicate.json",
+      "method": "POST",
+      "path": "/api/subscribe",
+      "status": 500
+    },
+    {
+      "kind": "http",
+      "name": "unsubscribe_missing_email",
+      "file": "cases/050_unsubscribe_missing_email.json",
+      "method": "GET",
+      "path": "/api/unsubscribe",
+      "status": 400
+    },
+    {
+      "kind": "http",
+      "name": "unsubscribe_wrong_token",
+      "file": "cases/051_unsubscribe_wrong_token.json",
+      "method": "GET",
+      "path": "/api/unsubscribe?email=a%40example.com&token=wrong",
+      "status": 404
+    },
+    {
+      "kind": "http",
+      "name": "unsubscribe_ok",
+      "file": "cases/052_unsubscribe_ok.json",
+      "method": "GET",
+      "path": "/api/unsubscribe?email=a%40example.com&token=0123456789abcdef0123456789abcdef",
+      "status": 200
+    },
+    {
+      "kind": "http",
+      "name": "unsubscribe_without_token",
+      "file": "cases/053_unsubscribe_without_token.json",
+      "method": "GET",
+      "path": "/api/unsubscribe?email=b%40example.com",
+      "status": 200
+    },
+    {
+      "kind": "http",
+      "name": "method_not_allowed",
+      "file": "cases/054_method_not_allowed.json",
+      "method": "DELETE",
+      "path": "/api/hello",
+      "status": 404
+    },
+    {
+      "kind": "http",
+      "name": "not_found",
+      "file": "cases/055_not_found.json",
+      "method": "GET",
+      "path": "/api/no-such-route",
+      "status": 404
+    },
+    {
+      "kind": "http",
+      "name": "trailing_slash",
+      "file": "cases/056_trailing_slash.json",
+      "method": "GET",
+      "path": "/api/posts/",
+      "status": 301
+    },
+    {
+      "kind": "http",
+      "name": "cors_preflight",
+      "file": "cases/057_cors_preflight.json",
+      "method": "OPTIONS",
+      "path": "/api/posts",
+      "status": 204
+    },
+    {
+      "kind": "http",
+      "name": "cors_simple_get",
+      "file": "cases/058_cors_simple_get.json",
+      "method": "GET",
+      "path": "/api/hello",
+      "status": 200
+    },
+    {
+      "kind": "http",
+      "name": "admin_route_no_header",
+      "file": "cases/059_admin_route_no_header.json",
+      "method": "GET",
+      "path": "/api/admin/posts",
+      "status": 401
+    },
+    {
+      "kind": "http",
+      "name": "admin_route_bad_format",
+      "file": "cases/060_admin_route_bad_format.json",
+      "method": "GET",
+      "path": "/api/admin/posts",
+      "status": 401
+    },
+    {
+      "kind": "http",
+      "name": "admin_route_invalid_token",
+      "file": "cases/061_admin_route_invalid_token.json",
+      "method": "GET",
+      "path": "/api/admin/posts",
+      "status": 401
+    },
+    {
+      "kind": "http",
+      "name": "admin_route_reader_token",
+      "file": "cases/062_admin_route_reader_token.json",
+      "method": "GET",
+      "path": "/api/admin/posts",
+      "status": 403
+    },
+    {
+      "kind": "http",
+      "name": "admin_route_admin_token",
+      "file": "cases/063_admin_route_admin_token.json",
+      "method": "GET",
+      "path": "/api/admin/posts",
+      "status": 200
+    },
+    {
+      "kind": "http",
+      "name": "admin_route_hs512_token",
+      "file": "cases/064_admin_route_hs512_token.json",
+      "method": "GET",
+      "path": "/api/admin/posts",
+      "status": 200
+    },
+    {
+      "kind": "http",
+      "name": "user_get_admin_token",
+      "file": "cases/065_user_get_admin_token.json",
+      "method": "GET",
+      "path": "/api/user",
+      "status": 200
+    },
+    {
+      "kind": "http",
+      "name": "user_get_dev_token",
+      "file": "cases/066_user_get_dev_token.json",
+      "method": "GET",
+      "path": "/api/user",
+      "status": 200
+    },
+    {
+      "kind": "http",
+      "name": "user_get_no_token",
+      "file": "cases/067_user_get_no_token.json",
+      "method": "GET",
+      "path": "/api/user",
+      "status": 401
+    },
+    {
+      "kind": "http",
+      "name": "send_code_invalid_email",
+      "file": "cases/068_send_code_invalid_email.json",
+      "method": "POST",
+      "path": "/api/send-code",
+      "status": 400
+    },
+    {
+      "kind": "http",
+      "name": "send_code_reader",
+      "file": "cases/069_send_code_reader.json",
+      "method": "POST",
+      "path": "/api/send-code",
+      "status": 200
+    },
+    {
+      "kind": "email",
+      "name": "email_verification_reader",
+      "file": "emails/070_email_verification_reader.email.json",
+      "to": [
+        "reader@example.com"
+      ],
+      "subject": "Smileyan 验证码：<code>"
+    },
+    {
+      "kind": "note",
+      "name": "redis_after_send_code_reader",
+      "file": "notes/071_redis_after_send_code_reader.note.json"
+    },
+    {
+      "kind": "http",
+      "name": "send_code_reader_again",
+      "file": "cases/072_send_code_reader_again.json",
+      "method": "POST",
+      "path": "/api/send-code",
+      "status": 429
+    },
+    {
+      "kind": "note",
+      "name": "redis_after_send_code_reader_again",
+      "file": "notes/073_redis_after_send_code_reader_again.note.json"
+    },
+    {
+      "kind": "http",
+      "name": "send_code_admin_bypass",
+      "file": "cases/074_send_code_admin_bypass.json",
+      "method": "POST",
+      "path": "/api/send-code",
+      "status": 200
+    },
+    {
+      "kind": "email",
+      "name": "email_verification_admin",
+      "file": "emails/075_email_verification_admin.email.json",
+      "to": [
+        "admin@example.com"
+      ],
+      "subject": "Smileyan 验证码：<code>"
+    },
+    {
+      "kind": "http",
+      "name": "send_code_admin_again",
+      "file": "cases/076_send_code_admin_again.json",
+      "method": "POST",
+      "path": "/api/send-code",
+      "status": 200
+    },
+    {
+      "kind": "email",
+      "name": "email_verification_admin_again",
+      "file": "emails/077_email_verification_admin_again.email.json",
+      "to": [
+        "admin@example.com"
+      ],
+      "subject": "Smileyan 验证码：<code>"
+    },
+    {
+      "kind": "note",
+      "name": "redis_after_send_code_admin",
+      "file": "notes/078_redis_after_send_code_admin.note.json"
+    },
+    {
+      "kind": "http",
+      "name": "login_invalid_email",
+      "file": "cases/079_login_invalid_email.json",
+      "method": "POST",
+      "path": "/api/login",
+      "status": 400
+    },
+    {
+      "kind": "http",
+      "name": "login_short_code",
+      "file": "cases/080_login_short_code.json",
+      "method": "POST",
+      "path": "/api/login",
+      "status": 400
+    },
+    {
+      "kind": "http",
+      "name": "login_wrong_code",
+      "file": "cases/081_login_wrong_code.json",
+      "method": "POST",
+      "path": "/api/login",
+      "status": 400
+    },
+    {
+      "kind": "http",
+      "name": "login_reader",
+      "file": "cases/082_login_reader.json",
+      "method": "POST",
+      "path": "/api/login",
+      "status": 200
+    },
+    {
+      "kind": "http",
+      "name": "login_admin",
+      "file": "cases/083_login_admin.json",
+      "method": "POST",
+      "path": "/api/login",
+      "status": 200
+    },
+    {
+      "kind": "http",
+      "name": "send_code_short_email",
+      "file": "cases/084_send_code_short_email.json",
+      "method": "POST",
+      "path": "/api/send-code",
+      "status": 200
+    },
+    {
+      "kind": "email",
+      "name": "email_verification_short_email",
+      "file": "emails/085_email_verification_short_email.email.json",
+      "to": [
+        "a@b.co"
+      ],
+      "subject": "Smileyan 验证码：<code>"
+    },
+    {
+      "kind": "http",
+      "name": "login_short_email_panic",
+      "file": "cases/086_login_short_email_panic.json",
+      "method": "POST",
+      "path": "/api/login",
+      "status": 500
+    },
+    {
+      "kind": "http",
+      "name": "send_code_new_user",
+      "file": "cases/087_send_code_new_user.json",
+      "method": "POST",
+      "path": "/api/send-code",
+      "status": 200
+    },
+    {
+      "kind": "email",
+      "name": "email_verification_new_user",
+      "file": "emails/088_email_verification_new_user.email.json",
+      "to": [
+        "newuser@example.com"
+      ],
+      "subject": "Smileyan 验证码：<code>"
+    },
+    {
+      "kind": "http",
+      "name": "login_new_user",
+      "file": "cases/089_login_new_user.json",
+      "method": "POST",
+      "path": "/api/login",
+      "status": 200
+    },
+    {
+      "kind": "http",
+      "name": "user_get_new_user",
+      "file": "cases/090_user_get_new_user.json",
+      "method": "GET",
+      "path": "/api/user",
+      "status": 200
+    },
+    {
+      "kind": "http",
+      "name": "user_get_reader",
+      "file": "cases/091_user_get_reader.json",
+      "method": "GET",
+      "path": "/api/user",
+      "status": 200
+    },
+    {
+      "kind": "http",
+      "name": "user_put_reader",
+      "file": "cases/092_user_put_reader.json",
+      "method": "PUT",
+      "path": "/api/user",
+      "status": 200
+    },
+    {
+      "kind": "http",
+      "name": "upload_avatar_no_file",
+      "file": "cases/093_upload_avatar_no_file.json",
+      "method": "POST",
+      "path": "/api/upload-avatar",
+      "status": 400
+    },
+    {
+      "kind": "http",
+      "name": "upload_avatar_txt",
+      "file": "cases/094_upload_avatar_txt.json",
+      "method": "POST",
+      "path": "/api/upload-avatar",
+      "status": 400
+    },
+    {
+      "kind": "http",
+      "name": "upload_avatar_jpeg_ext",
+      "file": "cases/095_upload_avatar_jpeg_ext.json",
+      "method": "POST",
+      "path": "/api/upload-avatar",
+      "status": 400
+    },
+    {
+      "kind": "http",
+      "name": "upload_avatar_ok",
+      "file": "cases/096_upload_avatar_ok.json",
+      "method": "POST",
+      "path": "/api/upload-avatar",
+      "status": 200
+    },
+    {
+      "kind": "http",
+      "name": "get_uploaded_avatar",
+      "file": "cases/097_get_uploaded_avatar.json",
+      "method": "GET",
+      "path": "/uploads/avatars/2_capture-avatar.png",
+      "status": 200
+    },
+    {
+      "kind": "http",
+      "name": "create_comment_no_auth",
+      "file": "cases/098_create_comment_no_auth.json",
+      "method": "POST",
+      "path": "/api/comments",
+      "status": 401
+    },
+    {
+      "kind": "http",
+      "name": "create_comment_missing_post",
+      "file": "cases/099_create_comment_missing_post.json",
+      "method": "POST",
+      "path": "/api/comments",
+      "status": 404
+    },
+    {
+      "kind": "http",
+      "name": "create_comment_reader",
+      "file": "cases/100_create_comment_reader.json",
+      "method": "POST",
+      "path": "/api/comments",
+      "status": 201
+    },
+    {
+      "kind": "http",
+      "name": "create_comment_reply",
+      "file": "cases/101_create_comment_reply.json",
+      "method": "POST",
+      "path": "/api/comments",
+      "status": 201
+    },
+    {
+      "kind": "email",
+      "name": "email_comment_reply_notification",
+      "file": "emails/102_email_comment_reply_notification.email.json",
+      "to": [
+        "admin@example.com"
+      ],
+      "subject": "您在 Smileyan 博客的评论有新回复"
+    },
+    {
+      "kind": "note",
+      "name": "created_comment_id",
+      "file": "notes/103_created_comment_id.note.json"
+    },
+    {
+      "kind": "http",
+      "name": "tts_no_auth",
+      "file": "cases/104_tts_no_auth.json",
+      "method": "POST",
+      "path": "/v1/audio/speech",
+      "status": 401
+    },
+    {
+      "kind": "http",
+      "name": "tts_invalid_json",
+      "file": "cases/105_tts_invalid_json.json",
+      "method": "POST",
+      "path": "/v1/audio/speech",
+      "status": 400
+    },
+    {
+      "kind": "http",
+      "name": "tts_empty_input",
+      "file": "cases/106_tts_empty_input.json",
+      "method": "POST",
+      "path": "/v1/audio/speech",
+      "status": 400
+    },
+    {
+      "kind": "http",
+      "name": "tts_input_too_long_ascii",
+      "file": "cases/107_tts_input_too_long_ascii.json",
+      "method": "POST",
+      "path": "/v1/audio/speech",
+      "status": 400
+    },
+    {
+      "kind": "http",
+      "name": "tts_input_cjk_byte_quirk",
+      "file": "cases/108_tts_input_cjk_byte_quirk.json",
+      "method": "POST",
+      "path": "/v1/audio/speech",
+      "status": 400
+    },
+    {
+      "kind": "http",
+      "name": "tts_missing_voice",
+      "file": "cases/109_tts_missing_voice.json",
+      "method": "POST",
+      "path": "/v1/audio/speech",
+      "status": 400
+    },
+    {
+      "kind": "http",
+      "name": "tts_empty_voice",
+      "file": "cases/110_tts_empty_voice.json",
+      "method": "POST",
+      "path": "/v1/audio/speech",
+      "status": 400
+    },
+    {
+      "kind": "http",
+      "name": "tts_bad_voice_object",
+      "file": "cases/111_tts_bad_voice_object.json",
+      "method": "POST",
+      "path": "/v1/audio/speech",
+      "status": 400
+    },
+    {
+      "kind": "http",
+      "name": "tts_bad_format",
+      "file": "cases/112_tts_bad_format.json",
+      "method": "POST",
+      "path": "/v1/audio/speech",
+      "status": 400
+    },
+    {
+      "kind": "http",
+      "name": "tts_bad_speed_low",
+      "file": "cases/113_tts_bad_speed_low.json",
+      "method": "POST",
+      "path": "/v1/audio/speech",
+      "status": 400
+    },
+    {
+      "kind": "http",
+      "name": "tts_bad_speed_high",
+      "file": "cases/114_tts_bad_speed_high.json",
+      "method": "POST",
+      "path": "/v1/audio/speech",
+      "status": 400
+    },
+    {
+      "kind": "http",
+      "name": "tts_binary",
+      "file": "cases/115_tts_binary.json",
+      "method": "POST",
+      "path": "/v1/audio/speech",
+      "status": 200
+    },
+    {
+      "kind": "note",
+      "name": "tts_upstream_binary",
+      "file": "notes/116_tts_upstream_binary.note.json"
+    },
+    {
+      "kind": "http",
+      "name": "tts_voice_object_ok",
+      "file": "cases/117_tts_voice_object_ok.json",
+      "method": "POST",
+      "path": "/v1/audio/speech",
+      "status": 200
+    },
+    {
+      "kind": "note",
+      "name": "tts_upstream_voice_object",
+      "file": "notes/118_tts_upstream_voice_object.note.json"
+    },
+    {
+      "kind": "http",
+      "name": "tts_model_default",
+      "file": "cases/119_tts_model_default.json",
+      "method": "POST",
+      "path": "/v1/audio/speech",
+      "status": 200
+    },
+    {
+      "kind": "note",
+      "name": "tts_upstream_model_default",
+      "file": "notes/120_tts_upstream_model_default.note.json"
+    },
+    {
+      "kind": "http",
+      "name": "tts_instructions_speed",
+      "file": "cases/121_tts_instructions_speed.json",
+      "method": "POST",
+      "path": "/v1/audio/speech",
+      "status": 200
+    },
+    {
+      "kind": "note",
+      "name": "tts_upstream_instructions_speed",
+      "file": "notes/122_tts_upstream_instructions_speed.note.json"
+    },
+    {
+      "kind": "http",
+      "name": "tts_sse",
+      "file": "cases/123_tts_sse.json",
+      "method": "POST",
+      "path": "/v1/audio/speech",
+      "status": 200
+    },
+    {
+      "kind": "note",
+      "name": "tts_upstream_sse",
+      "file": "notes/124_tts_upstream_sse.note.json"
+    },
+    {
+      "kind": "http",
+      "name": "tts_upstream_error_400",
+      "file": "cases/125_tts_upstream_error_400.json",
+      "method": "POST",
+      "path": "/v1/audio/speech",
+      "status": 400
+    },
+    {
+      "kind": "http",
+      "name": "tts_upstream_error_500",
+      "file": "cases/126_tts_upstream_error_500.json",
+      "method": "POST",
+      "path": "/v1/audio/speech",
+      "status": 500
+    },
+    {
+      "kind": "http",
+      "name": "tts_upstream_drop",
+      "file": "cases/127_tts_upstream_drop.json",
+      "method": "POST",
+      "path": "/v1/audio/speech",
+      "status": 500
+    },
+    {
+      "kind": "http",
+      "name": "admin_posts_default",
+      "file": "cases/128_admin_posts_default.json",
+      "method": "GET",
+      "path": "/api/admin/posts",
+      "status": 200
+    },
+    {
+      "kind": "http",
+      "name": "admin_posts_published",
+      "file": "cases/129_admin_posts_published.json",
+      "method": "GET",
+      "path": "/api/admin/posts?status=published",
+      "status": 200
+    },
+    {
+      "kind": "http",
+      "name": "admin_posts_hidden",
+      "file": "cases/130_admin_posts_hidden.json",
+      "method": "GET",
+      "path": "/api/admin/posts?status=hidden",
+      "status": 200
+    },
+    {
+      "kind": "http",
+      "name": "admin_posts_category",
+      "file": "cases/131_admin_posts_category.json",
+      "method": "GET",
+      "path": "/api/admin/posts?category_id=1",
+      "status": 200
+    },
+    {
+      "kind": "http",
+      "name": "admin_posts_tag",
+      "file": "cases/132_admin_posts_tag.json",
+      "method": "GET",
+      "path": "/api/admin/posts?tag_id=1",
+      "status": 200
+    },
+    {
+      "kind": "http",
+      "name": "admin_posts_keyword",
+      "file": "cases/133_admin_posts_keyword.json",
+      "method": "GET",
+      "path": "/api/admin/posts?keyword=Published",
+      "status": 200
+    },
+    {
+      "kind": "http",
+      "name": "admin_posts_invalid_page",
+      "file": "cases/134_admin_posts_invalid_page.json",
+      "method": "GET",
+      "path": "/api/admin/posts?page=abc&page_size=xyz",
+      "status": 200
+    },
+    {
+      "kind": "http",
+      "name": "admin_post_by_id_1",
+      "file": "cases/135_admin_post_by_id_1.json",
+      "method": "GET",
+      "path": "/api/admin/posts/_id/1",
+      "status": 200
+    },
+    {
+      "kind": "http",
+      "name": "admin_post_by_id_is_deleted_4",
+      "file": "cases/136_admin_post_by_id_is_deleted_4.json",
+      "method": "GET",
+      "path": "/api/admin/posts/_id/4",
+      "status": 200
+    },
+    {
+      "kind": "http",
+      "name": "admin_post_by_id_soft_deleted_5",
+      "file": "cases/137_admin_post_by_id_soft_deleted_5.json",
+      "method": "GET",
+      "path": "/api/admin/posts/_id/5",
+      "status": 404
+    },
+    {
+      "kind": "http",
+      "name": "admin_post_by_id_missing",
+      "file": "cases/138_admin_post_by_id_missing.json",
+      "method": "GET",
+      "path": "/api/admin/posts/_id/9999",
+      "status": 404
+    },
+    {
+      "kind": "http",
+      "name": "admin_post_by_slug",
+      "file": "cases/139_admin_post_by_slug.json",
+      "method": "GET",
+      "path": "/api/admin/posts/slug/published-post",
+      "status": 200
+    },
+    {
+      "kind": "http",
+      "name": "admin_post_by_slug_missing",
+      "file": "cases/140_admin_post_by_slug_missing.json",
+      "method": "GET",
+      "path": "/api/admin/posts/slug/nope",
+      "status": 404
+    },
+    {
+      "kind": "http",
+      "name": "admin_comments_default",
+      "file": "cases/141_admin_comments_default.json",
+      "method": "GET",
+      "path": "/api/admin/comments",
+      "status": 200
+    },
+    {
+      "kind": "http",
+      "name": "admin_comments_pending",
+      "file": "cases/142_admin_comments_pending.json",
+      "method": "GET",
+      "path": "/api/admin/comments?status=pending",
+      "status": 200
+    },
+    {
+      "kind": "http",
+      "name": "admin_subscriptions",
+      "file": "cases/143_admin_subscriptions.json",
+      "method": "GET",
+      "path": "/api/admin/subscriptions",
+      "status": 200
+    },
+    {
+      "kind": "http",
+      "name": "admin_users",
+      "file": "cases/144_admin_users.json",
+      "method": "GET",
+      "path": "/api/admin/users",
+      "status": 200
+    },
+    {
+      "kind": "http",
+      "name": "admin_create_category",
+      "file": "cases/145_admin_create_category.json",
+      "method": "POST",
+      "path": "/api/admin/categories",
+      "status": 201
+    },
+    {
+      "kind": "http",
+      "name": "admin_update_category",
+      "file": "cases/146_admin_update_category.json",
+      "method": "PUT",
+      "path": "/api/admin/categories/_id/100",
+      "status": 200
+    },
+    {
+      "kind": "http",
+      "name": "admin_create_tag",
+      "file": "cases/147_admin_create_tag.json",
+      "method": "POST",
+      "path": "/api/admin/tags",
+      "status": 201
+    },
+    {
+      "kind": "http",
+      "name": "admin_create_page_published",
+      "file": "cases/148_admin_create_page_published.json",
+      "method": "POST",
+      "path": "/api/admin/pages",
+      "status": 201
+    },
+    {
+      "kind": "http",
+      "name": "admin_create_page_draft",
+      "file": "cases/149_admin_create_page_draft.json",
+      "method": "POST",
+      "path": "/api/admin/pages",
+      "status": 201
+    },
+    {
+      "kind": "http",
+      "name": "admin_update_page",
+      "file": "cases/150_admin_update_page.json",
+      "method": "PUT",
+      "path": "/api/admin/pages/_id/100",
+      "status": 200
+    },
+    {
+      "kind": "http",
+      "name": "admin_create_post",
+      "file": "cases/151_admin_create_post.json",
+      "method": "POST",
+      "path": "/api/admin/posts",
+      "status": 201
+    },
+    {
+      "kind": "note",
+      "name": "created_post",
+      "file": "notes/152_created_post.note.json"
+    },
+    {
+      "kind": "note",
+      "name": "time_format_sample_created",
+      "file": "notes/153_time_format_sample_created.note.json"
+    },
+    {
+      "kind": "http",
+      "name": "admin_create_post_duplicate_slug",
+      "file": "cases/154_admin_create_post_duplicate_slug.json",
+      "method": "POST",
+      "path": "/api/admin/posts",
+      "status": 400
+    },
+    {
+      "kind": "http",
+      "name": "admin_create_post_missing_title",
+      "file": "cases/155_admin_create_post_missing_title.json",
+      "method": "POST",
+      "path": "/api/admin/posts",
+      "status": 400
+    },
+    {
+      "kind": "http",
+      "name": "admin_update_post",
+      "file": "cases/156_admin_update_post.json",
+      "method": "PUT",
+      "path": "/api/admin/posts/_id/100",
+      "status": 200
+    },
+    {
+      "kind": "http",
+      "name": "admin_get_created_post",
+      "file": "cases/157_admin_get_created_post.json",
+      "method": "GET",
+      "path": "/api/admin/posts/_id/100",
+      "status": 200
+    },
+    {
+      "kind": "http",
+      "name": "admin_update_post_clear_tags",
+      "file": "cases/158_admin_update_post_clear_tags.json",
+      "method": "PUT",
+      "path": "/api/admin/posts/_id/100",
+      "status": 200
+    },
+    {
+      "kind": "http",
+      "name": "admin_delete_post_soft",
+      "file": "cases/159_admin_delete_post_soft.json",
+      "method": "DELETE",
+      "path": "/api/admin/posts/_id/100",
+      "status": 200
+    },
+    {
+      "kind": "http",
+      "name": "admin_get_soft_deleted_post",
+      "file": "cases/160_admin_get_soft_deleted_post.json",
+      "method": "GET",
+      "path": "/api/admin/posts/_id/100",
+      "status": 200
+    },
+    {
+      "kind": "http",
+      "name": "search_after_soft_delete",
+      "file": "cases/161_search_after_soft_delete.json",
+      "method": "GET",
+      "path": "/api/search?keyword=%E5%A5%91%E7%BA%A6%E6%B5%8B%E8%AF%95%E6%96%87%E7%AB%A0",
+      "status": 200
+    },
+    {
+      "kind": "http",
+      "name": "admin_restore_post",
+      "file": "cases/162_admin_restore_post.json",
+      "method": "POST",
+      "path": "/api/admin/posts/_id/100/restore",
+      "status": 200
+    },
+    {
+      "kind": "http",
+      "name": "admin_get_restored_post",
+      "file": "cases/163_admin_get_restored_post.json",
+      "method": "GET",
+      "path": "/api/admin/posts/_id/100",
+      "status": 200
+    },
+    {
+      "kind": "http",
+      "name": "search_after_restore",
+      "file": "cases/164_search_after_restore.json",
+      "method": "GET",
+      "path": "/api/search?keyword=%E5%A5%91%E7%BA%A6%E6%B5%8B%E8%AF%95%E6%96%87%E7%AB%A0",
+      "status": 200
+    },
+    {
+      "kind": "http",
+      "name": "admin_delete_post_soft_again",
+      "file": "cases/165_admin_delete_post_soft_again.json",
+      "method": "DELETE",
+      "path": "/api/admin/posts/_id/100",
+      "status": 200
+    },
+    {
+      "kind": "http",
+      "name": "admin_get_soft_deleted_post_again",
+      "file": "cases/166_admin_get_soft_deleted_post_again.json",
+      "method": "GET",
+      "path": "/api/admin/posts/_id/100",
+      "status": 200
+    },
+    {
+      "kind": "http",
+      "name": "search_after_soft_delete_again",
+      "file": "cases/167_search_after_soft_delete_again.json",
+      "method": "GET",
+      "path": "/api/search?keyword=%E5%A5%91%E7%BA%A6%E6%B5%8B%E8%AF%95%E6%96%87%E7%AB%A0",
+      "status": 200
+    },
+    {
+      "kind": "http",
+      "name": "admin_delete_post_hard",
+      "file": "cases/168_admin_delete_post_hard.json",
+      "method": "DELETE",
+      "path": "/api/admin/posts/_id/100",
+      "status": 200
+    },
+    {
+      "kind": "http",
+      "name": "admin_get_hard_deleted_post",
+      "file": "cases/169_admin_get_hard_deleted_post.json",
+      "method": "GET",
+      "path": "/api/admin/posts/_id/100",
+      "status": 404
+    },
+    {
+      "kind": "http",
+      "name": "search_after_hard_delete",
+      "file": "cases/170_search_after_hard_delete.json",
+      "method": "GET",
+      "path": "/api/search?keyword=%E5%A5%91%E7%BA%A6%E6%B5%8B%E8%AF%95%E6%96%87%E7%AB%A0",
+      "status": 200
+    },
+    {
+      "kind": "http",
+      "name": "admin_delete_category",
+      "file": "cases/171_admin_delete_category.json",
+      "method": "DELETE",
+      "path": "/api/admin/categories/_id/100",
+      "status": 200
+    },
+    {
+      "kind": "http",
+      "name": "admin_delete_tag",
+      "file": "cases/172_admin_delete_tag.json",
+      "method": "DELETE",
+      "path": "/api/admin/tags/_id/100",
+      "status": 200
+    },
+    {
+      "kind": "http",
+      "name": "admin_delete_page",
+      "file": "cases/173_admin_delete_page.json",
+      "method": "DELETE",
+      "path": "/api/admin/pages/_id/100",
+      "status": 200
+    },
+    {
+      "kind": "http",
+      "name": "admin_delete_draft_page",
+      "file": "cases/174_admin_delete_draft_page.json",
+      "method": "DELETE",
+      "path": "/api/admin/pages/_id/101",
+      "status": 200
+    },
+    {
+      "kind": "http",
+      "name": "admin_approve_comment",
+      "file": "cases/175_admin_approve_comment.json",
+      "method": "POST",
+      "path": "/api/admin/comments/_id/4/approve",
+      "status": 200
+    },
+    {
+      "kind": "http",
+      "name": "comments_after_approve",
+      "file": "cases/176_comments_after_approve.json",
+      "method": "GET",
+      "path": "/api/comments?post_id=1",
+      "status": 200
+    },
+    {
+      "kind": "http",
+      "name": "admin_reject_comment",
+      "file": "cases/177_admin_reject_comment.json",
+      "method": "POST",
+      "path": "/api/admin/comments/_id/6/reject",
+      "status": 200
+    },
+    {
+      "kind": "http",
+      "name": "admin_delete_comment",
+      "file": "cases/178_admin_delete_comment.json",
+      "method": "DELETE",
+      "path": "/api/admin/comments/_id/6",
+      "status": 200
+    },
+    {
+      "kind": "http",
+      "name": "admin_delete_missing_comment",
+      "file": "cases/179_admin_delete_missing_comment.json",
+      "method": "DELETE",
+      "path": "/api/admin/comments/_id/9999",
+      "status": 200
+    },
+    {
+      "kind": "http",
+      "name": "admin_delete_subscription",
+      "file": "cases/180_admin_delete_subscription.json",
+      "method": "DELETE",
+      "path": "/api/admin/subscriptions/_id/2",
+      "status": 200
+    },
+    {
+      "kind": "http",
+      "name": "admin_notify",
+      "file": "cases/181_admin_notify.json",
+      "method": "POST",
+      "path": "/api/admin/notify",
+      "status": 200
+    },
+    {
+      "kind": "note",
+      "name": "notify_response",
+      "file": "notes/182_notify_response.note.json"
+    },
+    {
+      "kind": "email",
+      "name": "email_notify_subscriber",
+      "file": "emails/183_email_notify_subscriber.email.json",
+      "to": [
+        "newsub@example.com"
+      ],
+      "subject": "【新文章】Published Post 已发布"
+    },
+    {
+      "kind": "http",
+      "name": "admin_update_user_role",
+      "file": "cases/184_admin_update_user_role.json",
+      "method": "PUT",
+      "path": "/api/admin/users/2/role",
+      "status": 200
+    },
+    {
+      "kind": "http",
+      "name": "admin_update_user_role_missing",
+      "file": "cases/185_admin_update_user_role_missing.json",
+      "method": "PUT",
+      "path": "/api/admin/users/9999/role",
+      "status": 404
+    },
+    {
+      "kind": "http",
+      "name": "admin_update_user_role_bad_body",
+      "file": "cases/186_admin_update_user_role_bad_body.json",
+      "method": "PUT",
+      "path": "/api/admin/users/2/role",
+      "status": 400
+    },
+    {
+      "kind": "http",
+      "name": "admin_update_user_role_revert",
+      "file": "cases/187_admin_update_user_role_revert.json",
+      "method": "PUT",
+      "path": "/api/admin/users/2/role",
+      "status": 200
+    },
+    {
+      "kind": "http",
+      "name": "categories_after_delete",
+      "file": "cases/188_categories_after_delete.json",
+      "method": "GET",
+      "path": "/api/categories",
+      "status": 200
+    },
+    {
+      "kind": "http",
+      "name": "tags_after_delete",
+      "file": "cases/189_tags_after_delete.json",
+      "method": "GET",
+      "path": "/api/tags",
+      "status": 200
+    },
+    {
+      "kind": "http",
+      "name": "pages_after_delete",
+      "file": "cases/190_pages_after_delete.json",
+      "method": "GET",
+      "path": "/api/pages",
+      "status": 200
+    },
+    {
+      "kind": "http",
+      "name": "admin_posts_after_writes",
+      "file": "cases/191_admin_posts_after_writes.json",
+      "method": "GET",
+      "path": "/api/admin/posts",
+      "status": 200
+    },
+    {
+      "kind": "http",
+      "name": "admin_comments_after_writes",
+      "file": "cases/192_admin_comments_after_writes.json",
+      "method": "GET",
+      "path": "/api/admin/comments",
+      "status": 200
+    },
+    {
+      "kind": "http",
+      "name": "admin_subscriptions_after_writes",
+      "file": "cases/193_admin_subscriptions_after_writes.json",
+      "method": "GET",
+      "path": "/api/admin/subscriptions",
+      "status": 200
+    }
+  ]
+}

@@ -1,0 +1,27 @@
+{
+  "name": "page_detail_published",
+  "request": {
+    "method": "GET",
+    "path": "/api/pages/about",
+    "headers": {
+      "X-Forwarded-For": "203.0.113.10"
+    }
+  },
+  "response": {
+    "status": 200,
+    "headers": {
+      "connection": "close",
+      "content-type": "application/json; charset=utf-8"
+    },
+    "json": {
+      "id": 1,
+      "created_at": "<timestamp>",
+      "updated_at": "<timestamp>",
+      "title": "About",
+      "slug": "about",
+      "content": "# About\n\n关于页面。\n",
+      "html_content": "<h1 class=\"article-h1\">About</h1>",
+      "status": "published"
+    }
+  }
+}

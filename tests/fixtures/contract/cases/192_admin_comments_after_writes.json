@@ -1,0 +1,472 @@
+{
+  "name": "admin_comments_after_writes",
+  "request": {
+    "method": "GET",
+    "path": "/api/admin/comments",
+    "headers": {
+      "Authorization": "Bearer <admin>",
+      "X-Forwarded-For": "203.0.113.10"
+    }
+  },
+  "response": {
+    "status": 200,
+    "headers": {
+      "connection": "close",
+      "content-type": "application/json; charset=utf-8",
+      "transfer-encoding": "chunked"
+    },
+    "json": {
+      "list": [
+        {
+          "id": 101,
+          "created_at": "<timestamp>",
+          "updated_at": "<timestamp>",
+          "content": "回复管理员评论",
+          "status": "pending",
+          "post_id": 1,
+          "post": {
+            "id": 1,
+            "created_at": "<timestamp>",
+            "updated_at": "<timestamp>",
+            "title": "Published Post 已发布",
+            "slug": "published-post",
+            "content": "# Published Post 已发布\n\n这是 Go 与 Rust 的契约测试文章，覆盖全文搜索、数据库与云原生。\n\n## 代码示例\n\n```go\nfmt.Println(\"hello\")\n```\n",
+            "html_content": "<h1 class=\"article-h1\">Published Post 已发布</h1>\n<p class=\"article-p\">这是 Go 与 Rust 的契约测试文章，覆盖全文搜索、数据库与云原生。</p>",
+            "excerpt": "",
+            "cover_image": "",
+            "status": "published",
+            "view_count": 11,
+            "is_deleted": false,
+            "category_id": 1,
+            "category": {
+              "id": 0,
+              "created_at": "<timestamp>",
+              "updated_at": "<timestamp>",
+              "name": "",
+              "slug": "",
+              "description": "",
+              "sort": 0
+            },
+            "tags": null,
+            "author_id": 1,
+            "author": {
+              "id": 0,
+              "created_at": "<timestamp>",
+              "updated_at": "<timestamp>",
+              "email": "",
+              "nickname": "",
+              "avatar": "",
+              "role": "",
+              "status": ""
+            }
+          },
+          "user_id": 2,
+          "user": {
+            "id": 2,
+            "created_at": "<timestamp>",
+            "updated_at": "<timestamp>",
+            "email": "reader@example.com",
+            "nickname": "Reader Renamed",
+            "avatar": "/uploads/avatars/2_capture-avatar.png",
+            "role": "reader",
+            "status": "active"
+          },
+          "parent_id": 2
+        },
+        {
+          "id": 100,
+          "created_at": "<timestamp>",
+          "updated_at": "<timestamp>",
+          "content": "契约测试评论 <b>html</b>",
+          "status": "pending",
+          "post_id": 1,
+          "post": {
+            "id": 1,
+            "created_at": "<timestamp>",
+            "updated_at": "<timestamp>",
+            "title": "Published Post 已发布",
+            "slug": "published-post",
+            "content": "# Published Post 已发布\n\n这是 Go 与 Rust 的契约测试文章，覆盖全文搜索、数据库与云原生。\n\n## 代码示例\n\n```go\nfmt.Println(\"hello\")\n```\n",
+            "html_content": "<h1 class=\"article-h1\">Published Post 已发布</h1>\n<p class=\"article-p\">这是 Go 与 Rust 的契约测试文章，覆盖全文搜索、数据库与云原生。</p>",
+            "excerpt": "",
+            "cover_image": "",
+            "status": "published",
+            "view_count": 11,
+            "is_deleted": false,
+            "category_id": 1,
+            "category": {
+              "id": 0,
+              "created_at": "<timestamp>",
+              "updated_at": "<timestamp>",
+              "name": "",
+              "slug": "",
+              "description": "",
+              "sort": 0
+            },
+            "tags": null,
+            "author_id": 1,
+            "author": {
+              "id": 0,
+              "created_at": "<timestamp>",
+              "updated_at": "<timestamp>",
+              "email": "",
+              "nickname": "",
+              "avatar": "",
+              "role": "",
+              "status": ""
+            }
+          },
+          "user_id": 2,
+          "user": {
+            "id": 2,
+            "created_at": "<timestamp>",
+            "updated_at": "<timestamp>",
+            "email": "reader@example.com",
+            "nickname": "Reader Renamed",
+            "avatar": "/uploads/avatars/2_capture-avatar.png",
+            "role": "reader",
+            "status": "active"
+          },
+          "parent_id": null
+        },
+        {
+          "id": 8,
+          "created_at": "<timestamp>",
+          "updated_at": "<timestamp>",
+          "content": "对回复的二级回复 approved",
+          "status": "approved",
+          "post_id": 1,
+          "post": {
+            "id": 1,
+            "created_at": "<timestamp>",
+            "updated_at": "<timestamp>",
+            "title": "Published Post 已发布",
+            "slug": "published-post",
+            "content": "# Published Post 已发布\n\n这是 Go 与 Rust 的契约测试文章，覆盖全文搜索、数据库与云原生。\n\n## 代码示例\n\n```go\nfmt.Println(\"hello\")\n```\n",
+            "html_content": "<h1 class=\"article-h1\">Published Post 已发布</h1>\n<p class=\"article-p\">这是 Go 与 Rust 的契约测试文章，覆盖全文搜索、数据库与云原生。</p>",
+            "excerpt": "",
+            "cover_image": "",
+            "status": "published",
+            "view_count": 11,
+            "is_deleted": false,
+            "category_id": 1,
+            "category": {
+              "id": 0,
+              "created_at": "<timestamp>",
+              "updated_at": "<timestamp>",
+              "name": "",
+              "slug": "",
+              "description": "",
+              "sort": 0
+            },
+            "tags": null,
+            "author_id": 1,
+            "author": {
+              "id": 0,
+              "created_at": "<timestamp>",
+              "updated_at": "<timestamp>",
+              "email": "",
+              "nickname": "",
+              "avatar": "",
+              "role": "",
+              "status": ""
+            }
+          },
+          "user_id": 1,
+          "user": {
+            "id": 1,
+            "created_at": "<timestamp>",
+            "updated_at": "<timestamp>",
+            "email": "admin@example.com",
+            "nickname": "Admin",
+            "avatar": "",
+            "role": "admin",
+            "status": "active"
+          },
+          "parent_id": 3
+        },
+        {
+          "id": 7,
+          "created_at": "<timestamp>",
+          "updated_at": "<timestamp>",
+          "content": "草稿文章下的评论 approved",
+          "status": "approved",
+          "post_id": 2,
+          "post": {
+            "id": 2,
+            "created_at": "<timestamp>",
+            "updated_at": "<timestamp>",
+            "title": "Draft Post 草稿",
+            "slug": "draft-post",
+            "content": "# Draft Post 草稿\n\n这篇草稿不应出现在公开搜索中。draft secret keyword zzqdraft。\n",
+            "html_content": "<h1 class=\"article-h1\">Draft Post 草稿</h1>",
+            "excerpt": "草稿摘要",
+            "cover_image": "",
+            "status": "draft",
+            "view_count": 0,
+            "is_deleted": false,
+            "category_id": 1,
+            "category": {
+              "id": 0,
+              "created_at": "<timestamp>",
+              "updated_at": "<timestamp>",
+              "name": "",
+              "slug": "",
+              "description": "",
+              "sort": 0
+            },
+            "tags": null,
+            "author_id": 1,
+            "author": {
+              "id": 0,
+              "created_at": "<timestamp>",
+              "updated_at": "<timestamp>",
+              "email": "",
+              "nickname": "",
+              "avatar": "",
+              "role": "",
+              "status": ""
+            }
+          },
+          "user_id": 2,
+          "user": {
+            "id": 2,
+            "created_at": "<timestamp>",
+            "updated_at": "<timestamp>",
+            "email": "reader@example.com",
+            "nickname": "Reader Renamed",
+            "avatar": "/uploads/avatars/2_capture-avatar.png",
+            "role": "reader",
+            "status": "active"
+          },
+          "parent_id": null
+        },
+        {
+          "id": 4,
+          "created_at": "<timestamp>",
+          "updated_at": "<timestamp>",
+          "content": "待审核评论 pending",
+          "status": "approved",
+          "post_id": 1,
+          "post": {
+            "id": 1,
+            "created_at": "<timestamp>",
+            "updated_at": "<timestamp>",
+            "title": "Published Post 已发布",
+            "slug": "published-post",
+            "content": "# Published Post 已发布\n\n这是 Go 与 Rust 的契约测试文章，覆盖全文搜索、数据库与云原生。\n\n## 代码示例\n\n```go\nfmt.Println(\"hello\")\n```\n",
+            "html_content": "<h1 class=\"article-h1\">Published Post 已发布</h1>\n<p class=\"article-p\">这是 Go 与 Rust 的契约测试文章，覆盖全文搜索、数据库与云原生。</p>",
+            "excerpt": "",
+            "cover_image": "",
+            "status": "published",
+            "view_count": 11,
+            "is_deleted": false,
+            "category_id": 1,
+            "category": {
+              "id": 0,
+              "created_at": "<timestamp>",
+              "updated_at": "<timestamp>",
+              "name": "",
+              "slug": "",
+              "description": "",
+              "sort": 0
+            },
+            "tags": null,
+            "author_id": 1,
+            "author": {
+              "id": 0,
+              "created_at": "<timestamp>",
+              "updated_at": "<timestamp>",
+              "email": "",
+              "nickname": "",
+              "avatar": "",
+              "role": "",
+              "status": ""
+            }
+          },
+          "user_id": 2,
+          "user": {
+            "id": 2,
+            "created_at": "<timestamp>",
+            "updated_at": "<timestamp>",
+            "email": "reader@example.com",
+            "nickname": "Reader Renamed",
+            "avatar": "/uploads/avatars/2_capture-avatar.png",
+            "role": "reader",
+            "status": "active"
+          },
+          "parent_id": null
+        },
+        {
+          "id": 3,
+          "created_at": "<timestamp>",
+          "updated_at": "<timestamp>",
+          "content": "对管理员评论的回复 approved",
+          "status": "approved",
+          "post_id": 1,
+          "post": {
+            "id": 1,
+            "created_at": "<timestamp>",
+            "updated_at": "<timestamp>",
+            "title": "Published Post 已发布",
+            "slug": "published-post",
+            "content": "# Published Post 已发布\n\n这是 Go 与 Rust 的契约测试文章，覆盖全文搜索、数据库与云原生。\n\n## 代码示例\n\n```go\nfmt.Println(\"hello\")\n```\n",
+            "html_content": "<h1 class=\"article-h1\">Published Post 已发布</h1>\n<p class=\"article-p\">这是 Go 与 Rust 的契约测试文章，覆盖全文搜索、数据库与云原生。</p>",
+            "excerpt": "",
+            "cover_image": "",
+            "status": "published",
+            "view_count": 11,
+            "is_deleted": false,
+            "category_id": 1,
+            "category": {
+              "id": 0,
+              "created_at": "<timestamp>",
+              "updated_at": "<timestamp>",
+              "name": "",
+              "slug": "",
+              "description": "",
+              "sort": 0
+            },
+            "tags": null,
+            "author_id": 1,
+            "author": {
+              "id": 0,
+              "created_at": "<timestamp>",
+              "updated_at": "<timestamp>",
+              "email": "",
+              "nickname": "",
+              "avatar": "",
+              "role": "",
+              "status": ""
+            }
+          },
+          "user_id": 2,
+          "user": {
+            "id": 2,
+            "created_at": "<timestamp>",
+            "updated_at": "<timestamp>",
+            "email": "reader@example.com",
+            "nickname": "Reader Renamed",
+            "avatar": "/uploads/avatars/2_capture-avatar.png",
+            "role": "reader",
+            "status": "active"
+          },
+          "parent_id": 2
+        },
+        {
+          "id": 2,
+          "created_at": "<timestamp>",
+          "updated_at": "<timestamp>",
+          "content": "管理员评论 approved",
+          "status": "approved",
+          "post_id": 1,
+          "post": {
+            "id": 1,
+            "created_at": "<timestamp>",
+            "updated_at": "<timestamp>",
+            "title": "Published Post 已发布",
+            "slug": "published-post",
+            "content": "# Published Post 已发布\n\n这是 Go 与 Rust 的契约测试文章，覆盖全文搜索、数据库与云原生。\n\n## 代码示例\n\n```go\nfmt.Println(\"hello\")\n```\n",
+            "html_content": "<h1 class=\"article-h1\">Published Post 已发布</h1>\n<p class=\"article-p\">这是 Go 与 Rust 的契约测试文章，覆盖全文搜索、数据库与云原生。</p>",
+            "excerpt": "",
+            "cover_image": "",
+            "status": "published",
+            "view_count": 11,
+            "is_deleted": false,
+            "category_id": 1,
+            "category": {
+              "id": 0,
+              "created_at": "<timestamp>",
+              "updated_at": "<timestamp>",
+              "name": "",
+              "slug": "",
+              "description": "",
+              "sort": 0
+            },
+            "tags": null,
+            "author_id": 1,
+            "author": {
+              "id": 0,
+              "created_at": "<timestamp>",
+              "updated_at": "<timestamp>",
+              "email": "",
+              "nickname": "",
+              "avatar": "",
+              "role": "",
+              "status": ""
+            }
+          },
+          "user_id": 1,
+          "user": {
+            "id": 1,
+            "created_at": "<timestamp>",
+            "updated_at": "<timestamp>",
+            "email": "admin@example.com",
+            "nickname": "Admin",
+            "avatar": "",
+            "role": "admin",
+            "status": "active"
+          },
+          "parent_id": null
+        },
+        {
+          "id": 1,
+          "created_at": "<timestamp>",
+          "updated_at": "<timestamp>",
+          "content": "读者评论 approved",
+          "status": "approved",
+          "post_id": 1,
+          "post": {
+            "id": 1,
+            "created_at": "<timestamp>",
+            "updated_at": "<timestamp>",
+            "title": "Published Post 已发布",
+            "slug": "published-post",
+            "content": "# Published Post 已发布\n\n这是 Go 与 Rust 的契约测试文章，覆盖全文搜索、数据库与云原生。\n\n## 代码示例\n\n```go\nfmt.Println(\"hello\")\n```\n",
+            "html_content": "<h1 class=\"article-h1\">Published Post 已发布</h1>\n<p class=\"article-p\">这是 Go 与 Rust 的契约测试文章，覆盖全文搜索、数据库与云原生。</p>",
+            "excerpt": "",
+            "cover_image": "",
+            "status": "published",
+            "view_count": 11,
+            "is_deleted": false,
+            "category_id": 1,
+            "category": {
+              "id": 0,
+              "created_at": "<timestamp>",
+              "updated_at": "<timestamp>",
+              "name": "",
+              "slug": "",
+              "description": "",
+              "sort": 0
+            },
+            "tags": null,
+            "author_id": 1,
+            "author": {
+              "id": 0,
+              "created_at": "<timestamp>",
+              "updated_at": "<timestamp>",
+              "email": "",
+              "nickname": "",
+              "avatar": "",
+              "role": "",
+              "status": ""
+            }
+          },
+          "user_id": 2,
+          "user": {
+            "id": 2,
+            "created_at": "<timestamp>",
+            "updated_at": "<timestamp>",
+            "email": "reader@example.com",
+            "nickname": "Reader Renamed",
+            "avatar": "/uploads/avatars/2_capture-avatar.png",
+            "role": "reader",
+            "status": "active"
+          },
+          "parent_id": null
+        }
+      ],
+      "total": 8
+    }
+  }
+}

@@ -1,0 +1,28 @@
+{
+  "name": "tts_empty_input",
+  "request": {
+    "method": "POST",
+    "path": "/v1/audio/speech",
+    "headers": {
+      "Authorization": "Bearer <reader>",
+      "Content-Type": "application/json",
+      "X-Forwarded-For": "203.0.113.10"
+    },
+    "json": {
+      "model": "tts-capture",
+      "input": "   ",
+      "voice": "alloy",
+      "response_format": "mp3"
+    }
+  },
+  "response": {
+    "status": 400,
+    "headers": {
+      "connection": "close",
+      "content-type": "application/json; charset=utf-8"
+    },
+    "json": {
+      "error": "input is required"
+    }
+  }
+}

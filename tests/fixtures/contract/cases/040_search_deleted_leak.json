@@ -1,0 +1,43 @@
+{
+  "name": "search_deleted_leak",
+  "request": {
+    "method": "GET",
+    "path": "/api/search?keyword=zzqdeleted",
+    "headers": {
+      "X-Forwarded-For": "203.0.113.10"
+    }
+  },
+  "response": {
+    "status": 200,
+    "headers": {
+      "connection": "close",
+      "content-type": "application/json; charset=utf-8"
+    },
+    "json": {
+      "list": [
+        {
+          "category": {
+            "id": 1,
+            "name": "技术"
+          },
+          "cover_image": "",
+          "created_at": "<timestamp>",
+          "excerpt": "# Deleted Post 已删除\n\ndeleted secret keyword zzqdeleted。\n",
+          "id": 4,
+          "slug": "deletedpost",
+          "status": "hidden",
+          "tags": [
+            {
+              "id": 1,
+              "name": "Go"
+            }
+          ],
+          "title": "Deleted Post 已删除",
+          "view_count": 7
+        }
+      ],
+      "page": 1,
+      "total": 1
+    }
+  }
+}

@@ -1,0 +1,22 @@
+{
+  "name": "posts_invalid_page",
+  "request": {
+    "method": "GET",
+    "path": "/api/posts?page=abc&page_size=xyz",
+    "headers": {
+      "X-Forwarded-For": "203.0.113.10"
+    }
+  },
+  "response": {
+    "status": 200,
+    "headers": {
+      "connection": "close",
+      "content-type": "application/json; charset=utf-8"
+    },
+    "json": {
+      "list": [],
+      "page": 0,
+      "total": 5
+    }
+  }
+}

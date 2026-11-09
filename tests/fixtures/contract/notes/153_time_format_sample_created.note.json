@@ -1,0 +1,4 @@
+{
+  "offset": "+08:00",
+  "rule": "Go RFC3339Nano: trailing-zero-trimmed fraction, omitted when zero (DATETIME(3) => 0-3 digits)"
+}

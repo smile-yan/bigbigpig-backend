@@ -1,0 +1,25 @@
+{
+  "name": "user_get_new_user",
+  "request": {
+    "method": "GET",
+    "path": "/api/user",
+    "headers": {
+      "Authorization": "Bearer <new_user>",
+      "X-Forwarded-For": "203.0.113.10"
+    }
+  },
+  "response": {
+    "status": 200,
+    "headers": {
+      "connection": "close",
+      "content-type": "application/json; charset=utf-8"
+    },
+    "json": {
+      "avatar": "",
+      "email": "newuser@example.com",
+      "id": 100,
+      "nickname": "newuser@e",
+      "role": "reader"
+    }
+  }
+}

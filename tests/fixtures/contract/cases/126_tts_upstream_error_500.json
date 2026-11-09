@@ -1,0 +1,29 @@
+{
+  "name": "tts_upstream_error_500",
+  "request": {
+    "method": "POST",
+    "path": "/v1/audio/speech",
+    "headers": {
+      "Authorization": "Bearer <reader>",
+      "Content-Type": "application/json",
+      "X-Forwarded-For": "203.0.113.10"
+    },
+    "json": {
+      "model": "tts-capture",
+      "input": "TRIGGER_ERROR_500",
+      "voice": "alloy",
+      "response_format": "mp3"
+    }
+  },
+  "response": {
+    "status": 500,
+    "headers": {
+      "connection": "close",
+      "content-type": "application/json; charset=utf-8"
+    },
+    "json": {
+      "detail": "{\"error\": \"mock internal error\"}",
+      "error": "TTS service error"
+    }
+  }
+}

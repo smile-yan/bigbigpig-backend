@@ -1,0 +1,16 @@
+{
+  "rate_limit_email": {
+    "exists": true,
+    "ttl_class": "<=10m"
+  },
+  "rate_limit_ip": {
+    "rate_limit:ip:203.0.113.10": {
+      "ttl_class": "<=1h",
+      "value": "1"
+    }
+  },
+  "verification_code": {
+    "exists": true,
+    "ttl_class": "<=10m"
+  }
+}

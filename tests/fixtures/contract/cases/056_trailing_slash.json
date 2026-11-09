@@ -1,0 +1,19 @@
+{
+  "name": "trailing_slash",
+  "request": {
+    "method": "GET",
+    "path": "/api/posts/",
+    "headers": {
+      "X-Forwarded-For": "203.0.113.10"
+    }
+  },
+  "response": {
+    "status": 301,
+    "headers": {
+      "connection": "close",
+      "content-type": "text/html; charset=utf-8",
+      "location": "/api/posts"
+    },
+    "text": "<a href=\"/api/posts\">Moved Permanently</a>.\n\n"
+  }
+}

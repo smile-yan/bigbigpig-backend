@@ -1,0 +1,56 @@
+# Disposable infrastructure for Phase 0 baseline capture.
+#
+#   docker compose -f tests/fixtures/docker-compose.yml up -d
+#
+# Everything is bound to high localhost ports so it cannot collide with a
+# developer's own MySQL/Redis/SMTP. `docker compose ... down -v` wipes state.
+name: smileyan-capture
+
+services:
+  mysql:
+    image: mysql:8.4
+    command:
+      - --default-time-zone=+08:00
+      - --character-set-server=utf8mb4
+      - --collation-server=utf8mb4_0900_ai_ci
+    environment:
+      MYSQL_ROOT_PASSWORD: ${CAPTURE_MYSQL_PASSWORD:-capturepass}
+      MYSQL_DATABASE: smileyan_capture
+      TZ: Asia/Shanghai
+    ports:
+      - "${CAPTURE_MYSQL_PORT:-13306}:3306"
+    volumes:
+      - mysql-data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "127.0.0.1", "-uroot", "-p${CAPTURE_MYSQL_PASSWORD:-capturepass}"]
+      interval: 3s
+      timeout: 3s
+      retries: 60
+      start_period: 10s
+
+  redis:
+    image: redis:7.4-alpine
+    command:
+      - redis-server
+      - --requirepass
+      - ${CAPTURE_REDIS_PASSWORD:-capturepass}
+      - --save
+      - ""
+      - --appendonly
+      - "no"
+    ports:
+      - "${CAPTURE_REDIS_PORT:-16379}:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "-a", "${CAPTURE_REDIS_PASSWORD:-capturepass}", "ping"]
+      interval: 3s
+      timeout: 3s
+      retries: 30
+
+  mailhog:
+    image: mailhog/mailhog:v1.0.1
+    ports:
+      - "${CAPTURE_SMTP_PORT:-11025}:1025"
+      - "${CAPTURE_MAILHOG_HTTP_PORT:-18025}:8025"
+
+volumes:
+  mysql-data:

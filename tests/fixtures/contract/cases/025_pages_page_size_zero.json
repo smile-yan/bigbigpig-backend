@@ -1,0 +1,21 @@
+{
+  "name": "pages_page_size_zero",
+  "request": {
+    "method": "GET",
+    "path": "/api/pages?page=1&page_size=0",
+    "headers": {
+      "X-Forwarded-For": "203.0.113.10"
+    }
+  },
+  "response": {
+    "status": 200,
+    "headers": {
+      "connection": "close",
+      "content-type": "application/json; charset=utf-8"
+    },
+    "json": {
+      "list": [],
+      "total": 2
+    }
+  }
+}

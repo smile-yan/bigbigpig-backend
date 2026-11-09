@@ -1,0 +1,8 @@
+{
+  "to": [
+    "admin@example.com"
+  ],
+  "from": "capture@example.com",
+  "subject": "您在 Smileyan 博客的评论有新回复",
+  "body": "<html><body><p>您好，Admin</p><p>您有一条新的回复：</p><blockquote>回复管理员评论</blockquote><p><a href='/post/published-post#comment-101'>查看回复</a></p></body></html>"
+}

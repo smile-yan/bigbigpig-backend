@@ -1,0 +1,39 @@
+{
+  "id": "mix_06",
+  "kind": "mixed",
+  "keyword": "Draft 草稿",
+  "page": 1,
+  "page_size": 10,
+  "status": 200,
+  "total": 1,
+  "list_length": 1,
+  "slugs": [
+    "draft-post"
+  ],
+  "body": {
+    "list": [
+      {
+        "category": {
+          "id": 1,
+          "name": "技术"
+        },
+        "cover_image": "",
+        "created_at": "<timestamp>",
+        "excerpt": "草稿摘要",
+        "id": 2,
+        "slug": "draft-post",
+        "status": "draft",
+        "tags": [
+          {
+            "id": 1,
+            "name": "Go"
+          }
+        ],
+        "title": "Draft Post 草稿",
+        "view_count": 0
+      }
+    ],
+    "page": 1,
+    "total": 1
+  }
+}

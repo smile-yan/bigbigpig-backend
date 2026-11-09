@@ -1,0 +1,26 @@
+{
+  "name": "create_comment_missing_post",
+  "request": {
+    "method": "POST",
+    "path": "/api/comments",
+    "headers": {
+      "Authorization": "Bearer <reader>",
+      "Content-Type": "application/json",
+      "X-Forwarded-For": "203.0.113.10"
+    },
+    "json": {
+      "post_id": 999,
+      "content": "missing post"
+    }
+  },
+  "response": {
+    "status": 404,
+    "headers": {
+      "connection": "close",
+      "content-type": "application/json; charset=utf-8"
+    },
+    "json": {
+      "error": "Post not found"
+    }
+  }
+}

@@ -1,0 +1,28 @@
+{
+  "name": "admin_create_post_duplicate_slug",
+  "request": {
+    "method": "POST",
+    "path": "/api/admin/posts",
+    "headers": {
+      "Authorization": "Bearer <admin>",
+      "Content-Type": "application/json",
+      "X-Forwarded-For": "203.0.113.10"
+    },
+    "json": {
+      "title": "Duplicate",
+      "slug": "published-post",
+      "content": "duplicate",
+      "status": "published"
+    }
+  },
+  "response": {
+    "status": 400,
+    "headers": {
+      "connection": "close",
+      "content-type": "application/json; charset=utf-8"
+    },
+    "json": {
+      "error": "Slug already exists"
+    }
+  }
+}

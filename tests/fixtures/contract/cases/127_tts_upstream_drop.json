@@ -1,0 +1,28 @@
+{
+  "name": "tts_upstream_drop",
+  "request": {
+    "method": "POST",
+    "path": "/v1/audio/speech",
+    "headers": {
+      "Authorization": "Bearer <reader>",
+      "Content-Type": "application/json",
+      "X-Forwarded-For": "203.0.113.10"
+    },
+    "json": {
+      "model": "tts-capture",
+      "input": "TRIGGER_DROP",
+      "voice": "alloy",
+      "response_format": "mp3"
+    }
+  },
+  "response": {
+    "status": 500,
+    "headers": {
+      "connection": "close",
+      "content-type": "application/json; charset=utf-8"
+    },
+    "json": {
+      "error": "Failed to call TTS service"
+    }
+  }
+}

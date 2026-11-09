@@ -1,0 +1,64 @@
+{
+  "id": "zh_03",
+  "kind": "chinese",
+  "keyword": "测试",
+  "page": 1,
+  "page_size": 10,
+  "status": 200,
+  "total": 2,
+  "list_length": 2,
+  "slugs": [
+    "published-long",
+    "published-post"
+  ],
+  "body": {
+    "list": [
+      {
+        "category": {
+          "id": 1,
+          "name": "技术"
+        },
+        "cover_image": "",
+        "created_at": "<timestamp>",
+        "excerpt": "# 长文摘要边界\n\n长文摘要测试长文摘要测试长文摘要测试长文摘要测试长文摘要测试长文摘要测试长文摘要测试长文摘要测试长文摘要测试长文摘要测�...",
+        "id": 7,
+        "slug": "published-long",
+        "status": "published",
+        "tags": [
+          {
+            "id": 1,
+            "name": "Go"
+          }
+        ],
+        "title": "长文摘要边界",
+        "view_count": 2
+      },
+      {
+        "category": {
+          "id": 1,
+          "name": "技术"
+        },
+        "cover_image": "",
+        "created_at": "<timestamp>",
+        "excerpt": "# Published Post 已发布\n\n这是 Go 与 Rust 的契约测试文章，覆盖全文搜索、数据库与云原生。\n\n## 代码示例\n\n```go\nfmt.Println(\"hello\")\n```\n",
+        "id": 1,
+        "slug": "published-post",
+        "status": "published",
+        "tags": [
+          {
+            "id": 1,
+            "name": "Go"
+          },
+          {
+            "id": 2,
+            "name": "Rust"
+          }
+        ],
+        "title": "Published Post 已发布",
+        "view_count": 10
+      }
+    ],
+    "page": 1,
+    "total": 2
+  }
+}

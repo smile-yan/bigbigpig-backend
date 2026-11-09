@@ -1,0 +1,20 @@
+{
+  "name": "unsubscribe_wrong_token",
+  "request": {
+    "method": "GET",
+    "path": "/api/unsubscribe?email=a%40example.com&token=wrong",
+    "headers": {
+      "X-Forwarded-For": "203.0.113.10"
+    }
+  },
+  "response": {
+    "status": 404,
+    "headers": {
+      "connection": "close",
+      "content-type": "application/json; charset=utf-8"
+    },
+    "json": {
+      "error": "Subscription not found"
+    }
+  }
+}

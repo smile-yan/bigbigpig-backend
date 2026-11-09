@@ -1,0 +1,43 @@
+{
+  "name": "search_published_is_deleted_leak",
+  "request": {
+    "method": "GET",
+    "path": "/api/search?keyword=zzqpubdel",
+    "headers": {
+      "X-Forwarded-For": "203.0.113.10"
+    }
+  },
+  "response": {
+    "status": 200,
+    "headers": {
+      "connection": "close",
+      "content-type": "application/json; charset=utf-8"
+    },
+    "json": {
+      "list": [
+        {
+          "category": {
+            "id": 1,
+            "name": "技术"
+          },
+          "cover_image": "",
+          "created_at": "<timestamp>",
+          "excerpt": "# Published But IsDeleted\n\npublished-is-deleted leak keyword zzqpubdel。\n",
+          "id": 9,
+          "slug": "published-but-is-deleted",
+          "status": "published",
+          "tags": [
+            {
+              "id": 1,
+              "name": "Go"
+            }
+          ],
+          "title": "Published But IsDeleted",
+          "view_count": 9
+        }
+      ],
+      "page": 1,
+      "total": 1
+    }
+  }
+}

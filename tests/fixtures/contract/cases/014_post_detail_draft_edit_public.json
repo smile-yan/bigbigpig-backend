@@ -1,0 +1,20 @@
+{
+  "name": "post_detail_draft_edit_public",
+  "request": {
+    "method": "GET",
+    "path": "/api/posts/draft-post?edit=true",
+    "headers": {
+      "X-Forwarded-For": "203.0.113.10"
+    }
+  },
+  "response": {
+    "status": 404,
+    "headers": {
+      "connection": "close",
+      "content-type": "application/json; charset=utf-8"
+    },
+    "json": {
+      "error": "Post not found"
+    }
+  }
+}

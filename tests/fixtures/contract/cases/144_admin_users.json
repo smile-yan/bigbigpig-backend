@@ -1,0 +1,54 @@
+{
+  "name": "admin_users",
+  "request": {
+    "method": "GET",
+    "path": "/api/admin/users",
+    "headers": {
+      "Authorization": "Bearer <admin>",
+      "X-Forwarded-For": "203.0.113.10"
+    }
+  },
+  "response": {
+    "status": 200,
+    "headers": {
+      "connection": "close",
+      "content-type": "application/json; charset=utf-8"
+    },
+    "json": {
+      "list": [
+        {
+          "id": 1,
+          "created_at": "<timestamp>",
+          "updated_at": "<timestamp>",
+          "email": "admin@example.com",
+          "nickname": "Admin",
+          "avatar": "",
+          "role": "admin",
+          "status": "active"
+        },
+        {
+          "id": 2,
+          "created_at": "<timestamp>",
+          "updated_at": "<timestamp>",
+          "email": "reader@example.com",
+          "nickname": "Reader Renamed",
+          "avatar": "/uploads/avatars/2_capture-avatar.png",
+          "role": "reader",
+          "status": "active"
+        },
+        {
+          "id": 100,
+          "created_at": "<timestamp>",
+          "updated_at": "<timestamp>",
+          "email": "newuser@example.com",
+          "nickname": "newuser@e",
+          "avatar": "",
+          "role": "reader",
+          "status": "active"
+        }
+      ],
+      "page": 1,
+      "total": 3
+    }
+  }
+}

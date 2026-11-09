@@ -1,0 +1,34 @@
+{
+  "name": "admin_create_page_draft",
+  "request": {
+    "method": "POST",
+    "path": "/api/admin/pages",
+    "headers": {
+      "Authorization": "Bearer <admin>",
+      "Content-Type": "application/json",
+      "X-Forwarded-For": "203.0.113.10"
+    },
+    "json": {
+      "title": "契约草稿页面",
+      "content": "# 草稿\n",
+      "status": "draft"
+    }
+  },
+  "response": {
+    "status": 201,
+    "headers": {
+      "connection": "close",
+      "content-type": "application/json; charset=utf-8"
+    },
+    "json": {
+      "id": 101,
+      "created_at": "<timestamp>",
+      "updated_at": "<timestamp>",
+      "title": "契约草稿页面",
+      "slug": "契约草稿页面",
+      "content": "# 草稿\n",
+      "html_content": "<h1 class=\"article-h1\">草稿</h1>\n",
+      "status": "draft"
+    }
+  }
+}

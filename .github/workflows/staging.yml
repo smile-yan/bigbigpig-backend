@@ -1,0 +1,199 @@
+name: Deploy staging
+
+# Manual staging deployment on port 8081. Reuses the production release
+# artifact for a given tag; deploy-remote.sh rewrites server.port to 8081 and
+# stops/starts only the staging instance (port-scoped, PID-scoped).
+#
+# The target list is the STAGING_SERVERS_CONFIG repository variable:
+# [
+#   {"name":"staging-1","addr":"1.2.3.4","port":"22","user":"deploy",
+#    "deploy_path":"/opt/smileyan-backend-staging"}
+# ]
+# `app_port` in that object overrides the input below.
+
+on:
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: 'Release tag to deploy (e.g. v1.2.0-rc1)'
+        required: true
+        type: string
+      deploy_path:
+        description: 'Server directory for staging'
+        required: false
+        default: '/opt/smileyan-backend-staging'
+        type: string
+      app_port:
+        description: 'Staging application port'
+        required: false
+        default: '8081'
+        type: string
+
+permissions:
+  contents: read
+
+concurrency:
+  group: staging-deploy
+  cancel-in-progress: false
+
+jobs:
+  deploy-staging:
+    name: Deploy staging to ${{ matrix.server.name }}
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        server: ${{ fromJSON(vars.STAGING_SERVERS_CONFIG || '[]') }}
+
+    steps:
+      - name: Check required env vars
+        env:
+          S_DB_HOST: ${{ secrets.SMILEYAN_BACKEND_DB_HOST }}
+          S_DB_USER: ${{ secrets.SMILEYAN_BACKEND_DB_USER }}
+          S_DB_PASSWORD: ${{ secrets.SMILEYAN_BACKEND_DB_PASSWORD }}
+          S_DB_NAME: ${{ secrets.SMILEYAN_BACKEND_DB_NAME }}
+          S_REDIS_HOST: ${{ secrets.SMILEYAN_BACKEND_REDIS_HOST }}
+          S_REDIS_USERNAME: ${{ secrets.SMILEYAN_BACKEND_REDIS_USERNAME }}
+          S_REDIS_PASSWORD: ${{ secrets.SMILEYAN_BACKEND_REDIS_PASSWORD }}
+          S_EMAIL_PASSWORD: ${{ secrets.SMILEYAN_BACKEND_EMAIL_PASSWORD }}
+          S_JWT_SECRET: ${{ secrets.SMILEYAN_BACKEND_JWT_SECRET }}
+          S_SSH_KEY: ${{ secrets.DEPLOY_SSH_KEY }}
+        run: |
+          set -u
+          MISSING=()
+          for pair in \
+            "SMILEYAN_BACKEND_DB_HOST|${S_DB_HOST}" \
+            "SMILEYAN_BACKEND_DB_USER|${S_DB_USER}" \
+            "SMILEYAN_BACKEND_DB_PASSWORD|${S_DB_PASSWORD}" \
+            "SMILEYAN_BACKEND_DB_NAME|${S_DB_NAME}" \
+            "SMILEYAN_BACKEND_REDIS_HOST|${S_REDIS_HOST}" \
+            "SMILEYAN_BACKEND_REDIS_USERNAME|${S_REDIS_USERNAME}" \
+            "SMILEYAN_BACKEND_REDIS_PASSWORD|${S_REDIS_PASSWORD}" \
+            "SMILEYAN_BACKEND_EMAIL_PASSWORD|${S_EMAIL_PASSWORD}" \
+            "SMILEYAN_BACKEND_JWT_SECRET|${S_JWT_SECRET}" \
+            "DEPLOY_SSH_KEY|${S_SSH_KEY}"; do
+            name="${pair%%|*}"
+            val="${pair#*|}"
+            if [ -z "$val" ]; then
+              MISSING+=("$name")
+            fi
+          done
+          if [ ${#MISSING[@]} -gt 0 ]; then
+            echo "FAIL: missing required secrets:" >&2
+            printf '  - %s\n' "${MISSING[@]}" >&2
+            exit 1
+          fi
+          echo "All required env vars are present."
+
+      - name: Checkout
+        uses: actions/checkout@v5
+        with:
+          fetch-depth: 1
+
+      - name: Download release tarball
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          mkdir -p dist
+          gh release download "${{ inputs.tag }}" \
+            --pattern "smileyan-backend-prod.tar.gz" \
+            --dir dist
+          ls -la dist
+
+      - name: Set up SSH key
+        uses: webfactory/ssh-agent@v0.10.0
+        with:
+          ssh-private-key: ${{ secrets.DEPLOY_SSH_KEY }}
+
+      - name: Add server to known_hosts
+        run: |
+          mkdir -p ~/.ssh
+          ssh-keyscan -p "${{ matrix.server.port }}" \
+            -H "${{ matrix.server.addr }}" >> ~/.ssh/known_hosts
+
+      - name: Upload tarball and smoke test
+        run: |
+          set -e
+          scp -P "${{ matrix.server.port }}" dist/smileyan-backend-prod.tar.gz \
+            "${{ matrix.server.user }}@${{ matrix.server.addr }}:/tmp/smileyan-backend-staging.tar.gz"
+          scp -P "${{ matrix.server.port }}" scripts/smoke.sh \
+            "${{ matrix.server.user }}@${{ matrix.server.addr }}:/tmp/smoke-staging.sh"
+
+      - name: Run remote deploy script
+        env:
+          SERVER_NAME: ${{ matrix.server.name }}
+          SERVER_DEPLOY_PATH: ${{ matrix.server.deploy_path || inputs.deploy_path }}
+          APP_PORT: ${{ matrix.server.app_port || inputs.app_port }}
+          RELEASE_TAG: ${{ inputs.tag }}
+          S_DB_HOST: ${{ secrets.SMILEYAN_BACKEND_DB_HOST }}
+          S_DB_USER: ${{ secrets.SMILEYAN_BACKEND_DB_USER }}
+          S_DB_PASSWORD: ${{ secrets.SMILEYAN_BACKEND_DB_PASSWORD }}
+          S_DB_NAME: ${{ secrets.SMILEYAN_BACKEND_DB_NAME }}
+          S_REDIS_HOST: ${{ secrets.SMILEYAN_BACKEND_REDIS_HOST }}
+          S_REDIS_USER: ${{ secrets.SMILEYAN_BACKEND_REDIS_USERNAME }}
+          S_REDIS_PASS: ${{ secrets.SMILEYAN_BACKEND_REDIS_PASSWORD }}
+          S_EMAIL_PASS: ${{ secrets.SMILEYAN_BACKEND_EMAIL_PASSWORD }}
+          S_JWT_SECRET: ${{ secrets.SMILEYAN_BACKEND_JWT_SECRET }}
+          S_TTS_BASE_URL: ${{ secrets.SMILEYAN_BACKEND_TTS_BASE_URL }}
+          S_TTS_API_KEY: ${{ secrets.SMILEYAN_BACKEND_TTS_API_KEY }}
+          S_TTS_MODEL: ${{ secrets.SMILEYAN_BACKEND_TTS_DEFAULT_MODEL }}
+        run: |
+          set -euo pipefail
+
+          echo ">>> [$SERVER_NAME] Extracting deploy-remote.sh"
+          mkdir -p /tmp/deploy-tools
+          tar -xzf dist/smileyan-backend-prod.tar.gz -C /tmp/deploy-tools ./deploy-remote.sh
+          chmod +x /tmp/deploy-tools/deploy-remote.sh
+
+          scp -P "${{ matrix.server.port }}" \
+            /tmp/deploy-tools/deploy-remote.sh \
+            "${{ matrix.server.user }}@${{ matrix.server.addr }}:/tmp/deploy-remote.sh"
+
+          echo ">>> [$SERVER_NAME] Deploying $RELEASE_TAG to :$APP_PORT"
+          ssh -p "${{ matrix.server.port }}" \
+            -o ServerAliveInterval=30 -o ServerAliveCountMax=10 \
+            "${{ matrix.server.user }}@${{ matrix.server.addr }}" \
+            "DEPLOY_PATH='$SERVER_DEPLOY_PATH' \
+             RELEASE_TAG='$RELEASE_TAG' \
+             APP_PORT='$APP_PORT' \
+             TARBALL_PATH='/tmp/smileyan-backend-staging.tar.gz' \
+             S_DB_HOST='$S_DB_HOST' \
+             S_DB_USER='$S_DB_USER' \
+             S_DB_PASSWORD='$S_DB_PASSWORD' \
+             S_DB_NAME='$S_DB_NAME' \
+             S_REDIS_HOST='$S_REDIS_HOST' \
+             S_REDIS_USER='$S_REDIS_USER' \
+             S_REDIS_PASS='$S_REDIS_PASS' \
+             S_EMAIL_PASS='$S_EMAIL_PASS' \
+             S_JWT_SECRET='$S_JWT_SECRET' \
+             S_TTS_BASE_URL='$S_TTS_BASE_URL' \
+             S_TTS_API_KEY='$S_TTS_API_KEY' \
+             S_TTS_MODEL='$S_TTS_MODEL' \
+             bash -x /tmp/deploy-remote.sh"
+
+      - name: Smoke test staging
+        env:
+          SERVER_NAME: ${{ matrix.server.name }}
+          APP_PORT: ${{ matrix.server.app_port || inputs.app_port }}
+        run: |
+          ssh -p "${{ matrix.server.port }}" \
+            -o ServerAliveInterval=30 -o ServerAliveCountMax=10 \
+            "${{ matrix.server.user }}@${{ matrix.server.addr }}" \
+            "bash /tmp/smoke-staging.sh http://127.0.0.1:$APP_PORT"
+
+      - name: Inspect staging state
+        env:
+          SERVER_NAME: ${{ matrix.server.name }}
+          SERVER_DEPLOY_PATH: ${{ matrix.server.deploy_path || inputs.deploy_path }}
+          APP_PORT: ${{ matrix.server.app_port || inputs.app_port }}
+        run: |
+          ssh -p "${{ matrix.server.port }}" \
+            -o ServerAliveInterval=30 -o ServerAliveCountMax=10 \
+            "${{ matrix.server.user }}@${{ matrix.server.addr }}" \
+            env DEPLOY_PATH="$SERVER_DEPLOY_PATH" APP_PORT="$APP_PORT" bash -s <<'REMOTE'
+            set +e
+            ls -la "$DEPLOY_PATH/"
+            sha256sum "$DEPLOY_PATH/smileyan-backend" "$DEPLOY_PATH/smileyan-backend.prev" 2>&1 || true
+            tail -n 20 "$DEPLOY_PATH/logs/app.log" 2>&1 || true
+            (ss -ltnp 2>/dev/null || netstat -ltnp 2>/dev/null) | grep -E ":$APP_PORT" || true
+          REMOTE

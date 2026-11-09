@@ -1,0 +1,68 @@
+# 邮件中的绝对链接前缀（Q10）。默认与 Go 版硬编码的站点地址一致。
+site_url: https://smileyan.cn
+
+server:
+  port: 8080
+  mode: debug
+  # created_at/updated_at 序列化使用的 IANA 时区。
+  # Go 版使用进程本地时区；生产服务器为 Asia/Shanghai，这里显式固定。
+  timezone: Asia/Shanghai
+
+database:
+  # 数据库地址
+  host: localhost
+  port: 3306
+  # 数据库用户名
+  user: root
+  # 数据库密码，请通过环境变量 SMILEYAN_BACKEND_DB_PASSWORD 设置
+  password: ""
+  # 数据库名称
+  dbname: smileyan
+  charset: utf8mb4
+  max_idle_conns: 10
+  max_open_conns: 100
+
+redis:
+  # Redis 地址
+  host: localhost
+  port: 6379
+  # Redis 用户名
+  username: ""
+  # Redis 密码，请通过环境变量 SMILEYAN_BACKEND_REDIS_PASSWORD 设置
+  password: ""
+  db: 0
+
+
+email:
+  host: smtp.exmail.qq.com
+  port: 465
+  username: root@smileyan.cn
+  # 邮箱密码，请通过环境变量 SMILEYAN_BACKEND_EMAIL_PASSWORD 设置
+  password: ""
+  use_ssl: true
+
+jwt:
+  # JWT 密钥，请通过环境变量 SMILEYAN_BACKEND_JWT_SECRET 设置
+  secret: ""
+  expire_hours: 168  # 7 days
+
+# 管理员邮箱列表
+admin_emails:
+  - i@ccyan.cn
+
+upload:
+  path: ./uploads
+  avatar_path: ./uploads/avatars
+  max_size: 5  # MB
+
+tts:
+  # OpenAI 兼容 TTS 上游地址（如 http://127.0.0.1:8000），留空则接口返回 500
+  base_url: ""
+  # 上游 API Key，请通过环境变量 SMILEYAN_BACKEND_TTS_API_KEY 设置
+  api_key: ""
+  # 请求未指定 model 时使用的默认模型，留空则要求调用方必须传 model
+  default_model: ""
+
+search:
+  # 索引无命中时回退到 MySQL LIKE（切换期兜底；稳定后可改为 false）
+  fallback_like: true

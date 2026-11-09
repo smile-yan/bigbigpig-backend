@@ -1,0 +1,385 @@
+{
+  "generated_from": "go-baseline-2026-11",
+  "notes": "Queries are executed in order by scripts/lib/capture_search.py.",
+  "query_count": 54,
+  "queries": [
+    {
+      "id": "zh_01",
+      "kind": "chinese",
+      "keyword": "文章",
+      "page": 1,
+      "page_size": 10
+    },
+    {
+      "id": "zh_02",
+      "kind": "chinese",
+      "keyword": "契约",
+      "page": 1,
+      "page_size": 10
+    },
+    {
+      "id": "zh_03",
+      "kind": "chinese",
+      "keyword": "测试",
+      "page": 1,
+      "page_size": 10
+    },
+    {
+      "id": "zh_04",
+      "kind": "chinese",
+      "keyword": "全文搜索",
+      "page": 1,
+      "page_size": 10
+    },
+    {
+      "id": "zh_05",
+      "kind": "chinese",
+      "keyword": "数据库",
+      "page": 1,
+      "page_size": 10
+    },
+    {
+      "id": "zh_06",
+      "kind": "chinese",
+      "keyword": "云原生",
+      "page": 1,
+      "page_size": 10
+    },
+    {
+      "id": "zh_07",
+      "kind": "chinese",
+      "keyword": "代码示例",
+      "page": 1,
+      "page_size": 10
+    },
+    {
+      "id": "zh_08",
+      "kind": "chinese",
+      "keyword": "草稿",
+      "page": 1,
+      "page_size": 10
+    },
+    {
+      "id": "zh_09",
+      "kind": "chinese",
+      "keyword": "隐藏",
+      "page": 1,
+      "page_size": 10
+    },
+    {
+      "id": "zh_10",
+      "kind": "chinese",
+      "keyword": "已删除",
+      "page": 1,
+      "page_size": 10
+    },
+    {
+      "id": "zh_11",
+      "kind": "chinese",
+      "keyword": "中文分词",
+      "page": 1,
+      "page_size": 10
+    },
+    {
+      "id": "zh_12",
+      "kind": "chinese",
+      "keyword": "博客",
+      "page": 1,
+      "page_size": 10
+    },
+    {
+      "id": "zh_13",
+      "kind": "chinese",
+      "keyword": "长文",
+      "page": 1,
+      "page_size": 10
+    },
+    {
+      "id": "zh_14",
+      "kind": "chinese",
+      "keyword": "摘要",
+      "page": 1,
+      "page_size": 10
+    },
+    {
+      "id": "zh_15",
+      "kind": "chinese",
+      "keyword": "搜索",
+      "page": 1,
+      "page_size": 10
+    },
+    {
+      "id": "zh_16",
+      "kind": "chinese",
+      "keyword": "分类",
+      "page": 1,
+      "page_size": 10
+    },
+    {
+      "id": "zh_17",
+      "kind": "chinese",
+      "keyword": "标签",
+      "page": 1,
+      "page_size": 10
+    },
+    {
+      "id": "zh_18",
+      "kind": "chinese",
+      "keyword": "评论",
+      "page": 1,
+      "page_size": 10
+    },
+    {
+      "id": "zh_19",
+      "kind": "chinese",
+      "keyword": "订阅",
+      "page": 1,
+      "page_size": 10
+    },
+    {
+      "id": "zh_20",
+      "kind": "chinese",
+      "keyword": "页面",
+      "page": 1,
+      "page_size": 10
+    },
+    {
+      "id": "en_01",
+      "kind": "english",
+      "keyword": "Go",
+      "page": 1,
+      "page_size": 10
+    },
+    {
+      "id": "en_02",
+      "kind": "english",
+      "keyword": "Rust",
+      "page": 1,
+      "page_size": 10
+    },
+    {
+      "id": "en_03",
+      "kind": "english",
+      "keyword": "MySQL",
+      "page": 1,
+      "page_size": 10
+    },
+    {
+      "id": "en_04",
+      "kind": "english",
+      "keyword": "Redis",
+      "page": 1,
+      "page_size": 10
+    },
+    {
+      "id": "en_05",
+      "kind": "english",
+      "keyword": "Bleve",
+      "page": 1,
+      "page_size": 10
+    },
+    {
+      "id": "en_06",
+      "kind": "english",
+      "keyword": "Linux",
+      "page": 1,
+      "page_size": 10
+    },
+    {
+      "id": "en_07",
+      "kind": "english",
+      "keyword": "Docker",
+      "page": 1,
+      "page_size": 10
+    },
+    {
+      "id": "en_08",
+      "kind": "english",
+      "keyword": "Nginx",
+      "page": 1,
+      "page_size": 10
+    },
+    {
+      "id": "en_09",
+      "kind": "english",
+      "keyword": "September",
+      "page": 1,
+      "page_size": 10
+    },
+    {
+      "id": "en_10",
+      "kind": "english",
+      "keyword": "contract",
+      "page": 1,
+      "page_size": 10
+    },
+    {
+      "id": "mix_01",
+      "kind": "mixed",
+      "keyword": "Go 契约",
+      "page": 1,
+      "page_size": 10
+    },
+    {
+      "id": "mix_02",
+      "kind": "mixed",
+      "keyword": "Rust 搜索",
+      "page": 1,
+      "page_size": 10
+    },
+    {
+      "id": "mix_03",
+      "kind": "mixed",
+      "keyword": "MySQL 数据库",
+      "page": 1,
+      "page_size": 10
+    },
+    {
+      "id": "mix_04",
+      "kind": "mixed",
+      "keyword": "Redis 缓存",
+      "page": 1,
+      "page_size": 10
+    },
+    {
+      "id": "mix_05",
+      "kind": "mixed",
+      "keyword": "Bleve 全文",
+      "page": 1,
+      "page_size": 10
+    },
+    {
+      "id": "mix_06",
+      "kind": "mixed",
+      "keyword": "Draft 草稿",
+      "page": 1,
+      "page_size": 10
+    },
+    {
+      "id": "mix_07",
+      "kind": "mixed",
+      "keyword": "Hidden 隐藏",
+      "page": 1,
+      "page_size": 10
+    },
+    {
+      "id": "mix_08",
+      "kind": "mixed",
+      "keyword": "Deleted 已删除",
+      "page": 1,
+      "page_size": 10
+    },
+    {
+      "id": "mix_09",
+      "kind": "mixed",
+      "keyword": "September 九月",
+      "page": 1,
+      "page_size": 10
+    },
+    {
+      "id": "mix_10",
+      "kind": "mixed",
+      "keyword": "go 测试",
+      "page": 1,
+      "page_size": 10
+    },
+    {
+      "id": "special_01",
+      "kind": "special",
+      "keyword": "\"",
+      "page": 1,
+      "page_size": 10
+    },
+    {
+      "id": "special_02",
+      "kind": "special",
+      "keyword": "+Go",
+      "page": 1,
+      "page_size": 10
+    },
+    {
+      "id": "special_03",
+      "kind": "special",
+      "keyword": "-Go",
+      "page": 1,
+      "page_size": 10
+    },
+    {
+      "id": "special_04",
+      "kind": "special",
+      "keyword": "title:文章",
+      "page": 1,
+      "page_size": 10
+    },
+    {
+      "id": "special_05",
+      "kind": "special",
+      "keyword": "zzq*",
+      "page": 1,
+      "page_size": 10
+    },
+    {
+      "id": "edge_empty",
+      "kind": "edge",
+      "keyword": "",
+      "page": 1,
+      "page_size": 10
+    },
+    {
+      "id": "edge_long",
+      "kind": "edge",
+      "keyword": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "page": 1,
+      "page_size": 10
+    },
+    {
+      "id": "page_01",
+      "kind": "pagination",
+      "keyword": "文章",
+      "page": 1,
+      "page_size": 1
+    },
+    {
+      "id": "page_02",
+      "kind": "pagination",
+      "keyword": "文章",
+      "page": 2,
+      "page_size": 1
+    },
+    {
+      "id": "page_last",
+      "kind": "pagination",
+      "keyword": "文章",
+      "page": 50,
+      "page_size": 1
+    },
+    {
+      "id": "page_overflow",
+      "kind": "pagination",
+      "keyword": "文章",
+      "page": 999,
+      "page_size": 10
+    },
+    {
+      "id": "page_size_zero",
+      "kind": "pagination",
+      "keyword": "文章",
+      "page": 1,
+      "page_size": 0
+    },
+    {
+      "id": "page_invalid",
+      "kind": "pagination",
+      "keyword": "文章",
+      "page": 0,
+      "page_size": 0
+    },
+    {
+      "id": "special_06",
+      "kind": "special",
+      "keyword": "zzqpubdel",
+      "page": 1,
+      "page_size": 10
+    }
+  ]
+}

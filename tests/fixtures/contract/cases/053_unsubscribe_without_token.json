@@ -1,0 +1,20 @@
+{
+  "name": "unsubscribe_without_token",
+  "request": {
+    "method": "GET",
+    "path": "/api/unsubscribe?email=b%40example.com",
+    "headers": {
+      "X-Forwarded-For": "203.0.113.10"
+    }
+  },
+  "response": {
+    "status": 200,
+    "headers": {
+      "connection": "close",
+      "content-type": "application/json; charset=utf-8"
+    },
+    "json": {
+      "message": "Unsubscribed successfully"
+    }
+  }
+}

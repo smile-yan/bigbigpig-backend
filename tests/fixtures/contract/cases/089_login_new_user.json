@@ -1,0 +1,32 @@
+{
+  "name": "login_new_user",
+  "request": {
+    "method": "POST",
+    "path": "/api/login",
+    "headers": {
+      "Content-Type": "application/json",
+      "X-Forwarded-For": "203.0.113.10"
+    },
+    "json": {
+      "email": "newuser@example.com",
+      "code": "<code>"
+    }
+  },
+  "response": {
+    "status": 200,
+    "headers": {
+      "connection": "close",
+      "content-type": "application/json; charset=utf-8"
+    },
+    "json": {
+      "token": "<jwt>",
+      "user": {
+        "avatar": "",
+        "email": "newuser@example.com",
+        "id": 100,
+        "nickname": "newuser@e",
+        "role": "reader"
+      }
+    }
+  }
+}

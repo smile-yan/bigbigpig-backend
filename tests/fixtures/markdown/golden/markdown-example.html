@@ -1,0 +1,517 @@
+<h1 class="article-h1">Markdown 示例文档</h1>
+<p class="article-p">本文档展示了博客支持的各类 Markdown 语法，包括代码高亮、数学公式等。</p>
+<hr class="article-hr" />
+<h2 class="article-h2">1. 标题</h2>
+<pre class="language-markdown line-numbers"><code># 一级标题
+## 二级标题
+### 三级标题
+#### 四级标题
+##### 五级标题
+###### 六级标题
+</code></pre>
+<hr class="article-hr" />
+<h2 class="article-h2">2. 文本格式</h2>
+<p class="article-p">这是<strong class="article-strong">粗体文本</strong>，这是<em class="article-em">斜体文本</em>，这是<del>删除线</del>，这是 <code>行内代码</code>。</p>
+<p class="article-p"><strong class="article-strong">组合使用：</strong><em class="article-em"><strong class="article-strong">粗体加斜体</strong></em>，<code>行内代码中的**粗体**</code></p>
+<blockquote class="article-blockquote">
+<p class="article-p">这是一个引用块
+可以换行</p>
+<blockquote class="article-blockquote">
+<p class="article-p">嵌套引用</p>
+</blockquote>
+</blockquote>
+<hr class="article-hr" />
+<h2 class="article-h2">3. 代码块</h2>
+<h3 class="article-h3">Python</h3>
+<pre class="language-python line-numbers"><code>import numpy as np
+import pandas as pd
+from typing import List, Dict, Optional
+
+class DataProcessor:
+    &quot;&quot;&quot;数据处理器类&quot;&quot;&quot;
+
+    def __init__(self, config: Dict[str, any]):
+        self.config = config
+        self.data = None
+
+    def load_data(self, filepath: str) -&gt; pd.DataFrame:
+        &quot;&quot;&quot;加载数据&quot;&quot;&quot;
+        return pd.read_csv(filepath)
+
+    def process(self, df: pd.DataFrame) -&gt; np.ndarray:
+        &quot;&quot;&quot;处理数据&quot;&quot;&quot;
+        return df.values.mean(axis=1)
+
+    def predict(self, X: np.ndarray) -&gt; List[float]:
+        &quot;&quot;&quot;预测&quot;&quot;&quot;
+        return [self.model.predict(x) for x in X]
+</code></pre>
+<h3 class="article-h3">Go</h3>
+<pre class="language-go line-numbers"><code>package main
+
+import (
+    &quot;fmt&quot;
+    &quot;context&quot;
+    &quot;time&quot;
+)
+
+type Server struct {
+    addr string
+    port int
+}
+
+func NewServer(addr string, port int) *Server {
+    return &amp;Server{
+        addr: addr,
+        port: port,
+    }
+}
+
+func (s *Server) Start(ctx context.Context) error {
+    fmt.Printf(&quot;Server starting on %s:%d\n&quot;, s.addr, s.port)
+
+    &lt;-ctx.Done()
+    return nil
+}
+</code></pre>
+<h3 class="article-h3">Java</h3>
+<pre class="language-java line-numbers"><code>public class UserService {
+
+    private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
+
+    public UserService(UserRepository userRepository,
+                       PasswordEncoder passwordEncoder) {
+        this.userRepository = userRepository;
+        this.passwordEncoder = passwordEncoder;
+    }
+
+    public User createUser(String username, String email, String password) {
+        if (userRepository.existsByUsername(username)) {
+            throw new UserAlreadyExistsException(&quot;Username already exists&quot;);
+        }
+
+        User user = new User();
+        user.setUsername(username);
+        user.setEmail(email);
+        user.setPassword(passwordEncoder.encode(password));
+
+        return userRepository.save(user);
+    }
+
+    public Optional&lt;User&gt; findById(Long id) {
+        return userRepository.findById(id);
+    }
+}
+</code></pre>
+<h3 class="article-h3">C / C++</h3>
+<pre class="language-c line-numbers"><code>#include &lt;stdio.h&gt;
+#include &lt;stdlib.h&gt;
+
+typedef struct {
+    int id;
+    char name[100];
+    float score;
+} Student;
+
+void print_student(const Student *s) {
+    printf(&quot;ID: %d, Name: %s, Score: %.2f\n&quot;,
+           s-&gt;id, s-&gt;name, s-&gt;score);
+}
+
+int main() {
+    Student s = {1, &quot;Alice&quot;, 95.5};
+    print_student(&amp;s);
+    return 0;
+}
+</code></pre>
+<pre class="language-cpp line-numbers"><code>#include &lt;iostream&gt;
+#include &lt;vector&gt;
+#include &lt;algorithm&gt;
+#include &lt;memory&gt;
+
+template&lt;typename T&gt;
+class Container {
+private:
+    std::vector&lt;T&gt; data;
+
+public:
+    void add(const T&amp; item) {
+        data.push_back(item);
+    }
+
+    void sort() {
+        std::sort(data.begin(), data.end());
+    }
+
+    size_t size() const {
+        return data.size();
+    }
+};
+
+int main() {
+    auto container = std::make_unique&lt;Container&lt;int&gt;&gt;();
+    container-&gt;add(5);
+    container-&gt;add(2);
+    container-&gt;add(8);
+    container-&gt;sort();
+
+    std::cout &lt;&lt; &quot;Size: &quot; &lt;&lt; container-&gt;size() &lt;&lt; std::endl;
+    return 0;
+}
+</code></pre>
+<h3 class="article-h3">HTML / CSS</h3>
+<pre class="language-html line-numbers"><code>&lt;!DOCTYPE html&gt;
+&lt;html lang=&quot;zh-CN&quot;&gt;
+&lt;head&gt;
+    &lt;meta charset=&quot;UTF-8&quot;&gt;
+    &lt;title&gt;示例页面&lt;/title&gt;
+    &lt;style&gt;
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .header {
+            background: linear-gradient(to right, #667eea, #764ba2);
+            color: white;
+            padding: 30px;
+        }
+    &lt;/style&gt;
+&lt;/head&gt;
+&lt;body&gt;
+    &lt;div class=&quot;container&quot;&gt;
+        &lt;header class=&quot;header&quot;&gt;
+            &lt;h1&gt;欢迎访问&lt;/h1&gt;
+        &lt;/header&gt;
+    &lt;/div&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+</code></pre>
+<pre class="language-css line-numbers"><code>/* CSS 动画示例 */
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+.fade-enter-active {
+    animation: fadeIn 0.5s ease-in-out;
+}
+
+.button {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border: none;
+    padding: 12px 24px;
+    color: white;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: transform 0.2s;
+}
+
+.button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+</code></pre>
+<h3 class="article-h3">JavaScript</h3>
+<pre class="language-javascript line-numbers"><code>// ES6+ 特性示例
+const fetchData = async (url) =&gt; {
+  try {
+    const response = await fetch(url);
+    const data = await response.json();
+    return { success: true, data };
+  } catch (error) {
+    console.error('Error:', error);
+    return { success: false, error: error.message };
+  }
+};
+
+class EventEmitter {
+  constructor() {
+    this.events = new Map();
+  }
+
+  on(event, callback) {
+    if (!this.events.has(event)) {
+      this.events.set(event, []);
+    }
+    this.events.get(event).push(callback);
+  }
+
+  emit(event, ...args) {
+    const callbacks = this.events.get(event) || [];
+    callbacks.forEach(cb =&gt; cb(...args));
+  }
+}
+
+export default EventEmitter;
+</code></pre>
+<h3 class="article-h3">Bash / Shell</h3>
+<pre class="language-bash line-numbers"><code>#!/bin/bash
+
+# 变量定义
+NAME=&quot;World&quot;
+CURRENT_DIR=$(pwd)
+TIMESTAMP=$(date +%Y%m%d_%H%M%S)
+
+# 函数定义
+backup_files() {
+    local source_dir=$1
+    local backup_dir=$2
+
+    echo &quot;Starting backup from $source_dir&quot;
+
+    if [ ! -d &quot;$source_dir&quot; ]; then
+        echo &quot;Error: Source directory not found&quot;
+        return 1
+    fi
+
+    mkdir -p &quot;$backup_dir&quot;
+    cp -r &quot;$source_dir&quot;/* &quot;$backup_dir/&quot;
+
+    echo &quot;Backup completed successfully&quot;
+}
+
+# 主逻辑
+main() {
+    backup_files &quot;/app/data&quot; &quot;/backup/data_$TIMESTAMP&quot;
+}
+
+main
+</code></pre>
+<h3 class="article-h3">Git</h3>
+<pre class="language-git line-numbers"><code># 常用 Git 命令
+
+# 初始化仓库
+git init
+git clone &lt;url&gt;
+
+# 基本操作
+git add .
+git commit -m &quot;feat: add new feature&quot;
+git push origin main
+
+# 分支操作
+git checkout -b feature/new-feature
+git merge main
+git rebase main
+
+# 查看状态
+git status
+git log --oneline --graph
+git diff HEAD~1
+
+# 储藏操作
+git stash
+git stash pop
+git stash list
+
+# 撤销操作
+git reset --soft HEAD~1
+git revert &lt;commit&gt;
+git checkout -- &lt;file&gt;
+</code></pre>
+<h3 class="article-h3">YAML</h3>
+<pre class="language-yaml line-numbers"><code># Docker Compose 配置示例
+version: '3.8'
+
+services:
+  web:
+    build: .
+    ports:
+      - &quot;3000:3000&quot;
+    environment:
+      - NODE_ENV=production
+      - DATABASE_URL=postgres://user:pass@db:5432/myapp
+    depends_on:
+      - db
+      - redis
+    volumes:
+      - ./data:/app/data
+    restart: unless-stopped
+
+  db:
+    image: postgres:14-alpine
+    environment:
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: pass
+      POSTGRES_DB: myapp
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+  redis:
+    image: redis:7-alpine
+    command: redis-server --appendonly yes
+    volumes:
+      - redisdata:/data
+
+volumes:
+  pgdata:
+  redisdata:
+</code></pre>
+<h3 class="article-h3">SQL</h3>
+<pre class="language-sql line-numbers"><code>-- 创建用户表
+CREATE TABLE users (
+    id BIGINT PRIMARY KEY AUTO_INCREMENT,
+    username VARCHAR(50) NOT NULL UNIQUE,
+    email VARCHAR(100) NOT NULL UNIQUE,
+    password_hash VARCHAR(255) NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    status ENUM('active', 'inactive', 'banned') DEFAULT 'active',
+    INDEX idx_username (username),
+    INDEX idx_email (email)
+);
+
+-- 查询用户及其订单
+SELECT
+    u.id,
+    u.username,
+    u.email,
+    COUNT(o.id) AS order_count,
+    SUM(o.total_amount) AS total_spent
+FROM users u
+LEFT JOIN orders o ON u.id = o.user_id
+WHERE u.status = 'active'
+  AND u.created_at &gt;= DATE_SUB(NOW(), INTERVAL 1 YEAR)
+GROUP BY u.id, u.username, u.email
+HAVING COUNT(o.id) &gt; 0
+ORDER BY total_spent DESC
+LIMIT 10;
+</code></pre>
+<hr class="article-hr" />
+<h2 class="article-h2">4. 数学公式</h2>
+<h3 class="article-h3">行内公式</h3>
+<p class="article-p">这是行内公式：$E = mc^2$，这是勾股定理 $a^2 + b^2 = c^2$，这是欧拉公式 $e^{i\pi} + 1 = 0$。</p>
+<p class="article-p">求根公式：$x = \frac{-b \pm \sqrt{b^2 - 4ac}}{2a}$</p>
+<h3 class="article-h3">块级公式</h3>
+<p class="article-p"><strong class="article-strong">麦克斯韦方程组：</strong></p>
+<p class="article-p">$$
+\nabla \times \mathbf{E} = -\frac{\partial \mathbf{B}}{\partial t}
+$$</p>
+<p class="article-p">$$
+\nabla \times \mathbf{B} = \mu_0 \mathbf{J} + \mu_0 \varepsilon_0 \frac{\partial \mathbf{E}}{\partial t}
+$$</p>
+<p class="article-p">$$
+\nabla \cdot \mathbf{E} = \frac{\rho}{\varepsilon_0}
+$$</p>
+<p class="article-p">$$
+\nabla \cdot \mathbf{B} = 0
+$$</p>
+<p class="article-p"><strong class="article-strong">矩阵：</strong></p>
+<p class="article-p">$$
+\mathbf{A} = \begin{pmatrix}
+a_{11} &amp; a_{12} &amp; a_{13} \
+a_{21} &amp; a_{22} &amp; a_{23} \
+a_{31} &amp; a_{32} &amp; a_{33}
+\end{pmatrix}
+$$</p>
+<p class="article-p"><strong class="article-strong">分段函数：</strong></p>
+<p class="article-p">$$
+f(x) = \begin{cases}
+x &amp; \text{if } x &gt; 0 \
+0 &amp; \text{if } x = 0 \
+-x &amp; \text{if } x &lt; 0
+\end{cases}
+$$</p>
+<p class="article-p"><strong class="article-strong">求和与积分：</strong></p>
+<p class="article-p">$$
+\sum_{i=1}^{n} i^2 = \frac{n(n+1)(2n+1)}{6}
+$$</p>
+<p class="article-p">$$
+\int_{0}^{\infty} e^{-x^2} dx = \frac{\sqrt{\pi}}{2}
+$$</p>
+<hr class="article-hr" />
+<h2 class="article-h2">5. 列表</h2>
+<h3 class="article-h3">无序列表</h3>
+<ul class="article-list">
+<li class="article-list-item">苹果</li>
+<li class="article-list-item">香蕉</li>
+<li class="article-list-item">橙子
+<ul class="article-list">
+<li class="article-list-item">赣南脐橙</li>
+<li class="article-list-item">血橙</li>
+</ul>
+</li>
+<li class="article-list-item">葡萄</li>
+</ul>
+<h3 class="article-h3">有序列表</h3>
+<ol class="article-list">
+<li class="article-list-item">第一步</li>
+<li class="article-list-item">第二步</li>
+<li class="article-list-item">第三步
+<ul class="article-list">
+<li class="article-list-item">子步骤 A</li>
+<li class="article-list-item">子步骤 B</li>
+</ul>
+</li>
+</ol>
+<h3 class="article-h3">任务列表</h3>
+<ul class="article-list">
+<li class="article-list-item"><input checked="" disabled="" type="checkbox"> 完成项目初始化</li>
+<li class="article-list-item"><input checked="" disabled="" type="checkbox"> 实现用户登录</li>
+<li class="article-list-item"><input disabled="" type="checkbox"> 实现文章发布</li>
+<li class="article-list-item"><input disabled="" type="checkbox"> 实现评论功能</li>
+<li class="article-list-item"><input disabled="" type="checkbox"> 添加数据统计</li>
+</ul>
+<hr class="article-hr" />
+<h2 class="article-h2">6. 表格</h2>
+<table class="article-table">
+<thead class="article-thead">
+<tr class="article-tr">
+<th class="article-th">语言</th>
+<th class="article-th">创始人</th>
+<th class="article-th">年份</th>
+<th class="article-th">特点</th>
+</tr>
+</thead>
+<tbody class="article-tbody">
+<tr class="article-tr">
+<td class="article-td">Python</td>
+<td class="article-td">Guido van Rossum</td>
+<td class="article-td">1991</td>
+<td class="article-td">简洁易读</td>
+</tr>
+<tr class="article-tr">
+<td class="article-td">Go</td>
+<td class="article-td">Robert Griesemer, Rob Pike, Ken Thompson</td>
+<td class="article-td">2009</td>
+<td class="article-td">高并发</td>
+</tr>
+<tr class="article-tr">
+<td class="article-td">Java</td>
+<td class="article-td">James Gosling</td>
+<td class="article-td">1995</td>
+<td class="article-td">跨平台</td>
+</tr>
+<tr class="article-tr">
+<td class="article-td">C</td>
+<td class="article-td">Dennis Ritchie</td>
+<td class="article-td">1972</td>
+<td class="article-td">系统编程</td>
+</tr>
+<tr class="article-tr">
+<td class="article-td">C++</td>
+<td class="article-td">Bjarne Stroustrup</td>
+<td class="article-td">1985</td>
+<td class="article-td">面向对象</td>
+</tr>
+</tbody>
+</table>
+<hr class="article-hr" />
+<h2 class="article-h2">7. 链接和图片</h2>
+<p class="article-p"><a class="article-link" target="_blank" rel="noopener noreferrer" href="https://www.baidu.com">百度</a></p>
+<p class="article-p"><figure class="article-figure"><img class="article-image" src="https://via.placeholder.com/800x400" alt="示例图片"><figcaption class="article-figcaption">示例图片</figcaption></figure></p>
+<hr class="article-hr" />
+<h2 class="article-h2">8. 特殊字符</h2>
+<ul class="article-list">
+<li class="article-list-item">箭头：→ ← ↑ ↓ ⇒ ⇐ ⇑ ⇓</li>
+<li class="article-list-item">数学符号：∞ ∑ ∏ ∫ ∂ ∆ ∇ ± × ÷ ≠ ≤ ≥ ≈ ≡</li>
+<li class="article-list-item">希腊字母：α β γ δ ε ζ η θ ι κ λ μ ν ξ ο π ρ σ τ υ φ χ ψ ω</li>
+<li class="article-list-item">其他：★ ☆ ♠ ♣ ♥ ♦ ✓ ✗ © ® ™ § ¶ † ‡</li>
+</ul>
+<hr class="article-hr" />
+<h2 class="article-h2">9. 脚注</h2>
+<p class="article-p">这里有一个脚注<a class="article-link" target="_blank" rel="noopener noreferrer" href="%E8%BF%99%E6%98%AF%E7%AC%AC%E4%B8%80%E4%B8%AA%E8%84%9A%E6%B3%A8%E7%9A%84%E5%86%85%E5%AE%B9%E3%80%82">^1</a>，还有另一个脚注<a class="article-link" target="_blank" rel="noopener noreferrer" href="%E8%BF%99%E6%98%AF%E7%AC%AC%E4%BA%8C%E4%B8%AA%E8%84%9A%E6%B3%A8%E7%9A%84%E5%86%85%E5%AE%B9%EF%BC%8C%E5%8F%AF%E4%BB%A5%E5%8C%85%E5%90%AB%E5%A4%9A%E8%A1%8C%E6%96%87%E5%AD%97%E3%80%82">^2</a>。</p>
+<hr class="article-hr" />
+<p class="article-p"><em class="article-em">文档结束</em></p>

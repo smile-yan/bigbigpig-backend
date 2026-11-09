@@ -1,0 +1,16 @@
+#!/bin/bash
+# Local development with cargo-watch (optional; install with
+# `cargo install cargo-watch`). Falls back to a single `cargo run`.
+
+set -u
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+PROJECT_DIR="$(dirname "$SCRIPT_DIR")"
+cd "$PROJECT_DIR" || exit 1
+
+if command -v cargo-watch >/dev/null 2>&1; then
+  exec cargo watch -x run
+fi
+
+echo "cargo-watch not found; running once. Install it with:" >&2
+echo "  cargo install cargo-watch" >&2
+exec cargo run

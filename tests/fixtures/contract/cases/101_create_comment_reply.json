@@ -1,0 +1,80 @@
+{
+  "name": "create_comment_reply",
+  "request": {
+    "method": "POST",
+    "path": "/api/comments",
+    "headers": {
+      "Authorization": "Bearer <reader>",
+      "Content-Type": "application/json",
+      "X-Forwarded-For": "203.0.113.10"
+    },
+    "json": {
+      "post_id": 1,
+      "content": "回复管理员评论",
+      "parent_id": 2
+    }
+  },
+  "response": {
+    "status": 201,
+    "headers": {
+      "connection": "close",
+      "content-type": "application/json; charset=utf-8"
+    },
+    "json": {
+      "id": 101,
+      "created_at": "<timestamp>",
+      "updated_at": "<timestamp>",
+      "content": "回复管理员评论",
+      "status": "pending",
+      "post_id": 1,
+      "post": {
+        "id": 0,
+        "created_at": "<timestamp>",
+        "updated_at": "<timestamp>",
+        "title": "",
+        "slug": "",
+        "content": "",
+        "html_content": "",
+        "excerpt": "",
+        "cover_image": "",
+        "status": "",
+        "view_count": 0,
+        "is_deleted": false,
+        "category_id": null,
+        "category": {
+          "id": 0,
+          "created_at": "<timestamp>",
+          "updated_at": "<timestamp>",
+          "name": "",
+          "slug": "",
+          "description": "",
+          "sort": 0
+        },
+        "tags": null,
+        "author_id": 0,
+        "author": {
+          "id": 0,
+          "created_at": "<timestamp>",
+          "updated_at": "<timestamp>",
+          "email": "",
+          "nickname": "",
+          "avatar": "",
+          "role": "",
+          "status": ""
+        }
+      },
+      "user_id": 2,
+      "user": {
+        "id": 2,
+        "created_at": "<timestamp>",
+        "updated_at": "<timestamp>",
+        "email": "reader@example.com",
+        "nickname": "Reader Renamed",
+        "avatar": "/uploads/avatars/2_capture-avatar.png",
+        "role": "reader",
+        "status": "active"
+      },
+      "parent_id": 2
+    }
+  }
+}

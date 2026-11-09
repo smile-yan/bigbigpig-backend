@@ -1,0 +1,29 @@
+{
+  "name": "tts_sse",
+  "request": {
+    "method": "POST",
+    "path": "/v1/audio/speech",
+    "headers": {
+      "Authorization": "Bearer <reader>",
+      "Content-Type": "application/json",
+      "X-Forwarded-For": "203.0.113.10"
+    },
+    "json": {
+      "model": "tts-capture",
+      "input": "你好，契约测试",
+      "voice": "alloy",
+      "response_format": "mp3",
+      "stream_format": "sse"
+    }
+  },
+  "response": {
+    "status": 200,
+    "headers": {
+      "cache-control": "no-cache",
+      "connection": "close",
+      "content-type": "text/event-stream",
+      "transfer-encoding": "chunked"
+    },
+    "text": "data: {\"type\":\"speech.audio.delta\",\"audio\":\"QUJD\"}\n\ndata: {\"type\":\"speech.audio.delta\",\"audio\":\"REVG\"}\n\ndata: {\"type\":\"speech.audio.done\",\"usage\":{\"input_tokens\":3,\"output_tokens\":2,\"total_tokens\":5}}\n\n"
+  }
+}

@@ -1,0 +1,76 @@
+{
+  "name": "admin_get_soft_deleted_post_again",
+  "request": {
+    "method": "GET",
+    "path": "/api/admin/posts/_id/100",
+    "headers": {
+      "Authorization": "Bearer <admin>",
+      "X-Forwarded-For": "203.0.113.10"
+    }
+  },
+  "response": {
+    "status": 200,
+    "headers": {
+      "connection": "close",
+      "content-type": "application/json; charset=utf-8"
+    },
+    "json": {
+      "id": 100,
+      "created_at": "<timestamp>",
+      "updated_at": "<timestamp>",
+      "title": "契约测试文章 Contract Capture Updated",
+      "slug": "<random-slug>",
+      "content": "# 更新后\n\n更新内容。\n",
+      "html_content": "<h1 class=\"article-h1\">更新后</h1>\n<p class=\"article-p\">更新内容。</p>\n",
+      "excerpt": "更新摘要",
+      "cover_image": "",
+      "status": "hidden",
+      "view_count": 0,
+      "is_deleted": true,
+      "category_id": 2,
+      "category": {
+        "id": 2,
+        "created_at": "<timestamp>",
+        "updated_at": "<timestamp>",
+        "name": "生活",
+        "slug": "life",
+        "description": "生活随笔",
+        "sort": 2
+      },
+      "tags": [
+        {
+          "id": 1,
+          "created_at": "<timestamp>",
+          "updated_at": "<timestamp>",
+          "name": "Go",
+          "slug": "go"
+        },
+        {
+          "id": 2,
+          "created_at": "<timestamp>",
+          "updated_at": "<timestamp>",
+          "name": "Rust",
+          "slug": "rust"
+        },
+        {
+          "id": 100,
+          "created_at": "<timestamp>",
+          "updated_at": "<timestamp>",
+          "name": "契约标签",
+          "slug": "契约标签"
+        }
+      ],
+      "author_id": 1,
+      "author": {
+        "id": 1,
+        "created_at": "<timestamp>",
+        "updated_at": "<timestamp>",
+        "email": "admin@example.com",
+        "nickname": "Admin",
+        "avatar": "",
+        "role": "admin",
+        "status": "active"
+      }
+    }
+  }
+}

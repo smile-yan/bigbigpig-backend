@@ -1,0 +1,119 @@
+{
+  "name": "posts_keyword",
+  "request": {
+    "method": "GET",
+    "path": "/api/posts?keyword=Published",
+    "headers": {
+      "X-Forwarded-For": "203.0.113.10"
+    }
+  },
+  "response": {
+    "status": 200,
+    "headers": {
+      "connection": "close",
+      "content-type": "application/json; charset=utf-8",
+      "transfer-encoding": "chunked"
+    },
+    "json": {
+      "list": [
+        {
+          "id": 9,
+          "created_at": "<timestamp>",
+          "updated_at": "<timestamp>",
+          "title": "Published But IsDeleted",
+          "slug": "published-but-is-deleted",
+          "content": "# Published But IsDeleted\n\npublished-is-deleted leak keyword zzqpubdel。\n",
+          "html_content": "<h1 class=\"article-h1\">Published But IsDeleted</h1>",
+          "excerpt": " Published But IsDeleted published-is-deleted leak keyword zzqpubdel。 ",
+          "cover_image": "",
+          "status": "published",
+          "view_count": 8,
+          "is_deleted": true,
+          "category_id": 1,
+          "category": {
+            "id": 1,
+            "created_at": "<timestamp>",
+            "updated_at": "<timestamp>",
+            "name": "技术",
+            "slug": "tech",
+            "description": "技术类文章",
+            "sort": 1
+          },
+          "tags": [
+            {
+              "id": 1,
+              "created_at": "<timestamp>",
+              "updated_at": "<timestamp>",
+              "name": "Go",
+              "slug": "go"
+            }
+          ],
+          "author_id": 1,
+          "author": {
+            "id": 1,
+            "created_at": "<timestamp>",
+            "updated_at": "<timestamp>",
+            "email": "admin@example.com",
+            "nickname": "Admin",
+            "avatar": "",
+            "role": "admin",
+            "status": "active"
+          }
+        },
+        {
+          "id": 1,
+          "created_at": "<timestamp>",
+          "updated_at": "<timestamp>",
+          "title": "Published Post 已发布",
+          "slug": "published-post",
+          "content": "# Published Post 已发布\n\n这是 Go 与 Rust 的契约测试文章，覆盖全文搜索、数据库与云原生。\n\n## 代码示例\n\n```go\nfmt.Println(\"hello\")\n```\n",
+          "html_content": "<h1 class=\"article-h1\">Published Post 已发布</h1>\n<p class=\"article-p\">这是 Go 与 Rust 的契约测试文章，覆盖全文搜索、数据库与云原生。</p>",
+          "excerpt": " Published Post 已发布 这是 Go 与 Rust 的契约测试文章，覆盖全文搜索、数据库与云原生。  代码示例 go fmt.Println(\"hello\") ",
+          "cover_image": "",
+          "status": "published",
+          "view_count": 10,
+          "is_deleted": false,
+          "category_id": 1,
+          "category": {
+            "id": 1,
+            "created_at": "<timestamp>",
+            "updated_at": "<timestamp>",
+            "name": "技术",
+            "slug": "tech",
+            "description": "技术类文章",
+            "sort": 1
+          },
+          "tags": [
+            {
+              "id": 1,
+              "created_at": "<timestamp>",
+              "updated_at": "<timestamp>",
+              "name": "Go",
+              "slug": "go"
+            },
+            {
+              "id": 2,
+              "created_at": "<timestamp>",
+              "updated_at": "<timestamp>",
+              "name": "Rust",
+              "slug": "rust"
+            }
+          ],
+          "author_id": 1,
+          "author": {
+            "id": 1,
+            "created_at": "<timestamp>",
+            "updated_at": "<timestamp>",
+            "email": "admin@example.com",
+            "nickname": "Admin",
+            "avatar": "",
+            "role": "admin",
+            "status": "active"
+          }
+        }
+      ],
+      "page": 1,
+      "total": 2
+    }
+  }
+}

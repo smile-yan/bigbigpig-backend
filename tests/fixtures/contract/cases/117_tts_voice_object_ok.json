@@ -1,0 +1,31 @@
+{
+  "name": "tts_voice_object_ok",
+  "request": {
+    "method": "POST",
+    "path": "/v1/audio/speech",
+    "headers": {
+      "Authorization": "Bearer <reader>",
+      "Content-Type": "application/json",
+      "X-Forwarded-For": "203.0.113.10"
+    },
+    "json": {
+      "model": "tts-capture",
+      "input": "你好，契约测试",
+      "voice": {
+        "id": "alloy"
+      },
+      "response_format": "mp3"
+    }
+  },
+  "response": {
+    "status": 200,
+    "headers": {
+      "connection": "close",
+      "content-disposition": "attachment; filename=speech.mp3",
+      "content-type": "application/octet-stream"
+    },
+    "body_base64": "SUQzBAAAAAAAAENBUFRVUkUtQVVESU8AAQL/",
+    "body_sha256": "d874d8baf3ec26cc2e369869cb5dd2668a9f86a911478fa9bf1f12349cf1ab13",
+    "body_bytes": 27
+  }
+}

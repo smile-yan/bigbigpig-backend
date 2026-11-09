@@ -1,0 +1,43 @@
+{
+  "name": "search_english",
+  "request": {
+    "method": "GET",
+    "path": "/api/search?keyword=September",
+    "headers": {
+      "X-Forwarded-For": "203.0.113.10"
+    }
+  },
+  "response": {
+    "status": 200,
+    "headers": {
+      "connection": "close",
+      "content-type": "application/json; charset=utf-8"
+    },
+    "json": {
+      "list": [
+        {
+          "category": {
+            "id": 2,
+            "name": "生活"
+          },
+          "cover_image": "",
+          "created_at": "<timestamp>",
+          "excerpt": "# September Archive\n\nSeptember archive post about Linux, Docker, Nginx.\n",
+          "id": 8,
+          "slug": "published-september",
+          "status": "published",
+          "tags": [
+            {
+              "id": 2,
+              "name": "Rust"
+            }
+          ],
+          "title": "September Archive",
+          "view_count": 4
+        }
+      ],
+      "page": 1,
+      "total": 1
+    }
+  }
+}

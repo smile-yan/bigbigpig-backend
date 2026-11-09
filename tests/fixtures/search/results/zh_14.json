@@ -1,0 +1,71 @@
+{
+  "id": "zh_14",
+  "kind": "chinese",
+  "keyword": "摘要",
+  "page": 1,
+  "page_size": 10,
+  "status": 200,
+  "total": 3,
+  "list_length": 3,
+  "slugs": [
+    "published-long",
+    "published-no-category",
+    "draft-post"
+  ],
+  "body": {
+    "list": [
+      {
+        "category": {
+          "id": 1,
+          "name": "技术"
+        },
+        "cover_image": "",
+        "created_at": "<timestamp>",
+        "excerpt": "# 长文摘要边界\n\n长文摘要测试长文摘要测试长文摘要测试长文摘要测试长文摘要测试长文摘要测试长文摘要测试长文摘要测试长文摘要测试长文摘要测�...",
+        "id": 7,
+        "slug": "published-long",
+        "status": "published",
+        "tags": [
+          {
+            "id": 1,
+            "name": "Go"
+          }
+        ],
+        "title": "长文摘要边界",
+        "view_count": 2
+      },
+      {
+        "cover_image": "https://example.com/cover.png",
+        "created_at": "<timestamp>",
+        "excerpt": "固定摘要",
+        "id": 6,
+        "slug": "published-no-category",
+        "status": "published",
+        "title": "无分类文章",
+        "view_count": 11
+      },
+      {
+        "category": {
+          "id": 1,
+          "name": "技术"
+        },
+        "cover_image": "",
+        "created_at": "<timestamp>",
+        "excerpt": "草稿摘要",
+        "id": 2,
+        "slug": "draft-post",
+        "status": "draft",
+        "tags": [
+          {
+            "id": 1,
+            "name": "Go"
+          }
+        ],
+        "title": "Draft Post 草稿",
+        "view_count": 0
+      }
+    ],
+    "page": 1,
+    "total": 3
+  }
+}

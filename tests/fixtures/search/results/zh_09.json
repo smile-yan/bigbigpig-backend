@@ -1,0 +1,39 @@
+{
+  "id": "zh_09",
+  "kind": "chinese",
+  "keyword": "隐藏",
+  "page": 1,
+  "page_size": 10,
+  "status": 200,
+  "total": 1,
+  "list_length": 1,
+  "slugs": [
+    "hidden-post"
+  ],
+  "body": {
+    "list": [
+      {
+        "category": {
+          "id": 2,
+          "name": "生活"
+        },
+        "cover_image": "",
+        "created_at": "<timestamp>",
+        "excerpt": "# Hidden Post 隐藏\n\nhidden secret keyword zzqhidden。\n",
+        "id": 3,
+        "slug": "hidden-post",
+        "status": "hidden",
+        "tags": [
+          {
+            "id": 2,
+            "name": "Rust"
+          }
+        ],
+        "title": "Hidden Post 隐藏",
+        "view_count": 5
+      }
+    ],
+    "page": 1,
+    "total": 1
+  }
+}

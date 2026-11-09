@@ -1,0 +1,18 @@
+{
+  "name": "method_not_allowed",
+  "request": {
+    "method": "DELETE",
+    "path": "/api/hello",
+    "headers": {
+      "X-Forwarded-For": "203.0.113.10"
+    }
+  },
+  "response": {
+    "status": 404,
+    "headers": {
+      "connection": "close",
+      "content-type": "text/plain"
+    },
+    "text": "404 page not found"
+  }
+}

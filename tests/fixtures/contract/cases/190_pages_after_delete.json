@@ -1,0 +1,42 @@
+{
+  "name": "pages_after_delete",
+  "request": {
+    "method": "GET",
+    "path": "/api/pages",
+    "headers": {
+      "X-Forwarded-For": "203.0.113.10"
+    }
+  },
+  "response": {
+    "status": 200,
+    "headers": {
+      "connection": "close",
+      "content-type": "application/json; charset=utf-8"
+    },
+    "json": {
+      "list": [
+        {
+          "id": 1,
+          "created_at": "<timestamp>",
+          "updated_at": "<timestamp>",
+          "title": "About",
+          "slug": "about",
+          "content": "# About\n\n关于页面。\n",
+          "html_content": "<h1 class=\"article-h1\">About</h1>",
+          "status": "published"
+        },
+        {
+          "id": 2,
+          "created_at": "<timestamp>",
+          "updated_at": "<timestamp>",
+          "title": "Draft Page",
+          "slug": "draft-page",
+          "content": "# Draft Page\n\n草稿页面。\n",
+          "html_content": "<h1 class=\"article-h1\">Draft Page</h1>",
+          "status": "draft"
+        }
+      ],
+      "total": 2
+    }
+  }
+}

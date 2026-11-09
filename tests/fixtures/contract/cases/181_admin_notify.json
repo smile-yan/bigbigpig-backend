@@ -1,0 +1,26 @@
+{
+  "name": "admin_notify",
+  "request": {
+    "method": "POST",
+    "path": "/api/admin/notify",
+    "headers": {
+      "Authorization": "Bearer <admin>",
+      "Content-Type": "application/json",
+      "X-Forwarded-For": "203.0.113.10"
+    },
+    "json": {
+      "post_id": 1
+    }
+  },
+  "response": {
+    "status": 200,
+    "headers": {
+      "connection": "close",
+      "content-type": "application/json; charset=utf-8"
+    },
+    "json": {
+      "count": 1,
+      "message": "Notifications sent"
+    }
+  }
+}

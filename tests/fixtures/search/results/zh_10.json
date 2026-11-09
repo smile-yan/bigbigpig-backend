@@ -1,0 +1,64 @@
+{
+  "id": "zh_10",
+  "kind": "chinese",
+  "keyword": "已删除",
+  "page": 1,
+  "page_size": 10,
+  "status": 200,
+  "total": 2,
+  "list_length": 2,
+  "slugs": [
+    "deletedpost",
+    "published-post"
+  ],
+  "body": {
+    "list": [
+      {
+        "category": {
+          "id": 1,
+          "name": "技术"
+        },
+        "cover_image": "",
+        "created_at": "<timestamp>",
+        "excerpt": "# Deleted Post 已删除\n\ndeleted secret keyword zzqdeleted。\n",
+        "id": 4,
+        "slug": "deletedpost",
+        "status": "hidden",
+        "tags": [
+          {
+            "id": 1,
+            "name": "Go"
+          }
+        ],
+        "title": "Deleted Post 已删除",
+        "view_count": 7
+      },
+      {
+        "category": {
+          "id": 1,
+          "name": "技术"
+        },
+        "cover_image": "",
+        "created_at": "<timestamp>",
+        "excerpt": "# Published Post 已发布\n\n这是 Go 与 Rust 的契约测试文章，覆盖全文搜索、数据库与云原生。\n\n## 代码示例\n\n```go\nfmt.Println(\"hello\")\n```\n",
+        "id": 1,
+        "slug": "published-post",
+        "status": "published",
+        "tags": [
+          {
+            "id": 1,
+            "name": "Go"
+          },
+          {
+            "id": 2,
+            "name": "Rust"
+          }
+        ],
+        "title": "Published Post 已发布",
+        "view_count": 10
+      }
+    ],
+    "page": 1,
+    "total": 2
+  }
+}

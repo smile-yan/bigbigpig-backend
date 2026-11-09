@@ -1,0 +1,43 @@
+{
+  "name": "search_hidden_leak",
+  "request": {
+    "method": "GET",
+    "path": "/api/search?keyword=zzqhidden",
+    "headers": {
+      "X-Forwarded-For": "203.0.113.10"
+    }
+  },
+  "response": {
+    "status": 200,
+    "headers": {
+      "connection": "close",
+      "content-type": "application/json; charset=utf-8"
+    },
+    "json": {
+      "list": [
+        {
+          "category": {
+            "id": 2,
+            "name": "生活"
+          },
+          "cover_image": "",
+          "created_at": "<timestamp>",
+          "excerpt": "# Hidden Post 隐藏\n\nhidden secret keyword zzqhidden。\n",
+          "id": 3,
+          "slug": "hidden-post",
+          "status": "hidden",
+          "tags": [
+            {
+              "id": 2,
+              "name": "Rust"
+            }
+          ],
+          "title": "Hidden Post 隐藏",
+          "view_count": 5
+        }
+      ],
+      "page": 1,
+      "total": 1
+    }
+  }
+}

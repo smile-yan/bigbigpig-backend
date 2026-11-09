@@ -1,0 +1,16 @@
+{
+  "id": "page_invalid",
+  "kind": "pagination",
+  "keyword": "文章",
+  "page": 0,
+  "page_size": 0,
+  "status": 200,
+  "total": 3,
+  "list_length": 0,
+  "slugs": [],
+  "body": {
+    "list": null,
+    "page": 0,
+    "total": 3
+  }
+}

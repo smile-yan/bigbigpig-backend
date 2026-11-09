@@ -1,0 +1,446 @@
+{
+  "meta": {
+    "backend_commit": "1f3a87f0ade6a80a37d67698f563238499695ce9",
+    "backend_tag": "go-baseline-2026-11",
+    "queries_sha256": "974e2c6ea3d66fb8e814a5706794738f89fe7b32d9603a2f2759471855bbf874",
+    "query_count": 54,
+    "non_200": [
+      "special_01",
+      "edge_empty"
+    ]
+  },
+  "results": [
+    {
+      "id": "zh_01",
+      "kind": "chinese",
+      "file": "zh_01.json",
+      "status": 200,
+      "total": 3,
+      "list_length": 3
+    },
+    {
+      "id": "zh_02",
+      "kind": "chinese",
+      "file": "zh_02.json",
+      "status": 200,
+      "total": 1,
+      "list_length": 1
+    },
+    {
+      "id": "zh_03",
+      "kind": "chinese",
+      "file": "zh_03.json",
+      "status": 200,
+      "total": 2,
+      "list_length": 2
+    },
+    {
+      "id": "zh_04",
+      "kind": "chinese",
+      "file": "zh_04.json",
+      "status": 200,
+      "total": 4,
+      "list_length": 4
+    },
+    {
+      "id": "zh_05",
+      "kind": "chinese",
+      "file": "zh_05.json",
+      "status": 200,
+      "total": 1,
+      "list_length": 1
+    },
+    {
+      "id": "zh_06",
+      "kind": "chinese",
+      "file": "zh_06.json",
+      "status": 200,
+      "total": 1,
+      "list_length": 1
+    },
+    {
+      "id": "zh_07",
+      "kind": "chinese",
+      "file": "zh_07.json",
+      "status": 200,
+      "total": 1,
+      "list_length": 1
+    },
+    {
+      "id": "zh_08",
+      "kind": "chinese",
+      "file": "zh_08.json",
+      "status": 200,
+      "total": 1,
+      "list_length": 1
+    },
+    {
+      "id": "zh_09",
+      "kind": "chinese",
+      "file": "zh_09.json",
+      "status": 200,
+      "total": 1,
+      "list_length": 1
+    },
+    {
+      "id": "zh_10",
+      "kind": "chinese",
+      "file": "zh_10.json",
+      "status": 200,
+      "total": 2,
+      "list_length": 2
+    },
+    {
+      "id": "zh_11",
+      "kind": "chinese",
+      "file": "zh_11.json",
+      "status": 200,
+      "total": 4,
+      "list_length": 4
+    },
+    {
+      "id": "zh_12",
+      "kind": "chinese",
+      "file": "zh_12.json",
+      "status": 200,
+      "total": 0,
+      "list_length": 0
+    },
+    {
+      "id": "zh_13",
+      "kind": "chinese",
+      "file": "zh_13.json",
+      "status": 200,
+      "total": 3,
+      "list_length": 3
+    },
+    {
+      "id": "zh_14",
+      "kind": "chinese",
+      "file": "zh_14.json",
+      "status": 200,
+      "total": 3,
+      "list_length": 3
+    },
+    {
+      "id": "zh_15",
+      "kind": "chinese",
+      "file": "zh_15.json",
+      "status": 200,
+      "total": 3,
+      "list_length": 3
+    },
+    {
+      "id": "zh_16",
+      "kind": "chinese",
+      "file": "zh_16.json",
+      "status": 200,
+      "total": 1,
+      "list_length": 1
+    },
+    {
+      "id": "zh_17",
+      "kind": "chinese",
+      "file": "zh_17.json",
+      "status": 200,
+      "total": 0,
+      "list_length": 0
+    },
+    {
+      "id": "zh_18",
+      "kind": "chinese",
+      "file": "zh_18.json",
+      "status": 200,
+      "total": 0,
+      "list_length": 0
+    },
+    {
+      "id": "zh_19",
+      "kind": "chinese",
+      "file": "zh_19.json",
+      "status": 200,
+      "total": 0,
+      "list_length": 0
+    },
+    {
+      "id": "zh_20",
+      "kind": "chinese",
+      "file": "zh_20.json",
+      "status": 200,
+      "total": 0,
+      "list_length": 0
+    },
+    {
+      "id": "en_01",
+      "kind": "english",
+      "file": "en_01.json",
+      "status": 200,
+      "total": 2,
+      "list_length": 2
+    },
+    {
+      "id": "en_02",
+      "kind": "english",
+      "file": "en_02.json",
+      "status": 200,
+      "total": 1,
+      "list_length": 1
+    },
+    {
+      "id": "en_03",
+      "kind": "english",
+      "file": "en_03.json",
+      "status": 200,
+      "total": 1,
+      "list_length": 1
+    },
+    {
+      "id": "en_04",
+      "kind": "english",
+      "file": "en_04.json",
+      "status": 200,
+      "total": 1,
+      "list_length": 1
+    },
+    {
+      "id": "en_05",
+      "kind": "english",
+      "file": "en_05.json",
+      "status": 200,
+      "total": 1,
+      "list_length": 1
+    },
+    {
+      "id": "en_06",
+      "kind": "english",
+      "file": "en_06.json",
+      "status": 200,
+      "total": 1,
+      "list_length": 1
+    },
+    {
+      "id": "en_07",
+      "kind": "english",
+      "file": "en_07.json",
+      "status": 200,
+      "total": 1,
+      "list_length": 1
+    },
+    {
+      "id": "en_08",
+      "kind": "english",
+      "file": "en_08.json",
+      "status": 200,
+      "total": 1,
+      "list_length": 1
+    },
+    {
+      "id": "en_09",
+      "kind": "english",
+      "file": "en_09.json",
+      "status": 200,
+      "total": 1,
+      "list_length": 1
+    },
+    {
+      "id": "en_10",
+      "kind": "english",
+      "file": "en_10.json",
+      "status": 200,
+      "total": 0,
+      "list_length": 0
+    },
+    {
+      "id": "mix_01",
+      "kind": "mixed",
+      "file": "mix_01.json",
+      "status": 200,
+      "total": 2,
+      "list_length": 2
+    },
+    {
+      "id": "mix_02",
+      "kind": "mixed",
+      "file": "mix_02.json",
+      "status": 200,
+      "total": 3,
+      "list_length": 3
+    },
+    {
+      "id": "mix_03",
+      "kind": "mixed",
+      "file": "mix_03.json",
+      "status": 200,
+      "total": 2,
+      "list_length": 2
+    },
+    {
+      "id": "mix_04",
+      "kind": "mixed",
+      "file": "mix_04.json",
+      "status": 200,
+      "total": 1,
+      "list_length": 1
+    },
+    {
+      "id": "mix_05",
+      "kind": "mixed",
+      "file": "mix_05.json",
+      "status": 200,
+      "total": 3,
+      "list_length": 3
+    },
+    {
+      "id": "mix_06",
+      "kind": "mixed",
+      "file": "mix_06.json",
+      "status": 200,
+      "total": 1,
+      "list_length": 1
+    },
+    {
+      "id": "mix_07",
+      "kind": "mixed",
+      "file": "mix_07.json",
+      "status": 200,
+      "total": 1,
+      "list_length": 1
+    },
+    {
+      "id": "mix_08",
+      "kind": "mixed",
+      "file": "mix_08.json",
+      "status": 200,
+      "total": 3,
+      "list_length": 3
+    },
+    {
+      "id": "mix_09",
+      "kind": "mixed",
+      "file": "mix_09.json",
+      "status": 200,
+      "total": 1,
+      "list_length": 1
+    },
+    {
+      "id": "mix_10",
+      "kind": "mixed",
+      "file": "mix_10.json",
+      "status": 200,
+      "total": 3,
+      "list_length": 3
+    },
+    {
+      "id": "special_01",
+      "kind": "special",
+      "file": "special_01.json",
+      "status": 500,
+      "total": null,
+      "list_length": 0
+    },
+    {
+      "id": "special_02",
+      "kind": "special",
+      "file": "special_02.json",
+      "status": 200,
+      "total": 2,
+      "list_length": 2
+    },
+    {
+      "id": "special_03",
+      "kind": "special",
+      "file": "special_03.json",
+      "status": 200,
+      "total": 6,
+      "list_length": 6
+    },
+    {
+      "id": "special_04",
+      "kind": "special",
+      "file": "special_04.json",
+      "status": 200,
+      "total": 2,
+      "list_length": 2
+    },
+    {
+      "id": "special_05",
+      "kind": "special",
+      "file": "special_05.json",
+      "status": 200,
+      "total": 4,
+      "list_length": 4
+    },
+    {
+      "id": "edge_empty",
+      "kind": "edge",
+      "file": "edge_empty.json",
+      "status": 400,
+      "total": null,
+      "list_length": 0
+    },
+    {
+      "id": "edge_long",
+      "kind": "edge",
+      "file": "edge_long.json",
+      "status": 200,
+      "total": 0,
+      "list_length": 0
+    },
+    {
+      "id": "page_01",
+      "kind": "pagination",
+      "file": "page_01.json",
+      "status": 200,
+      "total": 3,
+      "list_length": 1
+    },
+    {
+      "id": "page_02",
+      "kind": "pagination",
+      "file": "page_02.json",
+      "status": 200,
+      "total": 3,
+      "list_length": 1
+    },
+    {
+      "id": "page_last",
+      "kind": "pagination",
+      "file": "page_last.json",
+      "status": 200,
+      "total": 3,
+      "list_length": 0
+    },
+    {
+      "id": "page_overflow",
+      "kind": "pagination",
+      "file": "page_overflow.json",
+      "status": 200,
+      "total": 3,
+      "list_length": 0
+    },
+    {
+      "id": "page_size_zero",
+      "kind": "pagination",
+      "file": "page_size_zero.json",
+      "status": 200,
+      "total": 3,
+      "list_length": 0
+    },
+    {
+      "id": "page_invalid",
+      "kind": "pagination",
+      "file": "page_invalid.json",
+      "status": 200,
+      "total": 3,
+      "list_length": 0
+    },
+    {
+      "id": "special_06",
+      "kind": "special",
+      "file": "special_06.json",
+      "status": 200,
+      "total": 1,
+      "list_length": 1
+    }
+  ]
+}

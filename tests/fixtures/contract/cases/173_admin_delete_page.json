@@ -1,0 +1,21 @@
+{
+  "name": "admin_delete_page",
+  "request": {
+    "method": "DELETE",
+    "path": "/api/admin/pages/_id/100",
+    "headers": {
+      "Authorization": "Bearer <admin>",
+      "X-Forwarded-For": "203.0.113.10"
+    }
+  },
+  "response": {
+    "status": 200,
+    "headers": {
+      "connection": "close",
+      "content-type": "application/json; charset=utf-8"
+    },
+    "json": {
+      "message": "Page deleted"
+    }
+  }
+}

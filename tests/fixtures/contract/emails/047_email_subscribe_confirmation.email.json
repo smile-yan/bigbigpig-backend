@@ -1,0 +1,8 @@
+{
+  "to": [
+    "newsub@example.com"
+  ],
+  "from": "capture@example.com",
+  "subject": "欢迎订阅 Smileyan 博客",
+  "body": "<html><body><h2>感谢您的订阅！</h2><p>您将收到新文章发布通知。</p><p><a href='https://smileyan.cn/unsubscribe?token=<token>&email=newsub@example.com'>退订</a></p></body></html>"
+}

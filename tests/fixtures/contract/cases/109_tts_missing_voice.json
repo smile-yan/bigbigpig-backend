@@ -1,0 +1,26 @@
+{
+  "name": "tts_missing_voice",
+  "request": {
+    "method": "POST",
+    "path": "/v1/audio/speech",
+    "headers": {
+      "Authorization": "Bearer <reader>",
+      "Content-Type": "application/json",
+      "X-Forwarded-For": "203.0.113.10"
+    },
+    "json": {
+      "model": "tts-capture",
+      "input": "no voice"
+    }
+  },
+  "response": {
+    "status": 400,
+    "headers": {
+      "connection": "close",
+      "content-type": "application/json; charset=utf-8"
+    },
+    "json": {
+      "error": "voice must be a string or an object with 'id' field"
+    }
+  }
+}

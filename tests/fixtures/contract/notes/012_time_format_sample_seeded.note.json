@@ -1,0 +1,5 @@
+{
+  "created_at": "2026-10-01T10:00:00+08:00",
+  "offset": "+08:00",
+  "rule": "Go RFC3339Nano: trailing-zero-trimmed fraction, omitted when zero (DATETIME(3) => 0-3 digits)"
+}

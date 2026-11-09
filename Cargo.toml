@@ -1,0 +1,95 @@
+[package]
+name = "smileyan-backend"
+version = "0.1.0"
+edition = "2024"
+rust-version = "1.96"
+description = "Rust rewrite of the Smileyan Blog backend"
+publish = false
+
+[dependencies]
+axum = { version = "0.8.9", features = ["json", "multipart", "http1", "tokio"] }
+tokio = { version = "1.54", features = ["rt-multi-thread", "macros", "signal", "time", "sync", "fs"] }
+tower = { version = "0.5", features = ["util"] }
+tower-http = { version = "0.6", features = [
+    "cors",
+    "fs",
+    "trace",
+    "limit",
+    "normalize-path",
+    "catch-panic",
+    "timeout",
+] }
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+# `mysql-rsa` is required for MySQL 8's caching_sha2_password over plain TCP
+# (the production database does not use TLS).
+sqlx = { version = "0.9", default-features = false, features = [
+    "runtime-tokio",
+    "mysql",
+    "mysql-rsa",
+    "chrono",
+    "migrate",
+    "macros",
+] }
+redis = { version = "1.8", features = ["tokio-comp", "connection-manager"] }
+jsonwebtoken = { version = "11", default-features = false, features = ["rust_crypto"] }
+lettre = { version = "0.11", default-features = false, features = [
+    "tokio1",
+    "tokio1-rustls",
+    "ring",
+    "webpki-roots",
+    "smtp-transport",
+    "builder",
+    "pool",
+] }
+# Default features pull in the CLI and syntect highlighting, which this
+# service never uses (and which drags in the unmaintained bincode/yaml-rust).
+comrak = { version = "0.59", default-features = false }
+tantivy = "0.27"
+tantivy-jieba = "0.21"
+# `rustls-no-provider` + a direct ring-backed rustls keeps aws-lc-rs (C build)
+# out of the dependency graph, which is required for the musl static build.
+reqwest = { version = "0.13", default-features = false, features = [
+    "rustls-no-provider",
+    "json",
+    "stream",
+    "http2",
+] }
+rustls = { version = "0.23", default-features = false, features = ["ring", "logging", "std", "tls12"] }
+config = { version = "0.15", default-features = false, features = ["yaml"] }
+dotenvy = "0.15"
+tracing = "0.1"
+tracing-subscriber = { version = "0.3", features = ["env-filter", "json", "fmt", "chrono"] }
+# Kept per plan §2.6; the file writer is custom (src/logging.rs) so it can roll
+# over on local dates with Go's `logs/YYYY-MM-DD.log` names.
+tracing-appender = "0.2"
+thiserror = "2"
+anyhow = "1"
+validator = { version = "0.21", features = ["derive"] }
+rand = "0.10"
+regex = "1"
+chrono = { version = "0.4", features = ["serde"] }
+futures = "0.3"
+bytes = "1"
+http = "1"
+hex = "0.4"
+url = "2"
+async-trait = "0.1.92"
+chrono-tz = "0.10.4"
+
+[dev-dependencies]
+# testcontainers-modules 0.15 requires testcontainers 0.27; pin both together.
+testcontainers = "0.27"
+testcontainers-modules = { version = "0.15", features = ["mysql", "redis"] }
+wiremock = "0.6"
+insta = { version = "1.49", features = ["json"] }
+http-body-util = "0.1"
+base64 = "0.22"
+# Cross-process lock so parallel test binaries do not start a dozen MySQL/Redis
+# containers at once (see tests/common/mod.rs).
+fs4 = "0.13"
+
+[profile.release]
+lto = "thin"
+codegen-units = 1
+strip = "symbols"

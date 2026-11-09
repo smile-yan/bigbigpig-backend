@@ -1,0 +1,29 @@
+{
+  "name": "admin_create_tag",
+  "request": {
+    "method": "POST",
+    "path": "/api/admin/tags",
+    "headers": {
+      "Authorization": "Bearer <admin>",
+      "Content-Type": "application/json",
+      "X-Forwarded-For": "203.0.113.10"
+    },
+    "json": {
+      "name": "契约标签"
+    }
+  },
+  "response": {
+    "status": 201,
+    "headers": {
+      "connection": "close",
+      "content-type": "application/json; charset=utf-8"
+    },
+    "json": {
+      "id": 100,
+      "created_at": "<timestamp>",
+      "updated_at": "<timestamp>",
+      "name": "契约标签",
+      "slug": "契约标签"
+    }
+  }
+}

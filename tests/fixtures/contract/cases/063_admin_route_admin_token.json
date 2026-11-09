@@ -1,0 +1,377 @@
+{
+  "name": "admin_route_admin_token",
+  "request": {
+    "method": "GET",
+    "path": "/api/admin/posts",
+    "headers": {
+      "Authorization": "Bearer <admin>",
+      "X-Forwarded-For": "203.0.113.10"
+    }
+  },
+  "response": {
+    "status": 200,
+    "headers": {
+      "connection": "close",
+      "content-type": "application/json; charset=utf-8",
+      "transfer-encoding": "chunked"
+    },
+    "json": {
+      "list": [
+        {
+          "id": 9,
+          "created_at": "<timestamp>",
+          "updated_at": "<timestamp>",
+          "title": "Published But IsDeleted",
+          "slug": "published-but-is-deleted",
+          "content": "# Published But IsDeleted\n\npublished-is-deleted leak keyword zzqpubdel。\n",
+          "html_content": "<h1 class=\"article-h1\">Published But IsDeleted</h1>",
+          "excerpt": "",
+          "cover_image": "",
+          "status": "published",
+          "view_count": 9,
+          "is_deleted": true,
+          "category_id": 1,
+          "category": {
+            "id": 1,
+            "created_at": "<timestamp>",
+            "updated_at": "<timestamp>",
+            "name": "技术",
+            "slug": "tech",
+            "description": "技术类文章",
+            "sort": 1
+          },
+          "tags": [
+            {
+              "id": 1,
+              "created_at": "<timestamp>",
+              "updated_at": "<timestamp>",
+              "name": "Go",
+              "slug": "go"
+            }
+          ],
+          "author_id": 1,
+          "author": {
+            "id": 0,
+            "created_at": "<timestamp>",
+            "updated_at": "<timestamp>",
+            "email": "",
+            "nickname": "",
+            "avatar": "",
+            "role": "",
+            "status": ""
+          }
+        },
+        {
+          "id": 4,
+          "created_at": "<timestamp>",
+          "updated_at": "<timestamp>",
+          "title": "Deleted Post 已删除",
+          "slug": "deletedpost",
+          "content": "# Deleted Post 已删除\n\ndeleted secret keyword zzqdeleted。\n",
+          "html_content": "<h1 class=\"article-h1\">Deleted Post 已删除</h1>",
+          "excerpt": "",
+          "cover_image": "",
+          "status": "hidden",
+          "view_count": 7,
+          "is_deleted": true,
+          "category_id": 1,
+          "category": {
+            "id": 1,
+            "created_at": "<timestamp>",
+            "updated_at": "<timestamp>",
+            "name": "技术",
+            "slug": "tech",
+            "description": "技术类文章",
+            "sort": 1
+          },
+          "tags": [
+            {
+              "id": 1,
+              "created_at": "<timestamp>",
+              "updated_at": "<timestamp>",
+              "name": "Go",
+              "slug": "go"
+            }
+          ],
+          "author_id": 1,
+          "author": {
+            "id": 0,
+            "created_at": "<timestamp>",
+            "updated_at": "<timestamp>",
+            "email": "",
+            "nickname": "",
+            "avatar": "",
+            "role": "",
+            "status": ""
+          }
+        },
+        {
+          "id": 3,
+          "created_at": "<timestamp>",
+          "updated_at": "<timestamp>",
+          "title": "Hidden Post 隐藏",
+          "slug": "hidden-post",
+          "content": "# Hidden Post 隐藏\n\nhidden secret keyword zzqhidden。\n",
+          "html_content": "<h1 class=\"article-h1\">Hidden Post 隐藏</h1>",
+          "excerpt": "",
+          "cover_image": "",
+          "status": "hidden",
+          "view_count": 5,
+          "is_deleted": false,
+          "category_id": 2,
+          "category": {
+            "id": 2,
+            "created_at": "<timestamp>",
+            "updated_at": "<timestamp>",
+            "name": "生活",
+            "slug": "life",
+            "description": "生活随笔",
+            "sort": 2
+          },
+          "tags": [
+            {
+              "id": 2,
+              "created_at": "<timestamp>",
+              "updated_at": "<timestamp>",
+              "name": "Rust",
+              "slug": "rust"
+            }
+          ],
+          "author_id": 2,
+          "author": {
+            "id": 0,
+            "created_at": "<timestamp>",
+            "updated_at": "<timestamp>",
+            "email": "",
+            "nickname": "",
+            "avatar": "",
+            "role": "",
+            "status": ""
+          }
+        },
+        {
+          "id": 2,
+          "created_at": "<timestamp>",
+          "updated_at": "<timestamp>",
+          "title": "Draft Post 草稿",
+          "slug": "draft-post",
+          "content": "# Draft Post 草稿\n\n这篇草稿不应出现在公开搜索中。draft secret keyword zzqdraft。\n",
+          "html_content": "<h1 class=\"article-h1\">Draft Post 草稿</h1>",
+          "excerpt": "草稿摘要",
+          "cover_image": "",
+          "status": "draft",
+          "view_count": 0,
+          "is_deleted": false,
+          "category_id": 1,
+          "category": {
+            "id": 1,
+            "created_at": "<timestamp>",
+            "updated_at": "<timestamp>",
+            "name": "技术",
+            "slug": "tech",
+            "description": "技术类文章",
+            "sort": 1
+          },
+          "tags": [
+            {
+              "id": 1,
+              "created_at": "<timestamp>",
+              "updated_at": "<timestamp>",
+              "name": "Go",
+              "slug": "go"
+            }
+          ],
+          "author_id": 1,
+          "author": {
+            "id": 0,
+            "created_at": "<timestamp>",
+            "updated_at": "<timestamp>",
+            "email": "",
+            "nickname": "",
+            "avatar": "",
+            "role": "",
+            "status": ""
+          }
+        },
+        {
+          "id": 7,
+          "created_at": "<timestamp>",
+          "updated_at": "<timestamp>",
+          "title": "长文摘要边界",
+          "slug": "published-long",
+          "content": "# 长文摘要边界\n\n长文摘要测试长文摘要测试长文摘要测试长文摘要测试长文摘要测试长文摘要测试长文摘要测试长文摘要测试长文摘要测试长文摘要测试长文摘要测试长文摘要测试长文摘要测试长文摘要测试长文摘要测试长文摘要测试长文摘要测试长文摘要测试长文摘要测试长文摘要测试长文摘要测试长文摘要测试长文摘要测试长文摘要测试长文摘要测试长文摘要测试长文摘要测试长文摘要测试长文摘要测试长文摘要测试长文摘要测试长文摘要测试长文摘要测试长文摘要测试长文摘要测试长文摘要测试长文摘要测试长文摘要测试长文摘要测试长文摘要测试\n",
+          "html_content": "<h1 class=\"article-h1\">长文摘要边界</h1>",
+          "excerpt": "",
+          "cover_image": "",
+          "status": "published",
+          "view_count": 2,
+          "is_deleted": false,
+          "category_id": 1,
+          "category": {
+            "id": 1,
+            "created_at": "<timestamp>",
+            "updated_at": "<timestamp>",
+            "name": "技术",
+            "slug": "tech",
+            "description": "技术类文章",
+            "sort": 1
+          },
+          "tags": [
+            {
+              "id": 1,
+              "created_at": "<timestamp>",
+              "updated_at": "<timestamp>",
+              "name": "Go",
+              "slug": "go"
+            }
+          ],
+          "author_id": 1,
+          "author": {
+            "id": 0,
+            "created_at": "<timestamp>",
+            "updated_at": "<timestamp>",
+            "email": "",
+            "nickname": "",
+            "avatar": "",
+            "role": "",
+            "status": ""
+          }
+        },
+        {
+          "id": 6,
+          "created_at": "<timestamp>",
+          "updated_at": "<timestamp>",
+          "title": "无分类文章",
+          "slug": "published-no-category",
+          "content": "# 无分类文章\n\nGo MySQL Redis Bleve 全文搜索。\n",
+          "html_content": "<h1 class=\"article-h1\">无分类文章</h1>",
+          "excerpt": "固定摘要",
+          "cover_image": "https://example.com/cover.png",
+          "status": "published",
+          "view_count": 11,
+          "is_deleted": false,
+          "category_id": null,
+          "category": {
+            "id": 0,
+            "created_at": "<timestamp>",
+            "updated_at": "<timestamp>",
+            "name": "",
+            "slug": "",
+            "description": "",
+            "sort": 0
+          },
+          "tags": [],
+          "author_id": 2,
+          "author": {
+            "id": 0,
+            "created_at": "<timestamp>",
+            "updated_at": "<timestamp>",
+            "email": "",
+            "nickname": "",
+            "avatar": "",
+            "role": "",
+            "status": ""
+          }
+        },
+        {
+          "id": 1,
+          "created_at": "<timestamp>",
+          "updated_at": "<timestamp>",
+          "title": "Published Post 已发布",
+          "slug": "published-post",
+          "content": "# Published Post 已发布\n\n这是 Go 与 Rust 的契约测试文章，覆盖全文搜索、数据库与云原生。\n\n## 代码示例\n\n```go\nfmt.Println(\"hello\")\n```\n",
+          "html_content": "<h1 class=\"article-h1\">Published Post 已发布</h1>\n<p class=\"article-p\">这是 Go 与 Rust 的契约测试文章，覆盖全文搜索、数据库与云原生。</p>",
+          "excerpt": "",
+          "cover_image": "",
+          "status": "published",
+          "view_count": 11,
+          "is_deleted": false,
+          "category_id": 1,
+          "category": {
+            "id": 1,
+            "created_at": "<timestamp>",
+            "updated_at": "<timestamp>",
+            "name": "技术",
+            "slug": "tech",
+            "description": "技术类文章",
+            "sort": 1
+          },
+          "tags": [
+            {
+              "id": 1,
+              "created_at": "<timestamp>",
+              "updated_at": "<timestamp>",
+              "name": "Go",
+              "slug": "go"
+            },
+            {
+              "id": 2,
+              "created_at": "<timestamp>",
+              "updated_at": "<timestamp>",
+              "name": "Rust",
+              "slug": "rust"
+            }
+          ],
+          "author_id": 1,
+          "author": {
+            "id": 0,
+            "created_at": "<timestamp>",
+            "updated_at": "<timestamp>",
+            "email": "",
+            "nickname": "",
+            "avatar": "",
+            "role": "",
+            "status": ""
+          }
+        },
+        {
+          "id": 8,
+          "created_at": "<timestamp>",
+          "updated_at": "<timestamp>",
+          "title": "September Archive",
+          "slug": "published-september",
+          "content": "# September Archive\n\nSeptember archive post about Linux, Docker, Nginx.\n",
+          "html_content": "<h1 class=\"article-h1\">September Archive</h1>",
+          "excerpt": "",
+          "cover_image": "",
+          "status": "published",
+          "view_count": 4,
+          "is_deleted": false,
+          "category_id": 2,
+          "category": {
+            "id": 2,
+            "created_at": "<timestamp>",
+            "updated_at": "<timestamp>",
+            "name": "生活",
+            "slug": "life",
+            "description": "生活随笔",
+            "sort": 2
+          },
+          "tags": [
+            {
+              "id": 2,
+              "created_at": "<timestamp>",
+              "updated_at": "<timestamp>",
+              "name": "Rust",
+              "slug": "rust"
+            }
+          ],
+          "author_id": 1,
+          "author": {
+            "id": 0,
+            "created_at": "<timestamp>",
+            "updated_at": "<timestamp>",
+            "email": "",
+            "nickname": "",
+            "avatar": "",
+            "role": "",
+            "status": ""
+          }
+        }
+      ],
+      "page": 1,
+      "page_size": 20,
+      "total": 8
+    }
+  }
+}

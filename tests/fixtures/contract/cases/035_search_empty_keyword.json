@@ -1,0 +1,20 @@
+{
+  "name": "search_empty_keyword",
+  "request": {
+    "method": "GET",
+    "path": "/api/search?keyword=",
+    "headers": {
+      "X-Forwarded-For": "203.0.113.10"
+    }
+  },
+  "response": {
+    "status": 400,
+    "headers": {
+      "connection": "close",
+      "content-type": "application/json; charset=utf-8"
+    },
+    "json": {
+      "error": "Keyword is required"
+    }
+  }
+}

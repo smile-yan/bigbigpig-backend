@@ -1,0 +1,57 @@
+{
+  "name": "search_plus_operator",
+  "request": {
+    "method": "GET",
+    "path": "/api/search?keyword=%2BGo",
+    "headers": {
+      "X-Forwarded-For": "203.0.113.10"
+    }
+  },
+  "response": {
+    "status": 200,
+    "headers": {
+      "connection": "close",
+      "content-type": "application/json; charset=utf-8"
+    },
+    "json": {
+      "list": [
+        {
+          "category": {
+            "id": 1,
+            "name": "技术"
+          },
+          "cover_image": "",
+          "created_at": "<timestamp>",
+          "excerpt": "# Published Post 已发布\n\n这是 Go 与 Rust 的契约测试文章，覆盖全文搜索、数据库与云原生。\n\n## 代码示例\n\n```go\nfmt.Println(\"hello\")\n```\n",
+          "id": 1,
+          "slug": "published-post",
+          "status": "published",
+          "tags": [
+            {
+              "id": 1,
+              "name": "Go"
+            },
+            {
+              "id": 2,
+              "name": "Rust"
+            }
+          ],
+          "title": "Published Post 已发布",
+          "view_count": 11
+        },
+        {
+          "cover_image": "https://example.com/cover.png",
+          "created_at": "<timestamp>",
+          "excerpt": "固定摘要",
+          "id": 6,
+          "slug": "published-no-category",
+          "status": "published",
+          "title": "无分类文章",
+          "view_count": 11
+        }
+      ],
+      "page": 1,
+      "total": 2
+    }
+  }
+}

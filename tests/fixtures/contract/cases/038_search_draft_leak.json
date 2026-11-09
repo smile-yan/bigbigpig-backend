@@ -1,0 +1,43 @@
+{
+  "name": "search_draft_leak",
+  "request": {
+    "method": "GET",
+    "path": "/api/search?keyword=zzqdraft",
+    "headers": {
+      "X-Forwarded-For": "203.0.113.10"
+    }
+  },
+  "response": {
+    "status": 200,
+    "headers": {
+      "connection": "close",
+      "content-type": "application/json; charset=utf-8"
+    },
+    "json": {
+      "list": [
+        {
+          "category": {
+            "id": 1,
+            "name": "技术"
+          },
+          "cover_image": "",
+          "created_at": "<timestamp>",
+          "excerpt": "草稿摘要",
+          "id": 2,
+          "slug": "draft-post",
+          "status": "draft",
+          "tags": [
+            {
+              "id": 1,
+              "name": "Go"
+            }
+          ],
+          "title": "Draft Post 草稿",
+          "view_count": 0
+        }
+      ],
+      "page": 1,
+      "total": 1
+    }
+  }
+}

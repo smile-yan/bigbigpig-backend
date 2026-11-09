@@ -1,0 +1,113 @@
+{
+  "name": "admin_posts_hidden",
+  "request": {
+    "method": "GET",
+    "path": "/api/admin/posts?status=hidden",
+    "headers": {
+      "Authorization": "Bearer <admin>",
+      "X-Forwarded-For": "203.0.113.10"
+    }
+  },
+  "response": {
+    "status": 200,
+    "headers": {
+      "connection": "close",
+      "content-type": "application/json; charset=utf-8"
+    },
+    "json": {
+      "list": [
+        {
+          "id": 4,
+          "created_at": "<timestamp>",
+          "updated_at": "<timestamp>",
+          "title": "Deleted Post 已删除",
+          "slug": "deletedpost",
+          "content": "# Deleted Post 已删除\n\ndeleted secret keyword zzqdeleted。\n",
+          "html_content": "<h1 class=\"article-h1\">Deleted Post 已删除</h1>",
+          "excerpt": "",
+          "cover_image": "",
+          "status": "hidden",
+          "view_count": 7,
+          "is_deleted": true,
+          "category_id": 1,
+          "category": {
+            "id": 1,
+            "created_at": "<timestamp>",
+            "updated_at": "<timestamp>",
+            "name": "技术",
+            "slug": "tech",
+            "description": "技术类文章",
+            "sort": 1
+          },
+          "tags": [
+            {
+              "id": 1,
+              "created_at": "<timestamp>",
+              "updated_at": "<timestamp>",
+              "name": "Go",
+              "slug": "go"
+            }
+          ],
+          "author_id": 1,
+          "author": {
+            "id": 0,
+            "created_at": "<timestamp>",
+            "updated_at": "<timestamp>",
+            "email": "",
+            "nickname": "",
+            "avatar": "",
+            "role": "",
+            "status": ""
+          }
+        },
+        {
+          "id": 3,
+          "created_at": "<timestamp>",
+          "updated_at": "<timestamp>",
+          "title": "Hidden Post 隐藏",
+          "slug": "hidden-post",
+          "content": "# Hidden Post 隐藏\n\nhidden secret keyword zzqhidden。\n",
+          "html_content": "<h1 class=\"article-h1\">Hidden Post 隐藏</h1>",
+          "excerpt": "",
+          "cover_image": "",
+          "status": "hidden",
+          "view_count": 5,
+          "is_deleted": false,
+          "category_id": 2,
+          "category": {
+            "id": 2,
+            "created_at": "<timestamp>",
+            "updated_at": "<timestamp>",
+            "name": "生活",
+            "slug": "life",
+            "description": "生活随笔",
+            "sort": 2
+          },
+          "tags": [
+            {
+              "id": 2,
+              "created_at": "<timestamp>",
+              "updated_at": "<timestamp>",
+              "name": "Rust",
+              "slug": "rust"
+            }
+          ],
+          "author_id": 2,
+          "author": {
+            "id": 0,
+            "created_at": "<timestamp>",
+            "updated_at": "<timestamp>",
+            "email": "",
+            "nickname": "",
+            "avatar": "",
+            "role": "",
+            "status": ""
+          }
+        }
+      ],
+      "page": 1,
+      "page_size": 20,
+      "total": 2
+    }
+  }
+}

@@ -1,0 +1,22 @@
+{
+  "name": "search_soft_deleted_at",
+  "request": {
+    "method": "GET",
+    "path": "/api/search?keyword=zzqsoft",
+    "headers": {
+      "X-Forwarded-For": "203.0.113.10"
+    }
+  },
+  "response": {
+    "status": 200,
+    "headers": {
+      "connection": "close",
+      "content-type": "application/json; charset=utf-8"
+    },
+    "json": {
+      "list": null,
+      "page": 1,
+      "total": 0
+    }
+  }
+}

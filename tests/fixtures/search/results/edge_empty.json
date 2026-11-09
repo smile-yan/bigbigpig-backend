@@ -1,0 +1,14 @@
+{
+  "id": "edge_empty",
+  "kind": "edge",
+  "keyword": "",
+  "page": 1,
+  "page_size": 10,
+  "status": 400,
+  "total": null,
+  "list_length": 0,
+  "slugs": [],
+  "body": {
+    "error": "Keyword is required"
+  }
+}

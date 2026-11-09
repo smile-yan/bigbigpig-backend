@@ -1,0 +1,24 @@
+{
+  "name": "tts_invalid_json",
+  "request": {
+    "method": "POST",
+    "path": "/v1/audio/speech",
+    "headers": {
+      "Authorization": "Bearer <reader>",
+      "Content-Type": "application/json",
+      "X-Forwarded-For": "203.0.113.10"
+    },
+    "body_bytes": 9,
+    "body_sha256": "7b50f06a23ab8db3930367be538bc3f57d4bde008206b25488a7b2766d0a589c"
+  },
+  "response": {
+    "status": 400,
+    "headers": {
+      "connection": "close",
+      "content-type": "application/json; charset=utf-8"
+    },
+    "json": {
+      "error": "Invalid request body"
+    }
+  }
+}

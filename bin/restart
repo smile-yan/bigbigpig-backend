@@ -1,0 +1,10 @@
+#!/bin/bash
+# Local development restart.
+
+set -u
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+
+echo "Restarting Smileyan Backend..."
+"$SCRIPT_DIR/stop"
+sleep 1
+"$SCRIPT_DIR/start"

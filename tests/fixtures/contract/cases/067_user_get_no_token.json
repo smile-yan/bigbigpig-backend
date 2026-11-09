@@ -1,0 +1,20 @@
+{
+  "name": "user_get_no_token",
+  "request": {
+    "method": "GET",
+    "path": "/api/user",
+    "headers": {
+      "X-Forwarded-For": "203.0.113.10"
+    }
+  },
+  "response": {
+    "status": 401,
+    "headers": {
+      "connection": "close",
+      "content-type": "application/json; charset=utf-8"
+    },
+    "json": {
+      "error": "Authorization header is required"
+    }
+  }
+}

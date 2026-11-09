@@ -1,0 +1,23 @@
+{
+  "name": "admin_update_user_role_bad_body",
+  "request": {
+    "method": "PUT",
+    "path": "/api/admin/users/2/role",
+    "headers": {
+      "Authorization": "Bearer <admin>",
+      "Content-Type": "application/json",
+      "X-Forwarded-For": "203.0.113.10"
+    },
+    "json": {}
+  },
+  "response": {
+    "status": 400,
+    "headers": {
+      "connection": "close",
+      "content-type": "application/json; charset=utf-8"
+    },
+    "json": {
+      "error": "Invalid request"
+    }
+  }
+}

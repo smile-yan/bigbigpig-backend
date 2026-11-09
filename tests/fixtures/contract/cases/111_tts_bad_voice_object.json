@@ -1,0 +1,30 @@
+{
+  "name": "tts_bad_voice_object",
+  "request": {
+    "method": "POST",
+    "path": "/v1/audio/speech",
+    "headers": {
+      "Authorization": "Bearer <reader>",
+      "Content-Type": "application/json",
+      "X-Forwarded-For": "203.0.113.10"
+    },
+    "json": {
+      "model": "tts-capture",
+      "input": "你好，契约测试",
+      "voice": {
+        "foo": "bar"
+      },
+      "response_format": "mp3"
+    }
+  },
+  "response": {
+    "status": 400,
+    "headers": {
+      "connection": "close",
+      "content-type": "application/json; charset=utf-8"
+    },
+    "json": {
+      "error": "voice object must have a string 'id' field"
+    }
+  }
+}

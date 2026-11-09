@@ -1,0 +1,20 @@
+{
+  "name": "get_uploaded_avatar",
+  "request": {
+    "method": "GET",
+    "path": "/uploads/avatars/2_capture-avatar.png",
+    "headers": {
+      "X-Forwarded-For": "203.0.113.10"
+    }
+  },
+  "response": {
+    "status": 200,
+    "headers": {
+      "connection": "close",
+      "content-type": "image/png"
+    },
+    "body_base64": "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==",
+    "body_sha256": "6b7fa434f92a8b80aab02d9bf1a12e49ffcae424e4013a1c4f68b67e3d2bbcd0",
+    "body_bytes": 70
+  }
+}

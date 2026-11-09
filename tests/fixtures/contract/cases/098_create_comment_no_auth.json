@@ -1,0 +1,25 @@
+{
+  "name": "create_comment_no_auth",
+  "request": {
+    "method": "POST",
+    "path": "/api/comments",
+    "headers": {
+      "Content-Type": "application/json",
+      "X-Forwarded-For": "203.0.113.10"
+    },
+    "json": {
+      "post_id": 1,
+      "content": "no auth"
+    }
+  },
+  "response": {
+    "status": 401,
+    "headers": {
+      "connection": "close",
+      "content-type": "application/json; charset=utf-8"
+    },
+    "json": {
+      "error": "Authorization header is required"
+    }
+  }
+}

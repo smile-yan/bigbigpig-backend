@@ -1,0 +1,26 @@
+{
+  "name": "upload_avatar_no_file",
+  "request": {
+    "method": "POST",
+    "path": "/api/upload-avatar",
+    "headers": {
+      "Authorization": "Bearer <reader>",
+      "Content-Type": "multipart/form-data; boundary=----smileyan-capture-boundary",
+      "X-Forwarded-For": "203.0.113.10"
+    },
+    "multipart": {
+      "field": "avatar",
+      "file": false
+    }
+  },
+  "response": {
+    "status": 400,
+    "headers": {
+      "connection": "close",
+      "content-type": "application/json; charset=utf-8"
+    },
+    "json": {
+      "error": "No file uploaded"
+    }
+  }
+}

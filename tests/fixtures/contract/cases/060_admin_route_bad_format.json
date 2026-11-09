@@ -1,0 +1,21 @@
+{
+  "name": "admin_route_bad_format",
+  "request": {
+    "method": "GET",
+    "path": "/api/admin/posts",
+    "headers": {
+      "Authorization": "Token abc",
+      "X-Forwarded-For": "203.0.113.10"
+    }
+  },
+  "response": {
+    "status": 401,
+    "headers": {
+      "connection": "close",
+      "content-type": "application/json; charset=utf-8"
+    },
+    "json": {
+      "error": "Invalid authorization header format"
+    }
+  }
+}

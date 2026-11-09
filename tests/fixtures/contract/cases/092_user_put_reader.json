@@ -1,0 +1,29 @@
+{
+  "name": "user_put_reader",
+  "request": {
+    "method": "PUT",
+    "path": "/api/user",
+    "headers": {
+      "Authorization": "Bearer <reader>",
+      "Content-Type": "application/json",
+      "X-Forwarded-For": "203.0.113.10"
+    },
+    "json": {
+      "nickname": "Reader Renamed"
+    }
+  },
+  "response": {
+    "status": 200,
+    "headers": {
+      "connection": "close",
+      "content-type": "application/json; charset=utf-8"
+    },
+    "json": {
+      "avatar": "/uploads/avatars/2_seed.png",
+      "email": "reader@example.com",
+      "id": 2,
+      "nickname": "Reader Renamed",
+      "role": "reader"
+    }
+  }
+}

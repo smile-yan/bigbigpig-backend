@@ -1,0 +1,51 @@
+#!/bin/bash
+# Local development stop: PID file first, then the configured port only.
+# Never `pkill -f smileyan-backend` (a staging instance may share the host).
+
+set -u
+
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+PROJECT_DIR="$(dirname "$SCRIPT_DIR")"
+cd "$PROJECT_DIR" || exit 1
+
+PORT="$(awk '
+  /^server:[[:space:]]*$/ { s = 1; next }
+  s && /^[[:space:]]+port:/ { print $2; exit }
+  s && /^[^[:space:]#]/ { exit }
+' config.yaml 2>/dev/null)"
+PORT="${PORT:-8080}"
+
+if [ -f logs/app.pid ]; then
+  PID="$(cat logs/app.pid 2>/dev/null || true)"
+  PID_ARGS="$(ps -p "${PID:-0}" -o args= 2>/dev/null || true)"
+  if [ -n "$PID" ] && kill -0 "$PID" 2>/dev/null \
+    && echo "$PID_ARGS" | grep -q 'smileyan-backend'; then
+    echo "Stopping smileyan-backend (pid $PID)..."
+    kill "$PID" 2>/dev/null || true
+    for _ in $(seq 1 20); do
+      kill -0 "$PID" 2>/dev/null || break
+      sleep 0.5
+    done
+    if kill -0 "$PID" 2>/dev/null; then
+      kill -9 "$PID" 2>/dev/null || true
+    fi
+    rm -f logs/app.pid
+    echo "Stopped"
+    exit 0
+  fi
+  rm -f logs/app.pid
+fi
+
+if command -v lsof >/dev/null 2>&1; then
+  PIDS="$(lsof -t -iTCP:"$PORT" -sTCP:LISTEN 2>/dev/null || true)"
+  if [ -n "$PIDS" ]; then
+    echo "Stopping listener on port $PORT (pid(s): $PIDS)..."
+    # shellcheck disable=SC2086
+    kill $PIDS 2>/dev/null || true
+    echo "Stopped"
+    exit 0
+  fi
+fi
+
+echo "smileyan-backend is not running"
+exit 0
