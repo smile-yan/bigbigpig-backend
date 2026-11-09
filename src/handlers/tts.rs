@@ -349,6 +349,15 @@ mod tests {
             .to_string()
     }
 
+    /// `reqwest` is built with `rustls-no-provider` (see `Cargo.toml`), so a
+    /// provider must be installed before any client is built. Lib tests share
+    /// one process and run in parallel, so relying on another test having
+    /// installed it first is a race; do it here like `AppState::connect_with`.
+    fn test_client() -> reqwest::Client {
+        let _ = rustls::crypto::ring::default_provider().install_default();
+        reqwest::Client::new()
+    }
+
     #[test]
     fn validation_messages_match_go() {
         let cfg = config();
@@ -510,7 +519,7 @@ mod tests {
         };
 
         let response = proxy_upstream(
-            &reqwest::Client::new(),
+            &test_client(),
             &cfg,
             &prepared,
             Some(Duration::from_secs(2)),
@@ -557,7 +566,7 @@ mod tests {
         };
 
         let response = proxy_upstream(
-            &reqwest::Client::new(),
+            &test_client(),
             &cfg,
             &prepared,
             Some(Duration::from_secs(2)),
@@ -602,7 +611,7 @@ mod tests {
         };
 
         let response = proxy_upstream(
-            &reqwest::Client::new(),
+            &test_client(),
             &cfg,
             &prepared,
             Some(Duration::from_millis(50)),
