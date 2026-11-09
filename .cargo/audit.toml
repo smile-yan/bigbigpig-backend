@@ -1,7 +1,8 @@
 # Security-audit configuration for `cargo audit` (used by CI).
 #
-# The ignored advisories are reachable only through algorithm support this
-# service does not use, and neither has a fixed release as of 2026-11-04:
+# The ignored advisories are either unreachable through the features this
+# service enables, or have no fixed release within our dependency ranges
+# (as of 2026-11-09):
 #
 # - RUSTSEC-2023-0071 (rsa Marvin attack): jsonwebtoken's `rust_crypto`
 #   backend links RSA/ECDSA code, but the service only signs and verifies
@@ -9,5 +10,12 @@
 #   password exchange, while the Marvin attack targets private-key operations.
 # - RUSTSEC-2026-0387 (crypto-bigint timing): pulled in by jsonwebtoken's
 #   ECDSA dependencies (p256/p384), which are never used for HS256.
+# - RUSTSEC-2026-0459 (libsqlite3-sys / SQLite WAL uninitialized memory):
+#   sqlx declares its `sqlite` driver as an optional dependency, so
+#   libsqlite3-sys is present in Cargo.lock even though the `sqlite` feature
+#   is not enabled (`cargo tree -i libsqlite3-sys` prints nothing). The
+#   service uses MySQL only and never compiles or links SQLite. sqlx 0.9.0
+#   constrains the driver to `>=0.30.1, <0.38.0`, so the patched 0.39.x
+#   cannot be selected until sqlx widens that range.
 [advisories]
-ignore = ["RUSTSEC-2023-0071", "RUSTSEC-2026-0387"]
+ignore = ["RUSTSEC-2023-0071", "RUSTSEC-2026-0387", "RUSTSEC-2026-0459"]

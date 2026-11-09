@@ -2,6 +2,8 @@
 #
 # - Advisories: the two ignored entries are unreachable (HS256-only JWT and
 #   RSA public-key password exchange); see .cargo/audit.toml for the details.
+#   `cargo deny` resolves only the features this workspace enables, so it
+#   never sees lockfile-only crates such as the unused sqlx `sqlite` driver.
 # - Licenses: permissive licenses only; GPL/AGPL/SSPL and unknown licenses
 #   fail the check.
 # - Sources: crates.io only; no git or unknown registries.
