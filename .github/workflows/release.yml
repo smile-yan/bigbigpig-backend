@@ -431,8 +431,8 @@ jobs:
 
           if command -v pv >/dev/null 2>&1; then
             # File bytes go over stdin; pv writes percentage/ETA progress to
-            # stderr, which the Actions log captures line by line.
-            pv -f -p -e -r -b -i 0.5 -s "$SIZE_BYTES" "$BUNDLE" | \
+            # stderr every 30s, which the Actions log captures line by line.
+            pv -f -p -e -r -b -i 30 -s "$SIZE_BYTES" "$BUNDLE" | \
               ssh -p "${{ matrix.server.port }}" \
                 -o ServerAliveInterval=30 -o ServerAliveCountMax=10 \
                 "${{ matrix.server.user }}@${{ matrix.server.addr }}" \

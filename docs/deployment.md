@@ -117,7 +117,7 @@ release/deploy-remote.sh      # 服务端部署脚本
   缺省 8080）；deploy job 依赖 `preflight` 与 `release`。
 - deploy job 先把 release tarball 与 `deploy-remote.sh` 合并压缩为
   `smileyan-backend-deploy.tar.gz`，日志打印压缩后大小（MB），再用 `pv`
-  流式上传并输出百分比进度；服务端解包后执行 `deploy-remote.sh`。
+  流式上传并每 30 秒输出一次百分比进度；服务端解包后执行 `deploy-remote.sh`。
 - 部署前检查 9 个应用 Secret + `DEPLOY_SSH_KEY` 非空；TTS 三个 Secret
   可选，空值不会写进 `.env`。
 - 部署后检查日志、进程、`:app_port` 监听、`.prev`/`rollback.sh` 是否存在，
