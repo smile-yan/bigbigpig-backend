@@ -3,15 +3,21 @@ name: Release
 # Triggers on pushes of tags matching vX.Y.Z (e.g. v1.0.0, v2.3.1-rc1).
 # - Preflight: validates SERVERS_CONFIG, then verifies over SSH that every
 #   listed server is reachable and that its deploy_path exists and is
-#   writable. The build job does not start until preflight passes.
+#   writable. It runs in parallel with the build (saving ~20s) but still gates
+#   every deploy job, so an unreachable server no longer delays the artifact.
 # - Builds the static x86_64-unknown-linux-musl binary with cross.
 # - Publishes a GitHub Release containing a three-file prod tarball:
 #   smileyan-backend, deploy-remote.sh and config.yaml (mode: prod).
 # - Auto-generates a changelog from grouped PRs / commits since the previous tag.
 # - For stable (non-prerelease) tags, deploys to every server in the
 #   SERVERS_CONFIG repository variable over SSH, in parallel. The deploy job
-#   bundles the release tarball with deploy-remote.sh, logs the compressed
-#   size in MB, and streams it to the server with a pv progress bar.
+#   extracts the release tarball, stages the currently deployed binary on the
+#   server as an rsync basis, and transfers only the changed blocks. A
+#   byte-identical binary (common for CI-only tags) is skipped entirely, so the
+#   slow GitHub-runner -> China link is no longer the critical path. The small
+#   config.yaml / deploy-remote.sh files are uploaded separately, the SHA256 of
+#   the transferred binary is verified on the server, and the existing
+#   deploy-remote.sh runs unchanged (PID/port-scoped stop/rollback contract).
 #
 # No application secret is needed to build: the Rust binary resolves
 # DB/Redis/email/TTS configuration at runtime. DEPLOY_SSH_KEY is consumed by
@@ -25,6 +31,12 @@ on:
 
 permissions:
   contents: write   # create the GitHub Release and upload the asset
+
+# Serialize releases: two tags must not deploy to the same servers at once,
+# and an in-flight release may be mid-restart, so never cancel it.
+concurrency:
+  group: release
+  cancel-in-progress: false
 
 jobs:
   validate-config:
@@ -182,7 +194,9 @@ jobs:
 
   release:
     name: Build and publish release
-    needs: preflight
+    # Build in parallel with preflight. A broken server entry still blocks its
+    # own deploy job (which needs preflight), but no longer the artifact.
+    needs: validate-config
     runs-on: ubuntu-latest
 
     steps:
@@ -198,6 +212,12 @@ jobs:
           targets: x86_64-unknown-linux-musl
 
       - uses: Swatinem/rust-cache@v2
+        with:
+          # GitHub scopes caches by ref: a tag run cannot restore caches from
+          # main or from another tag, so each release's ~450 MB cache is never
+          # reusable (it only helps re-runs of the exact same tag). Skip both
+          # the ~9s save and the cache-quota churn.
+          save-if: false
 
       - name: Install cross
         # Pinned-language toolchain is used from rust-toolchain.toml. Building
@@ -372,34 +392,20 @@ jobs:
         with:
           fetch-depth: 1
 
-      - name: Download release tarball
+      - name: Download and extract release tarball
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          mkdir -p dist
+          set -euo pipefail
+          mkdir -p dist/release
           gh release download "${{ github.ref_name }}" \
             --pattern "smileyan-backend-prod.tar.gz" \
             --dir dist
-          ls -la dist
-
-      - name: Prepare compressed upload bundle
-        # Upload a single compressed file instead of two: the release tarball
-        # plus the deploy script. The size is logged in MB so an unexpectedly
-        # large bundle is visible before the transfer starts.
-        run: |
-          set -euo pipefail
-          rm -rf upload-bundle
-          mkdir -p upload-bundle
-          cp dist/smileyan-backend-prod.tar.gz upload-bundle/
-          cp scripts/deploy-remote.sh upload-bundle/
-          chmod +x upload-bundle/deploy-remote.sh
-          tar --no-xattr -czf dist/smileyan-backend-deploy.tar.gz -C upload-bundle .
-
-          SIZE_BYTES=$(stat -c '%s' dist/smileyan-backend-deploy.tar.gz)
-          SIZE_MB=$(awk -v b="$SIZE_BYTES" 'BEGIN { printf "%.2f", b / 1048576 }')
-          echo "Compressed upload bundle: dist/smileyan-backend-deploy.tar.gz"
-          echo "Compressed size: ${SIZE_MB} MB (${SIZE_BYTES} bytes)"
-          tar -tzf dist/smileyan-backend-deploy.tar.gz
+          tar -xzf dist/smileyan-backend-prod.tar.gz -C dist/release
+          chmod +x dist/release/smileyan-backend dist/release/deploy-remote.sh
+          test -f dist/release/config.yaml
+          echo "release binary sha256: $(sha256sum dist/release/smileyan-backend | awk '{print $1}')"
+          ls -lh dist/release
 
       - name: Set up SSH key
         uses: webfactory/ssh-agent@v0.10.0
@@ -412,54 +418,104 @@ jobs:
           ssh-keyscan -p "${{ matrix.server.port }}" \
             -H "${{ matrix.server.addr }}" >> ~/.ssh/known_hosts
 
-      - name: Upload compressed bundle
+      - name: Transfer binary with rsync delta
+        # The runner -> China link is the release bottleneck (~12-20 KB/s), so
+        # never send the whole binary when only a few blocks changed:
+        #   1. copy the currently deployed binary to /tmp as an rsync basis;
+        #   2. rsync only the changed blocks (a byte-identical binary costs a
+        #      few KB of checksums and is skipped outright);
+        #   3. verify SHA256 before the deploy script is allowed to swap it in.
+        # The copy lives outside DEPLOY_PATH, so the running process and the
+        # rollback target (.prev) are untouched until deploy-remote.sh runs.
         env:
           SERVER_NAME: ${{ matrix.server.name }}
+          SERVER_DEPLOY_PATH: ${{ matrix.server.deploy_path }}
+          SSH_ADDR: ${{ matrix.server.addr }}
+          SSH_PORT: ${{ matrix.server.port }}
+          SSH_USER: ${{ matrix.server.user }}
         run: |
           set -euo pipefail
-          BUNDLE=dist/smileyan-backend-deploy.tar.gz
-          SIZE_BYTES=$(stat -c '%s' "$BUNDLE")
-          SIZE_MB=$(awk -v b="$SIZE_BYTES" 'BEGIN { printf "%.2f", b / 1048576 }')
-          echo ">>> [$SERVER_NAME] Uploading ${SIZE_MB} MB to /tmp/smileyan-backend-deploy.tar.gz"
+          command -v rsync >/dev/null || {
+            echo "ERROR: rsync is required on the runner" >&2
+            exit 1
+          }
 
-          # pv is not preinstalled on the GitHub-hosted runner image. A failed
-          # install must not block a release, so fall back to scp below.
-          if ! command -v pv >/dev/null 2>&1; then
-            sudo apt-get update -qq || true
-            sudo apt-get install -y -qq pv || true
-          fi
-
-          if command -v pv >/dev/null 2>&1; then
-            # File bytes go over stdin; pv writes percentage/ETA progress to
-            # stderr every 30s, which the Actions log captures line by line.
-            pv -f -p -e -r -b -i 30 -s "$SIZE_BYTES" "$BUNDLE" | \
-              ssh -p "${{ matrix.server.port }}" \
-                -o ServerAliveInterval=30 -o ServerAliveCountMax=10 \
-                "${{ matrix.server.user }}@${{ matrix.server.addr }}" \
-                'cat > /tmp/smileyan-backend-deploy.tar.gz'
-          else
-            echo "WARN: pv unavailable; uploading without a progress bar"
-            scp -P "${{ matrix.server.port }}" "$BUNDLE" \
-              "${{ matrix.server.user }}@${{ matrix.server.addr }}:/tmp/smileyan-backend-deploy.tar.gz"
-          fi
-          echo ">>> [$SERVER_NAME] Upload complete (${SIZE_MB} MB)"
-
-      - name: Unpack upload bundle
-        env:
-          SERVER_NAME: ${{ matrix.server.name }}
-        run: |
-          set -euo pipefail
-          echo ">>> [$SERVER_NAME] Unpacking upload bundle"
-          ssh -p "${{ matrix.server.port }}" \
+          NEW_SHA=$(sha256sum dist/release/smileyan-backend | awk '{print $1}')
+          REMOTE_SHA=$(ssh -p "$SSH_PORT" \
+            -o BatchMode=yes \
             -o ServerAliveInterval=30 -o ServerAliveCountMax=10 \
-            "${{ matrix.server.user }}@${{ matrix.server.addr }}" \
-            bash -s <<'REMOTE'
+            "$SSH_USER@$SSH_ADDR" \
+            env DEPLOY_PATH="$SERVER_DEPLOY_PATH" bash -s <<'REMOTE' | tail -n 1
           set -euo pipefail
-          rm -rf /tmp/smileyan-backend-deploy
-          mkdir -p /tmp/smileyan-backend-deploy
-          tar -xzf /tmp/smileyan-backend-deploy.tar.gz -C /tmp/smileyan-backend-deploy
-          chmod +x /tmp/smileyan-backend-deploy/deploy-remote.sh
-          ls -la /tmp/smileyan-backend-deploy
+          rm -rf /tmp/smileyan-deploy
+          mkdir -p /tmp/smileyan-deploy
+          if [ -f "$DEPLOY_PATH/smileyan-backend" ]; then
+            cp -f "$DEPLOY_PATH/smileyan-backend" /tmp/smileyan-deploy/smileyan-backend
+            sha256sum /tmp/smileyan-deploy/smileyan-backend | awk '{print $1}'
+          else
+            echo NO_BASIS
+          fi
+          REMOTE
+          )
+
+          echo ">>> [$SERVER_NAME] deployed binary sha256: $REMOTE_SHA"
+          echo ">>> [$SERVER_NAME] release  binary sha256: $NEW_SHA"
+
+          if [ "$REMOTE_SHA" = "$NEW_SHA" ]; then
+            echo ">>> [$SERVER_NAME] binary already deployed; skipping transfer"
+          else
+            rsync -z --compress-level=6 --block-size=32768 --partial --stats \
+              --timeout=300 \
+              -e "ssh -p $SSH_PORT -o BatchMode=yes -o ServerAliveInterval=30 -o ServerAliveCountMax=10" \
+              dist/release/smileyan-backend \
+              "$SSH_USER@$SSH_ADDR:/tmp/smileyan-deploy/smileyan-backend"
+          fi
+
+      - name: Upload config and deploy script
+        # Two tiny files (~14 KB total). Sent as one streamed tar so there is no
+        # second handshake and no nested gzip of the already-gzipped binary.
+        env:
+          SERVER_NAME: ${{ matrix.server.name }}
+          SSH_ADDR: ${{ matrix.server.addr }}
+          SSH_PORT: ${{ matrix.server.port }}
+          SSH_USER: ${{ matrix.server.user }}
+        run: |
+          set -euo pipefail
+          echo ">>> [$SERVER_NAME] Uploading config.yaml and deploy-remote.sh"
+          tar -czf - -C dist/release config.yaml deploy-remote.sh | \
+            ssh -p "$SSH_PORT" \
+              -o BatchMode=yes \
+              -o ServerAliveInterval=30 -o ServerAliveCountMax=10 \
+              "$SSH_USER@$SSH_ADDR" \
+              'mkdir -p /tmp/smileyan-deploy && tar -xzf - -C /tmp/smileyan-deploy && chmod +x /tmp/smileyan-deploy/deploy-remote.sh && ls -la /tmp/smileyan-deploy'
+
+      - name: Verify transfer and assemble deployment tarball
+        env:
+          SERVER_NAME: ${{ matrix.server.name }}
+          SSH_ADDR: ${{ matrix.server.addr }}
+          SSH_PORT: ${{ matrix.server.port }}
+          SSH_USER: ${{ matrix.server.user }}
+        run: |
+          set -euo pipefail
+          EXPECTED_SHA=$(sha256sum dist/release/smileyan-backend | awk '{print $1}')
+          echo ">>> [$SERVER_NAME] Verifying uploaded binary"
+          ssh -p "$SSH_PORT" \
+            -o BatchMode=yes \
+            -o ServerAliveInterval=30 -o ServerAliveCountMax=10 \
+            "$SSH_USER@$SSH_ADDR" \
+            env EXPECTED_SHA="$EXPECTED_SHA" bash -s <<'REMOTE'
+          set -euo pipefail
+          cd /tmp/smileyan-deploy
+          ACTUAL_SHA=$(sha256sum smileyan-backend | awk '{print $1}')
+          if [ "$ACTUAL_SHA" != "$EXPECTED_SHA" ]; then
+            echo "ERROR: uploaded binary sha256 $ACTUAL_SHA != expected $EXPECTED_SHA" >&2
+            exit 1
+          fi
+          test -f config.yaml
+          test -x deploy-remote.sh
+          tar -czf /tmp/smileyan-backend-deploy.tar.gz \
+            smileyan-backend config.yaml deploy-remote.sh
+          echo "OK: transfer verified (sha256 $ACTUAL_SHA); deployment tarball assembled"
           REMOTE
 
       - name: Run remote deploy script
@@ -485,14 +541,15 @@ jobs:
           set -euo pipefail
 
           echo ">>> [$SERVER_NAME] Running deploy-remote.sh (streaming output)"
-          # Single-quoted body: no re-expansion on the server.
+          # Single-quoted body: no re-expansion on the server. The tarball was
+          # assembled and SHA256-verified on the server by the previous step.
           ssh -p "${{ matrix.server.port }}" \
             -o ServerAliveInterval=30 -o ServerAliveCountMax=10 \
             "${{ matrix.server.user }}@${{ matrix.server.addr }}" \
             "DEPLOY_PATH='$SERVER_DEPLOY_PATH' \
              RELEASE_TAG='$RELEASE_TAG' \
              APP_PORT='$APP_PORT' \
-             TARBALL_PATH='/tmp/smileyan-backend-deploy/smileyan-backend-prod.tar.gz' \
+             TARBALL_PATH='/tmp/smileyan-backend-deploy.tar.gz' \
              S_DB_HOST='$S_DB_HOST' \
              S_DB_USER='$S_DB_USER' \
              S_DB_PASSWORD='$S_DB_PASSWORD' \
@@ -505,7 +562,7 @@ jobs:
              S_TTS_BASE_URL='$S_TTS_BASE_URL' \
              S_TTS_API_KEY='$S_TTS_API_KEY' \
              S_TTS_MODEL='$S_TTS_MODEL' \
-             bash -x /tmp/smileyan-backend-deploy/deploy-remote.sh"
+             bash -x /tmp/smileyan-deploy/deploy-remote.sh"
 
       - name: Inspect server-side state
         env:

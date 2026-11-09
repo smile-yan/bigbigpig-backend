@@ -108,16 +108,19 @@ release/deploy-remote.sh      # 服务端部署脚本
   `DEPLOY_SSH_KEY`；失败则整个流水线在构建前终止。
 - `Preflight <server>`：按 `SERVERS_CONFIG` 逐台 SSH（`fail-fast: false`），
   验证密钥登录成功，并检查 `deploy_path` 存在、当前用户可写可进入。
-  构建 job `needs: preflight`，任一机器失败都不会开始 cross 构建。
+  与 cross 构建并行执行；deploy job 依赖 `preflight`，任一机器失败只阻塞
+  自己的部署，不再阻塞构建与发布。
 - `cross build --locked --release --target x86_64-unknown-linux-musl`。
 - 静态链接检查（`file` + `readelf -d` 的 `DT_NEEDED`）、80 MiB 大小上限、三件套清单检查、
   `.env` 泄漏检查。
 - 发布 `smileyan-backend-prod.tar.gz`；stable tag 自动部署到
   `SERVERS_CONFIG` 中的每台机器（SSH 端口 `port`，应用端口 `app_port`，
   缺省 8080）；deploy job 依赖 `preflight` 与 `release`。
-- deploy job 先把 release tarball 与 `deploy-remote.sh` 合并压缩为
-  `smileyan-backend-deploy.tar.gz`，日志打印压缩后大小（MB），再用 `pv`
-  流式上传并每 30 秒输出一次百分比进度；服务端解包后执行 `deploy-remote.sh`。
+- deploy job 下载并解包 release tarball，把目标机上当前部署的二进制复制到
+  `/tmp` 作为 rsync basis，只传输变化块；SHA256 完全相同时跳过传输。
+  `config.yaml` 与 `deploy-remote.sh` 作为一个小 tar 流单独上传，服务端校验
+  二进制 SHA256 后重新组装三件套 tarball，再执行 `deploy-remote.sh`。
+  这样 GitHub runner → 国内服务器的慢链路只承载实际变化的字节。
 - 部署前检查 9 个应用 Secret + `DEPLOY_SSH_KEY` 非空；TTS 三个 Secret
   可选，空值不会写进 `.env`。
 - 部署后检查日志、进程、`:app_port` 监听、`.prev`/`rollback.sh` 是否存在，

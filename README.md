@@ -470,14 +470,18 @@ cargo deny check
 
 `.github/workflows/release.yml` 由 `v*.*.*` tag 触发：
 
-- 构建前先执行 preflight：校验 `SERVERS_CONFIG`，再逐台 SSH 验证连通性，并
-  确认 `deploy_path` 存在且部署用户可写；任何一台失败都不会开始构建；
+- 构建与 preflight 并行：校验 `SERVERS_CONFIG`，再逐台 SSH 验证连通性，并
+  确认 `deploy_path` 存在且部署用户可写；失败的服务器只阻塞自己的 deploy
+  job，不再阻塞构建与发布；
 - 使用 `cross` 构建 `x86_64-unknown-linux-musl` 静态二进制；
 - 校验 `file` 为静态链接、`readelf -d` 无 `NEEDED` 动态依赖、大小 ≤ 80 MiB；
 - 生成恰好三个文件的制品：`smileyan-backend`、`config.yaml`（`mode: prod`）、
   `deploy-remote.sh`，并检查 `.env` 泄漏；
 - 发布 `smileyan-backend-prod.tar.gz`；stable tag 会按 `SERVERS_CONFIG`
   自动部署到每台服务器（SSH 端口 `port`，应用端口 `app_port`，默认 8080）。
+  部署以服务器上当前二进制为 rsync basis，只传变化块；二进制完全相同则跳过
+  传输，`config.yaml` / `deploy-remote.sh` 单独小文件上传，服务端校验
+  SHA256 后重新打包并执行 `deploy-remote.sh`。
 
 部署 job 需要的 Repository Variables 与 Secrets 见下文“GitHub 流水线配置”。
 
