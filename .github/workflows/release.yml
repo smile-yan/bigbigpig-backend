@@ -438,7 +438,7 @@ jobs:
         # target untouched until deploy-remote.sh runs.
         env:
           SERVER_NAME: ${{ matrix.server.name }}
-          SERVER_DEPLOY_PATH: ${{ matrix.server.deploy_path }}
+          DEPLOY_PATH: ${{ matrix.server.deploy_path }}
           SSH_ADDR: ${{ matrix.server.addr }}
           SSH_PORT: ${{ matrix.server.port }}
           SSH_USER: ${{ matrix.server.user }}
