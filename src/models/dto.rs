@@ -14,7 +14,7 @@ use chrono_tz::Tz;
 use serde::Serialize;
 
 use super::entities::{
-    AdminPostSummaryRow, CategoryRow, CommentRow, PageRow, PostRow, PostSummaryRow,
+    AdminPostSummaryRow, ApiKeyRow, CategoryRow, CommentRow, PageRow, PostRow, PostSummaryRow,
     SubscriptionRow, TagRow, UserRow,
 };
 use super::go_time;
@@ -619,4 +619,37 @@ pub struct SubscriptionListResponse {
 pub struct NotifyResponse {
     pub count: usize,
     pub message: &'static str,
+}
+
+/// An API key as shown on the admin key-management page.
+///
+/// `api_key` is returned in full: this endpoint is admin-only and the page
+/// exists so the admin can copy the key to hand it out.
+#[derive(Debug, Clone, Serialize)]
+pub struct ApiKeyDto {
+    pub id: u64,
+    pub created_at: String,
+    pub updated_at: String,
+    pub name: String,
+    pub api_key: String,
+    pub expires_at: String,
+    pub last_used_at: String,
+    /// Computed server-side against `NOW(3)` so the table can flag expired
+    /// keys without clock skew issues.
+    pub expired: bool,
+}
+
+impl ApiKeyDto {
+    pub fn from_row(row: ApiKeyRow, tz: Tz, now: chrono::NaiveDateTime) -> Self {
+        Self {
+            id: row.id,
+            created_at: go_time::format_opt(row.created_at, tz),
+            updated_at: go_time::format_opt(row.updated_at, tz),
+            name: row.name.unwrap_or_default(),
+            api_key: row.api_key,
+            expires_at: go_time::format(row.expires_at, tz),
+            last_used_at: go_time::format_opt(row.last_used_at, tz),
+            expired: row.expires_at <= now,
+        }
+    }
 }
