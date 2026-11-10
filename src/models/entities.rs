@@ -103,6 +103,18 @@ pub struct PostSummaryRow {
     pub category_name: Option<String>,
 }
 
+/// One row of the admin post table (`GET /api/admin/posts/summary`): only the
+/// columns the management list renders.
+#[derive(Debug, Clone, sqlx::FromRow)]
+pub struct AdminPostSummaryRow {
+    pub id: u64,
+    pub created_at: Option<NaiveDateTime>,
+    pub title: String,
+    pub slug: String,
+    pub status: Option<String>,
+    pub view_count: Option<i64>,
+}
+
 /// `post_tags` joined with `tags` for the summary list.
 #[derive(Debug, Clone, sqlx::FromRow)]
 pub struct PostSummaryTagRow {

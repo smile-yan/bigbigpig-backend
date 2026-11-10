@@ -22,10 +22,10 @@ use serde::Deserialize;
 use crate::error::AppError;
 use crate::middleware::auth::{CurrentUser, resolve_current_user};
 use crate::models::{
-    AdminPostListResponse, CategoryDto, CategoryRow, MessageResponse, POST_STATUS_DRAFT,
-    POST_STATUS_HIDDEN, POST_STATUS_PUBLISHED, PostDateCountDto, PostDto, PostRow, PostSummaryDto,
-    PostSummaryTagDto, PostTagRow, PublicPostListResponse, PublicPostSummaryListResponse,
-    ROLE_ADMIN, TagDto, UserDto, UserRow,
+    AdminPostListResponse, AdminPostSummaryDto, AdminPostSummaryListResponse, CategoryDto,
+    CategoryRow, MessageResponse, POST_STATUS_DRAFT, POST_STATUS_HIDDEN, POST_STATUS_PUBLISHED,
+    PostDateCountDto, PostDto, PostRow, PostSummaryDto, PostSummaryTagDto, PostTagRow,
+    PublicPostListResponse, PublicPostSummaryListResponse, ROLE_ADMIN, TagDto, UserDto, UserRow,
 };
 use crate::repo::posts::{self, PostFilter};
 use crate::services::markdown;
@@ -259,10 +259,12 @@ pub async fn get_admin_posts(
     };
 
     let (limit, offset) = pagination(page, page_size);
-    let total = posts::count(&state.db, &filter).await.map_err(internal)?;
-    let rows = posts::list(&state.db, &filter, limit, offset)
-        .await
-        .map_err(internal)?;
+    // Independent statements: run them together to save a database round trip.
+    let (total, rows) = tokio::try_join!(
+        posts::count(&state.db, &filter),
+        posts::list(&state.db, &filter, limit, offset),
+    )
+    .map_err(internal)?;
 
     // Go's admin list preloads Category and Tags only; Author stays a
     // zero-value object (Q14).
@@ -276,6 +278,50 @@ pub async fn get_admin_posts(
 
     Ok(Json(AdminPostListResponse {
         list,
+        page,
+        page_size,
+        total,
+    }))
+}
+
+/// `GET /api/admin/posts/summary` — the admin post table.
+///
+/// Additive endpoint mirroring `GET /api/posts/summary` on the public side:
+/// same auth, filters and pagination as `GET /api/admin/posts`, but it selects
+/// only the columns the table renders, skips every association preload, and
+/// runs the count and page queries concurrently. The article body
+/// (`content`/`html_content`) never leaves MySQL, which is what made the full
+/// admin list heavy.
+pub async fn get_admin_posts_summary(
+    State(state): State<SharedState>,
+    Query(query): Query<PostListQuery>,
+) -> Result<Json<AdminPostSummaryListResponse>, AppError> {
+    let page = query.page.as_deref().map(parse_gin_int).unwrap_or(1);
+    let page_size = query.page_size.as_deref().map(parse_gin_int).unwrap_or(20);
+
+    let filter = PostFilter {
+        published_only: false,
+        hide_deleted: false,
+        status: non_empty(query.status),
+        category_id: non_empty(query.category_id),
+        tag_id: non_empty(query.tag_id),
+        keyword: non_empty(query.keyword),
+        start_date: non_empty(query.start_date),
+        end_date: non_empty(query.end_date),
+    };
+
+    let (limit, offset) = pagination(page, page_size);
+    let (total, rows) = tokio::try_join!(
+        posts::count(&state.db, &filter),
+        posts::list_admin_summary(&state.db, &filter, limit, offset),
+    )
+    .map_err(internal)?;
+
+    Ok(Json(AdminPostSummaryListResponse {
+        list: rows
+            .into_iter()
+            .map(|row| AdminPostSummaryDto::from_row(row, state.tz))
+            .collect(),
         page,
         page_size,
         total,

@@ -14,8 +14,8 @@ use sqlx::mysql::MySql;
 use sqlx::{MySqlPool, QueryBuilder, Transaction};
 
 use crate::models::{
-    CategoryRow, PostContentPreviewRow, PostDateCountRow, PostRow, PostSummaryRow,
-    PostSummaryTagRow, PostTagRow, TagRow, UserRow,
+    AdminPostSummaryRow, CategoryRow, PostContentPreviewRow, PostDateCountRow, PostRow,
+    PostSummaryRow, PostSummaryTagRow, PostTagRow, TagRow, UserRow,
 };
 
 /// Filters for the public and admin post lists.
@@ -138,6 +138,31 @@ pub async fn list_summary(
     builder.push_bind(offset);
     builder
         .build_query_as::<PostSummaryRow>()
+        .fetch_all(pool)
+        .await
+}
+
+/// The admin post table: same filter/order as [`list`] but selects only the
+/// columns the table renders. The article body (`content`/`html_content`) never
+/// leaves MySQL, and no tag/author/category preload is needed because the
+/// table shows none of them.
+pub async fn list_admin_summary(
+    pool: &MySqlPool,
+    filter: &PostFilter,
+    limit: i64,
+    offset: i64,
+) -> Result<Vec<AdminPostSummaryRow>, sqlx::Error> {
+    let mut builder = QueryBuilder::<MySql>::new(
+        "SELECT p.id, p.created_at, p.title, p.slug, p.status, p.view_count \
+         FROM posts p WHERE p.deleted_at IS NULL",
+    );
+    filter.apply(&mut builder);
+    builder.push(" ORDER BY p.created_at DESC LIMIT ");
+    builder.push_bind(limit);
+    builder.push(" OFFSET ");
+    builder.push_bind(offset);
+    builder
+        .build_query_as::<AdminPostSummaryRow>()
         .fetch_all(pool)
         .await
 }

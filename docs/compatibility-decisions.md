@@ -613,3 +613,28 @@ TTS：前端使用浏览器 `speechSynthesis`，没有调用 `/v1/audio/speech`�
 `AdminSubscriptions.vue` 的文章下拉仍用 `GET /api/posts`。
 
 回滚：前端改回 `/api/posts` 即可；后端新增路由为增量，可保留。
+
+## 15. 新增接口：`GET /api/admin/posts/summary`（2026-11-10，后台列表提速）
+
+后台文章管理页原先调用 `GET /api/admin/posts?page=1&page_size=20`，每行都带
+`content` 与 `html_content`（整篇文章正文），20 行即可达数百 KB；并且每次请求
+串行执行 5 条 SQL（count、list、categories、authors、tags），而页面表格只读
+`id/title/slug/status/view_count/created_at`。新增只读表格端点，**不改动
+`GET /api/admin/posts` 的任何契约**。
+
+| 项 | 内容 |
+|---|---|
+| 路径 | `GET /api/admin/posts/summary`（管理员认证，与 `/api/admin/posts` 同级） |
+| 查询参数 | 与 `GET /api/admin/posts` 完全一致：`page`、`page_size`、`status`、`category_id`、`tag_id`、`keyword`、`start_date`、`end_date`；分页 quirks（`page=abc → 0`、`page_size=0`、负 limit/offset）保持一致 |
+| 响应 | `{list,page,page_size,total}`；行：`{id,created_at,title,slug,status,view_count}` |
+| 省略字段 | `content`、`html_content`、`excerpt`、`cover_image`、`category`、`tags`、`author`、`is_deleted`、`updated_at`、`category_id`、`author_id` |
+| SQL | 2 条：`count` 与 `list_admin_summary` 并发（`tokio::try_join!`）；不预加载任何关联 |
+| 路由 | 静态段 `/posts/summary` 与 `/posts/slug/{slug}`、`/posts/_id/{id}` 同为固定前缀，无参数段冲突，不占用 slug |
+| 索引 | 不新增；沿用 `idx_posts_deleted_at`/`idx_posts_status`/`idx_posts_is_deleted`/`idx_posts_category_id` |
+| 实现 | `repo/posts.rs::list_admin_summary` + `handlers/posts.rs::get_admin_posts_summary` + `AdminPostSummaryDto` |
+| 测试 | `tests/admin_post_summary_contract.rs`：401/403、行字段集合（无正文/关联）、与 `GET /api/admin/posts` 的 id/total/page/字段一致性、筛选与分页 quirks、空库 `list=[]`、Content-Type |
+
+前端改动：`AdminPosts.vue` 的 `loadPosts` 改调新接口；分类、标签、文章三个请求
+并行发起（与首页一致），不再 `await` 分类/标签后再拉文章列表。
+
+回滚：前端改回 `/api/admin/posts` 即可；后端新增路由为增量，可保留。

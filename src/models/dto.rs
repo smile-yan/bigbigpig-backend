@@ -14,7 +14,8 @@ use chrono_tz::Tz;
 use serde::Serialize;
 
 use super::entities::{
-    CategoryRow, CommentRow, PageRow, PostRow, PostSummaryRow, SubscriptionRow, TagRow, UserRow,
+    AdminPostSummaryRow, CategoryRow, CommentRow, PageRow, PostRow, PostSummaryRow,
+    SubscriptionRow, TagRow, UserRow,
 };
 use super::go_time;
 
@@ -413,6 +414,44 @@ impl PostSummaryDto {
 pub struct PublicPostSummaryListResponse {
     pub list: Vec<PostSummaryDto>,
     pub page: i64,
+    pub total: i64,
+}
+
+/// One row of `GET /api/admin/posts/summary`, the admin post table.
+///
+/// Only the columns the table renders are returned; the article body
+/// (`content`/`html_content`), excerpt, cover image and all associations
+/// (`category`/`tags`/`author`) are omitted, mirroring [`PostSummaryDto`] for
+/// the home page.
+#[derive(Debug, Clone, Serialize)]
+pub struct AdminPostSummaryDto {
+    pub id: u64,
+    pub created_at: String,
+    pub title: String,
+    pub slug: String,
+    pub status: String,
+    pub view_count: i64,
+}
+
+impl AdminPostSummaryDto {
+    pub fn from_row(row: AdminPostSummaryRow, tz: Tz) -> Self {
+        Self {
+            id: row.id,
+            created_at: go_time::format_opt(row.created_at, tz),
+            title: row.title,
+            slug: row.slug,
+            status: row.status.unwrap_or_default(),
+            view_count: row.view_count.unwrap_or(0),
+        }
+    }
+}
+
+/// `GET /api/admin/posts/summary`: same envelope as the admin list.
+#[derive(Debug, Clone, Serialize)]
+pub struct AdminPostSummaryListResponse {
+    pub list: Vec<AdminPostSummaryDto>,
+    pub page: i64,
+    pub page_size: i64,
     pub total: i64,
 }
 

@@ -13,6 +13,10 @@
 > 2026-11-10 更新：首页文章列表改用新增的 `GET /api/posts/summary`
 > （不返回 `content`/`html_content`/`author`，首页载荷从 358 KB 降到 4.7 KB）；
 > 分页、分类/标签筛选、日期筛选的请求参数与 `GET /api/posts` 完全一致。
+>
+> 2026-11-10 更新：后台文章列表改用新增的 `GET /api/admin/posts/summary`
+> （不再返回 `content`/`html_content`，也不再预加载分类/标签/作者，只保留表格
+> 渲染的字段）；请求参数与 `GET /api/admin/posts` 完全一致。
 
 ## 1. 基础配置
 
@@ -43,7 +47,7 @@
 | GET | `/api/comments` | `Post.vue:340` | `{post_id}` |
 | POST | `/api/comments` | `Post.vue:352` | `{post_id, content, parent_id}` |
 | GET | `/api/search` | `Home.vue:245` | `{keyword, page, page_size}` |
-| GET | `/api/admin/posts` | `AdminPosts.vue:163` | `{page, page_size, status?, category_id?, tag_id?, keyword?}` |
+| GET | `/api/admin/posts/summary` | `AdminPosts.vue:169` | `{page, page_size, status?, category_id?, tag_id?, keyword?}` |
 | GET | `/api/admin/posts/_id/:id` | `Editor.vue:802` | path |
 | POST | `/api/admin/posts` | `Editor.vue:826` | `{title, slug, content, excerpt, cover_image, category_id, tag_ids, status}` |
 | PUT | `/api/admin/posts/_id/:id` | `Editor.vue:834` | 同上 |
@@ -76,6 +80,7 @@
 | POST | `/api/upload-avatar` | 模板中无 `<el-upload>`，属于死代码 |
 | POST | `/v1/audio/speech` | Post.vue 使用浏览器 `speechSynthesis` |
 | GET | `/api/admin/posts/slug/:slug` | 未使用 |
+| GET | `/api/admin/posts` | 列表改用 `/api/admin/posts/summary`；完整正文版本仅保留给契约测试/外部调用 |
 | POST | `/api/admin/posts/_id/:id/restore` | 未使用 |
 | GET | `/api/admin/pages/_id/:id` | 未使用 |
 | GET | `/api/admin/users` | 未使用 |
@@ -99,7 +104,7 @@
 | GET `/api/comments` | 裸数组；`id,created_at,content,user.{avatar,nickname},children[].{id,created_at,content,user.{avatar,nickname}}` |
 | POST `/api/comments` | 响应被忽略 |
 | GET `/api/search` | `list`、`total`；与文章卡片相同字段；`highlights?.[0]` 可选 |
-| GET `/api/admin/posts` | `list`、`total`；行：`id,title,slug,status,view_count,created_at` |
+| GET `/api/admin/posts/summary` | `list`、`total`；行：`id,title,slug,status,view_count,created_at`；无 `content`/`html_content`/`category`/`tags`/`author` |
 | GET `/api/admin/posts/_id/:id` | `id,title,slug,content,excerpt,cover_image,category_id,tags[].id,status` |
 | POST `/api/admin/posts` | `id`（兜底 `_id`） |
 | GET `/api/admin/comments` | `list`、`total`；行：`id,user?.{nickname,email},content,post?.{title},status,created_at` |

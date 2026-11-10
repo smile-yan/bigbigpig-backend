@@ -311,16 +311,17 @@ advisories、licenses、bans、sources 四节。
 
 ## API 概览
 
-共 45 个 API 端点（另有 `/uploads/*` 静态文件路由），路径、方法与认证层级与
-Go 基线一致；新增的是首页用的 `GET /api/posts/dates`（日历聚合）与
-`GET /api/posts/summary`（轻量文章卡片，2026-11-10，Go 基线无这两个端点）。
+共 46 个 API 端点（另有 `/uploads/*` 静态文件路由），路径、方法与认证层级与
+Go 基线一致；新增的是首页用的 `GET /api/posts/dates`（日历聚合）、
+`GET /api/posts/summary`（轻量文章卡片）与后台列表用的
+`GET /api/admin/posts/summary`（轻量表格行，2026-11-10，Go 基线无这些端点）。
 
 | 资源 | 公共 | 需登录 | 管理员 |
 |---|---|---|---|
 | 健康检查 | `GET /api/hello` | — | — |
 | 认证 | `POST /api/send-code`、`POST /api/login` | — | — |
 | 用户 | — | `GET/PUT /api/user`、`POST /api/upload-avatar` | `GET /api/admin/users`、`PUT /api/admin/users/{id}/role` |
-| 文章 | `GET /api/posts`、`GET /api/posts/summary`、`GET /api/posts/{slug}`、`GET /api/posts/dates` | — | `GET/POST /api/admin/posts`、`GET /api/admin/posts/slug/{slug}`、`GET/PUT/DELETE /api/admin/posts/_id/{id}`、`POST /api/admin/posts/_id/{id}/restore` |
+| 文章 | `GET /api/posts`、`GET /api/posts/summary`、`GET /api/posts/{slug}`、`GET /api/posts/dates` | — | `GET/POST /api/admin/posts`、`GET /api/admin/posts/summary`、`GET /api/admin/posts/slug/{slug}`、`GET/PUT/DELETE /api/admin/posts/_id/{id}`、`POST /api/admin/posts/_id/{id}/restore` |
 | 分类 | `GET /api/categories` | — | `POST /api/admin/categories`、`PUT/DELETE /api/admin/categories/_id/{id}` |
 | 标签 | `GET /api/tags` | — | `POST /api/admin/tags`、`DELETE /api/admin/tags/_id/{id}` |
 | 页面 | `GET /api/pages`、`GET /api/pages/{slug}`（可选认证） | — | `POST /api/admin/pages`、`GET/PUT/DELETE /api/admin/pages/_id/{id}` |

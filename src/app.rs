@@ -74,6 +74,10 @@ pub fn build_router(state: SharedState) -> Router {
             get(handlers::posts::get_admin_posts).post(handlers::posts::create_post),
         )
         .route(
+            "/posts/summary",
+            get(handlers::posts::get_admin_posts_summary),
+        )
+        .route(
             "/posts/slug/{slug}",
             get(handlers::posts::get_admin_post_by_slug),
         )
