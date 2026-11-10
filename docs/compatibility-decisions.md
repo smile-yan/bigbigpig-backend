@@ -585,3 +585,31 @@ TTS：前端使用浏览器 `speechSynthesis`，没有调用 `/v1/audio/speech`�
 
 回滚：前端恢复旧的 `loadPostDates` 即可（会重新出现双请求）；后端新增路由为
 增量，可保留。发布顺序仍建议后端先行，前端先上线遇 404 时日历降级为无圆点。
+
+## 14. 新增接口：`GET /api/posts/summary`（2026-11-10，首页提速）
+
+首页列表原先调用 `GET /api/posts?page=1&page_size=10`，返回整篇文章正文与作者：
+10 篇约 358 KB（全量 188 篇约 1.8 MB），且每次请求串行执行 5 条 SQL
+（count、list、categories、authors、tags）。前端卡片实际只读
+`id/title/slug/excerpt/cover_image/created_at/view_count/category.name/tags[].{id,name}`。
+新增只读卡片端点，**不改动任何既有端点契约**。
+
+| 项 | 内容 |
+|---|---|
+| 路径 | `GET /api/posts/summary`（公共、无认证） |
+| 查询参数 | 与 `GET /api/posts` 完全一致：`page`、`page_size`、`category_id`、`tag_id`、`keyword`、`start_date`、`end_date`；分页 quirks（`page=abc → 0`、`page_size=0`、负 limit/offset）保持一致 |
+| 响应 | `{list,page,total}`；item：`{id,created_at,title,slug,excerpt,cover_image,view_count,category,tags}` |
+| 省略字段 | `content`、`html_content`、`author`、`updated_at`、`status`、`is_deleted`、`category_id`、`author_id` |
+| 关联 | `category` 为 `{id,name}` 或 `null`（分类缺失/软删）；`tags` 恒为 `[]`/数组，无 `null` |
+| 摘要 | 沿用公共列表规则：存储的 `excerpt` 为空时，用 `LEFT(content,600)` 前缀经 `markdown::excerpt` 生成；仅对该页中摘要为空的行补一条查询，常规页不读正文 |
+| SQL | 3 条：`count` 与 `list_summary` 并发（`tokio::try_join!`），随后 1 条 tag 查询；分类名通过 `LEFT JOIN categories ... AND deleted_at IS NULL` 随主查询返回，不再单独查分类/作者 |
+| 载荷 | 实测 10 篇 4.7 KB（原 358 KB，约 1/76）；本机 curl 50–105 ms（原 305–530 ms） |
+| 路由 | 静态段 `/posts/summary` 注册在 `/posts/{slug}` 之前；若线上存在 slug=`summary` 的文章会被抢占，上线前执行 `SELECT 1 FROM posts WHERE slug='summary'` 检查 |
+| 索引 | 不新增；沿用 `idx_posts_status`/`idx_posts_is_deleted`/`idx_posts_category_id` |
+| 实现 | `repo/posts.rs::{list_summary,summary_tags_for_posts,content_previews}` + `handlers/posts.rs::get_posts_summary` + `PostSummaryDto` |
+| 测试 | `tests/post_summary_contract.rs`：卡片字段集合（无正文/作者）、与 `GET /api/posts` 逐字段一致、`created_at DESC` 顺序、草稿/隐藏/`is_deleted`/软删排除、`category=null`、软删标签不返回、空摘要回退、筛选与分页 quirks、空库 `list=[]`、Content-Type |
+
+前端改动：`Home.vue` 的 `loadPosts` 与 `loadPostsByDate` 改调新接口，字段读取不变；
+`AdminSubscriptions.vue` 的文章下拉仍用 `GET /api/posts`。
+
+回滚：前端改回 `/api/posts` 即可；后端新增路由为增量，可保留。

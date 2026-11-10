@@ -9,6 +9,10 @@
 >
 > 2026-11-10 更新：首页日历改用新增的 `GET /api/posts/dates`（方案 A），
 > 不再用 `GET /api/posts?page_size=1000` 拉取全量文章。
+>
+> 2026-11-10 更新：首页文章列表改用新增的 `GET /api/posts/summary`
+> （不返回 `content`/`html_content`/`author`，首页载荷从 358 KB 降到 4.7 KB）；
+> 分页、分类/标签筛选、日期筛选的请求参数与 `GET /api/posts` 完全一致。
 
 ## 1. 基础配置
 
@@ -27,8 +31,8 @@
 | GET | `/api/user` | `store/user.js:36` | 无 |
 | PUT | `/api/user` | `App.vue:203` | `{nickname}`（从不发送 avatar） |
 | GET | `/api/posts/dates` | `Home.vue:192` | 无 |
-| GET | `/api/posts` | `Home.vue:211` | `{page, page_size, category_id?, tag_id?}` |
-| GET | `/api/posts` | `Home.vue:218` | `{page:1, page_size:100, start_date, end_date}` |
+| GET | `/api/posts/summary` | `Home.vue:211` | `{page, page_size, category_id?, tag_id?}` |
+| GET | `/api/posts/summary` | `Home.vue:218` | `{page:1, page_size:100, start_date, end_date}` |
 | GET | `/api/posts` | `AdminSubscriptions.vue:82` | `{page_size:100}`（管理员 token） |
 | GET | `/api/posts/:slug` | `Post.vue:306` | path |
 | GET | `/api/categories` | `Home.vue:181`、`AdminPosts.vue:140`、`Editor.vue:784`、`AdminCategories.vue:64` | 无 |
@@ -87,6 +91,7 @@
 | GET `/api/pages`（`AdminPages`） | `list[].{id,title,slug,content,status,created_at}`、`total` |
 | GET `/api/pages/:slug` | `title`、`html_content` |
 | GET `/api/posts` | `list`、`total`；item：`id,slug,title,cover_image,created_at,category.name,view_count,excerpt,highlights?[0],tags[].{id,name}`；管理员视图还读 `status` |
+| GET `/api/posts/summary` | 与上一行相同的卡片字段，但没有 `content`/`html_content`/`author`/`status`；`category` 为 `{id,name}` 或 `null`，`tags` 恒为数组 |
 | GET `/api/posts/dates` | 裸数组；`[].{date,count}`（日历当前只读 `date`） |
 | GET `/api/posts/:slug` | `id,title,created_at,category.name,view_count,tags[],html_content,content` |
 | GET `/api/categories` | 裸数组；`id,name,post_count`；管理页读 `slug,description,sort` |
@@ -109,7 +114,7 @@
 2. **`list` 不能是 `null`**：多个调用点无空值保护地 `.forEach`/`.filter`。Go 的空结果行为需逐端点用夹具确认；Rust 对前端实际消费的列表输出 `[]` 更安全，但契约测试要以 Go 夹具为准并记录已批准差异。
 3. **`/api/categories`、`/api/tags`、`/api/comments`、`/api/posts/dates` 是裸数组**，不要统一为分页对象。
 4. **`comment.user` 必须是对象**，即使 Preload 缺失或用户被软删；保持 Go 的零值 `User` 形状。
-5. **`post.category` 未 Preload/分类软删时是零值对象**，不是 `null`（Go 的 `omitempty` 对结构体无效）。Rust 若要改 `null`，需前端确认并记录差异。
+5. **`post.category` 未 Preload/分类软删时是零值对象**，不是 `null`（Go 的 `omitempty` 对结构体无效）。Rust 若要改 `null`，需前端确认并记录差异。新增的 `/api/posts/summary` 是例外：该端点返回 `null`（`Home.vue` 用 `v-if="post.category"` 判断，显示效果更好）。
 6. **`post_count` 必须存在**，且只统计 `published AND is_deleted=0`。
 7. **日期字符串**必须可被 `new Date()`/dayjs 解析；保持 RFC3339 本地偏移，不输出 epoch 数字。
 8. **枚举小写**：`admin|reader`、`published|draft|hidden`、`pending|approved|rejected`。

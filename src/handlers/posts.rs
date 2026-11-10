@@ -23,8 +23,9 @@ use crate::error::AppError;
 use crate::middleware::auth::{CurrentUser, resolve_current_user};
 use crate::models::{
     AdminPostListResponse, CategoryDto, CategoryRow, MessageResponse, POST_STATUS_DRAFT,
-    POST_STATUS_HIDDEN, POST_STATUS_PUBLISHED, PostDateCountDto, PostDto, PostRow, PostTagRow,
-    PublicPostListResponse, ROLE_ADMIN, TagDto, UserDto, UserRow,
+    POST_STATUS_HIDDEN, POST_STATUS_PUBLISHED, PostDateCountDto, PostDto, PostRow, PostSummaryDto,
+    PostSummaryTagDto, PostTagRow, PublicPostListResponse, PublicPostSummaryListResponse,
+    ROLE_ADMIN, TagDto, UserDto, UserRow,
 };
 use crate::repo::posts::{self, PostFilter};
 use crate::services::markdown;
@@ -87,6 +88,90 @@ pub async fn get_posts(
         .collect();
 
     Ok(Json(PublicPostListResponse { list, page, total }))
+}
+
+/// `GET /api/posts/summary` — the home-page post list.
+///
+/// Additive endpoint (no Go baseline equivalent): the same filters and
+/// pagination as `GET /api/posts`, but it selects only the columns a card
+/// renders, joins the category name instead of loading categories separately,
+/// skips the author, and runs the count and page queries concurrently. The
+/// article body (`content`/`html_content`) never leaves MySQL.
+pub async fn get_posts_summary(
+    State(state): State<SharedState>,
+    Query(query): Query<PostListQuery>,
+) -> Result<Json<PublicPostSummaryListResponse>, AppError> {
+    let page = query.page.as_deref().map(parse_gin_int).unwrap_or(1);
+    let page_size = query.page_size.as_deref().map(parse_gin_int).unwrap_or(10);
+
+    let filter = PostFilter {
+        published_only: true,
+        hide_deleted: true,
+        category_id: non_empty(query.category_id),
+        tag_id: non_empty(query.tag_id),
+        keyword: non_empty(query.keyword),
+        start_date: non_empty(query.start_date),
+        end_date: non_empty(query.end_date),
+        ..PostFilter::default()
+    };
+
+    let (limit, offset) = pagination(page, page_size);
+    // The two statements are independent; issuing them together saves one
+    // round trip to the database on every request.
+    let (total, rows) = tokio::try_join!(
+        posts::count(&state.db, &filter),
+        posts::list_summary(&state.db, &filter, limit, offset),
+    )
+    .map_err(internal)?;
+
+    let post_ids: Vec<u64> = rows.iter().map(|row| row.id).collect();
+    let tag_rows = posts::summary_tags_for_posts(&state.db, &post_ids)
+        .await
+        .map_err(internal)?;
+    let mut tags: HashMap<u64, Vec<PostSummaryTagDto>> = HashMap::new();
+    for tag in tag_rows {
+        tags.entry(tag.post_id)
+            .or_default()
+            .push(PostSummaryTagDto {
+                id: tag.id,
+                name: tag.name,
+            });
+    }
+
+    // The public list derives an excerpt from the body when the stored one is
+    // empty. Read prefixes for those rows only, so the usual page stays free
+    // of `content`.
+    let needs_excerpt: Vec<u64> = rows
+        .iter()
+        .filter(|row| row.excerpt.as_deref().unwrap_or_default().is_empty())
+        .map(|row| row.id)
+        .collect();
+    let mut previews: HashMap<u64, String> = HashMap::new();
+    if !needs_excerpt.is_empty() {
+        for row in posts::content_previews(&state.db, &needs_excerpt)
+            .await
+            .map_err(internal)?
+        {
+            previews.insert(row.id, row.content.unwrap_or_default());
+        }
+    }
+
+    let list = rows
+        .into_iter()
+        .map(|row| {
+            let excerpt = match row.excerpt.as_deref() {
+                Some(excerpt) if !excerpt.is_empty() => excerpt.to_string(),
+                _ => markdown::excerpt(
+                    previews.get(&row.id).map_or("", String::as_str),
+                    EXCERPT_BYTES,
+                ),
+            };
+            let row_tags = tags.remove(&row.id).unwrap_or_default();
+            PostSummaryDto::assemble(row, state.tz, excerpt, row_tags)
+        })
+        .collect();
+
+    Ok(Json(PublicPostSummaryListResponse { list, page, total }))
 }
 
 /// `GET /api/posts/dates` — the publication days the calendar renders.

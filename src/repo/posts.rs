@@ -13,7 +13,10 @@
 use sqlx::mysql::MySql;
 use sqlx::{MySqlPool, QueryBuilder, Transaction};
 
-use crate::models::{CategoryRow, PostDateCountRow, PostRow, PostTagRow, TagRow, UserRow};
+use crate::models::{
+    CategoryRow, PostContentPreviewRow, PostDateCountRow, PostRow, PostSummaryRow,
+    PostSummaryTagRow, PostTagRow, TagRow, UserRow,
+};
 
 /// Filters for the public and admin post lists.
 ///
@@ -110,6 +113,33 @@ pub async fn list(
     builder.push(" OFFSET ");
     builder.push_bind(offset);
     builder.build_query_as::<PostRow>().fetch_all(pool).await
+}
+
+/// The home-page list: same filter/order as [`list`] but without the body
+/// columns, with the category name joined in (saves a round trip) and without
+/// the author (`authors_for_posts`) that the card never shows.
+pub async fn list_summary(
+    pool: &MySqlPool,
+    filter: &PostFilter,
+    limit: i64,
+    offset: i64,
+) -> Result<Vec<PostSummaryRow>, sqlx::Error> {
+    let mut builder = QueryBuilder::<MySql>::new(
+        "SELECT p.id, p.created_at, p.title, p.slug, p.excerpt, p.cover_image, p.view_count, \
+         p.category_id, c.name AS category_name \
+         FROM posts p LEFT JOIN categories c \
+           ON c.id = p.category_id AND c.deleted_at IS NULL \
+         WHERE p.deleted_at IS NULL",
+    );
+    filter.apply(&mut builder);
+    builder.push(" ORDER BY p.created_at DESC LIMIT ");
+    builder.push_bind(limit);
+    builder.push(" OFFSET ");
+    builder.push_bind(offset);
+    builder
+        .build_query_as::<PostSummaryRow>()
+        .fetch_all(pool)
+        .await
 }
 
 /// `GET /api/posts/dates`: one row per publication day.
@@ -316,6 +346,64 @@ pub async fn tags_for_posts(
     builder.push(") AND t.deleted_at IS NULL ORDER BY pt.post_id ASC, t.id ASC");
 
     builder.build_query_as::<PostTagRow>().fetch_all(pool).await
+}
+
+/// Tags for the summary list; only the two fields the card renders.
+/// Ordering and soft-delete filtering match [`tags_for_posts`].
+pub async fn summary_tags_for_posts(
+    pool: &MySqlPool,
+    post_ids: &[u64],
+) -> Result<Vec<PostSummaryTagRow>, sqlx::Error> {
+    if post_ids.is_empty() {
+        return Ok(Vec::new());
+    }
+
+    let mut builder = QueryBuilder::<MySql>::new(
+        "SELECT pt.post_id, t.id, t.name \
+         FROM post_tags pt JOIN tags t ON t.id = pt.tag_id \
+         WHERE pt.post_id IN (",
+    );
+    for (index, post_id) in post_ids.iter().enumerate() {
+        if index > 0 {
+            builder.push(", ");
+        }
+        builder.push_bind(*post_id);
+    }
+    builder.push(") AND t.deleted_at IS NULL ORDER BY pt.post_id ASC, t.id ASC");
+
+    builder
+        .build_query_as::<PostSummaryTagRow>()
+        .fetch_all(pool)
+        .await
+}
+
+/// Leading characters of the bodies for rows whose own excerpt is empty.
+/// `LEFT()` counts characters for utf8mb4, so this is a valid prefix for
+/// [`crate::services::markdown::excerpt`], which then cuts it on a byte
+/// boundary. Only called when at least one summary row needs it.
+pub async fn content_previews(
+    pool: &MySqlPool,
+    post_ids: &[u64],
+) -> Result<Vec<PostContentPreviewRow>, sqlx::Error> {
+    if post_ids.is_empty() {
+        return Ok(Vec::new());
+    }
+
+    let mut builder = QueryBuilder::<MySql>::new(
+        "SELECT p.id, LEFT(p.content, 600) AS content FROM posts p WHERE p.id IN (",
+    );
+    for (index, post_id) in post_ids.iter().enumerate() {
+        if index > 0 {
+            builder.push(", ");
+        }
+        builder.push_bind(*post_id);
+    }
+    builder.push(")");
+
+    builder
+        .build_query_as::<PostContentPreviewRow>()
+        .fetch_all(pool)
+        .await
 }
 
 /// `DB.Find(&tags, ids)` with GORM's soft-delete scope.

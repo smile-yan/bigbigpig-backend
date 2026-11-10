@@ -158,6 +158,7 @@ pub fn build_router(state: SharedState) -> Router {
         )
         .route("/posts", get(handlers::posts::get_posts))
         .route("/posts/dates", get(handlers::posts::get_post_dates))
+        .route("/posts/summary", get(handlers::posts::get_posts_summary))
         .route("/posts/{slug}", get(handlers::posts::get_post))
         .route("/search", get(handlers::search::search))
         .route("/categories", get(handlers::categories::get_categories))

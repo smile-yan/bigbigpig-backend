@@ -14,7 +14,7 @@ use chrono_tz::Tz;
 use serde::Serialize;
 
 use super::entities::{
-    CategoryRow, CommentRow, PageRow, PostRow, SubscriptionRow, TagRow, UserRow,
+    CategoryRow, CommentRow, PageRow, PostRow, PostSummaryRow, SubscriptionRow, TagRow, UserRow,
 };
 use super::go_time;
 
@@ -345,6 +345,73 @@ impl PageDto {
 #[derive(Debug, Clone, Serialize)]
 pub struct PublicPostListResponse {
     pub list: Vec<PostDto>,
+    pub page: i64,
+    pub total: i64,
+}
+
+/// One card of `GET /api/posts/summary`, the home-page list.
+///
+/// Only the fields the list renders are returned; the article body
+/// (`content`/`html_content`) and `author` are omitted. Unlike [`PostDto`],
+/// `category` is `null` when the post has no live category instead of a
+/// zero-value object, and `tags` is always an array.
+#[derive(Debug, Clone, Serialize)]
+pub struct PostSummaryDto {
+    pub id: u64,
+    pub created_at: String,
+    pub title: String,
+    pub slug: String,
+    pub excerpt: String,
+    pub cover_image: String,
+    pub view_count: i64,
+    pub category: Option<PostSummaryCategoryDto>,
+    pub tags: Vec<PostSummaryTagDto>,
+}
+
+#[derive(Debug, Clone, Serialize)]
+pub struct PostSummaryCategoryDto {
+    pub id: u64,
+    pub name: String,
+}
+
+#[derive(Debug, Clone, Serialize)]
+pub struct PostSummaryTagDto {
+    pub id: u64,
+    pub name: String,
+}
+
+impl PostSummaryDto {
+    /// `excerpt` is resolved by the caller because the fallback needs the
+    /// first characters of `content`, which this row does not select.
+    pub fn assemble(
+        row: PostSummaryRow,
+        tz: Tz,
+        excerpt: String,
+        tags: Vec<PostSummaryTagDto>,
+    ) -> Self {
+        Self {
+            id: row.id,
+            created_at: go_time::format_opt(row.created_at, tz),
+            title: row.title,
+            slug: row.slug,
+            excerpt,
+            cover_image: row.cover_image.unwrap_or_default(),
+            view_count: row.view_count.unwrap_or(0),
+            // NULL category_id, or a category filtered out by the join's
+            // soft-delete condition, stays hidden from the card.
+            category: match (row.category_id, row.category_name) {
+                (Some(id), Some(name)) => Some(PostSummaryCategoryDto { id, name }),
+                _ => None,
+            },
+            tags,
+        }
+    }
+}
+
+/// `GET /api/posts/summary`: same envelope as the public list.
+#[derive(Debug, Clone, Serialize)]
+pub struct PublicPostSummaryListResponse {
+    pub list: Vec<PostSummaryDto>,
     pub page: i64,
     pub total: i64,
 }
