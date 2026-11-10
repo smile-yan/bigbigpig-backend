@@ -213,17 +213,24 @@ jobs:
 
       - uses: Swatinem/rust-cache@v2
         with:
-          # GitHub scopes caches by ref: a tag run cannot restore caches from
-          # main or from another tag, so each release's ~450 MB cache is never
-          # reusable (it only helps re-runs of the exact same tag). Skip both
-          # the ~9s save and the cache-quota churn.
+          # `musl-cache` in ci.yml warms this exact key on every push to main.
+          # A tag run can restore caches written on the default branch, but it
+          # can never read a cache written by another tag, so the warming has
+          # to happen on main. `shared-key` is appended to the key and replaces
+          # the automatic job-name component (rust-cache only adds GITHUB_JOB
+          # when shared-key is empty), which is what lets the two jobs agree.
+          # Keep it in sync with ci.yml or the restore silently misses and the
+          # build falls back to a ~5 minute cold compile.
+          shared-key: musl
+          # Never save from a tag: a cache written by a tag is readable only by
+          # that same tag, so it would be pure quota churn.
           save-if: false
 
       - name: Install cross
-        # Pinned-language toolchain is used from rust-toolchain.toml. Building
-        # cross from source is slower than a prebuilt installer but has no
-        # third-party action-version dependency in the release path.
-        run: cargo install cross --locked
+        # Prebuilt binary pinned by version + sha256 in the script (~1s instead
+        # of ~30s compiling cross from source), and still no third-party action
+        # in the release path.
+        run: bash scripts/install-cross.sh
 
       - name: Build musl release binary
         run: |

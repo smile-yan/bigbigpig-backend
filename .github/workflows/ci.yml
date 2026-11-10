@@ -41,6 +41,45 @@ jobs:
       - name: Release build sanity
         run: cargo build --locked --release
 
+  musl-cache:
+    name: warm musl release cache
+    # GitHub scopes caches by ref: a tag run can restore caches written on the
+    # default branch, but never caches written by another tag. Building the
+    # musl dependency graph here, with the exact rust-cache key release.yml
+    # asks for, turns the release's ~2m30s of cold dependency compilation into
+    # a restore from main.
+    #
+    # Most runs are a no-op: rust-cache restores the artifacts and cargo
+    # reports everything fresh. A Cargo.lock / Cargo.toml / rust-toolchain.toml
+    # change rotates the key and pays the full build once, which doubles as a
+    # "the musl target still compiles" signal on main.
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Install Rust
+        uses: dtolnay/rust-toolchain@master
+        with:
+          toolchain: 1.96.0
+          targets: x86_64-unknown-linux-musl
+
+      - uses: Swatinem/rust-cache@v2
+        with:
+          # Must match release.yml exactly. `shared-key` is appended to the key
+          # and replaces the automatic job-name component (rust-cache only adds
+          # GITHUB_JOB when shared-key is empty), so both jobs request
+          # `v0-rust-musl-<os>-<arch>-<env hash>`.
+          shared-key: musl
+
+      - name: Install cross
+        run: bash scripts/install-cross.sh
+
+      - name: Build musl release binary
+        # Nothing is published from here; the point is the warmed
+        # target/x86_64-unknown-linux-musl directory and cargo registry.
+        run: cross build --locked --release --target x86_64-unknown-linux-musl
+
   audit:
     name: cargo audit / deny
     runs-on: ubuntu-latest
