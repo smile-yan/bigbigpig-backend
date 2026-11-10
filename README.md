@@ -10,10 +10,12 @@
 - 数据库 schema、软删除语义、slug 规则、Redis key/TTL 保持不变；
 - JWT 与 Go 版双向互通，现有 token 继续有效；
 - Markdown 渲染结果与 Go 基线对齐（25 个 golden 用例，仅两类已记录的语义等价差异）；
-- 前端（Vue 3）无需任何修改。
+- 前端（Vue 3）无需为后端重写做任何修改；2026-11-10 的首页日历优化
+  （方案 A，调用新增的 `/api/posts/dates`）属于独立的前端改动。
 
 > 基线：`smileyan-backend` tag `go-baseline-2026-11`（commit `1f3a87f`）。
-> 当前实现已完成 Phase 0–8，共 43 个 API 端点（另有 `/uploads/*` 静态文件路由）；
+> 当前实现已完成 Phase 0–8，共 44 个 API 端点（另有 `/uploads/*` 静态文件路由）；
+> 其中 `GET /api/posts/dates` 为方案 A 新增，其余 43 个与 Go 基线一致。
 > `tests/contract_full.rs` 会按采集顺序重放全部 172 个 HTTP、8 封邮件和 13 个
 > note 夹具。
 
@@ -308,15 +310,16 @@ advisories、licenses、bans、sources 四节。
 
 ## API 概览
 
-共 43 个 API 端点（另有 `/uploads/*` 静态文件路由），路径、方法与认证层级与
-Go 基线完全一致。
+共 44 个 API 端点（另有 `/uploads/*` 静态文件路由），路径、方法与认证层级与
+Go 基线一致；唯一新增的是首页日历用的 `GET /api/posts/dates`（方案 A，
+2026-11-10，Go 基线无此端点）。
 
 | 资源 | 公共 | 需登录 | 管理员 |
 |---|---|---|---|
 | 健康检查 | `GET /api/hello` | — | — |
 | 认证 | `POST /api/send-code`、`POST /api/login` | — | — |
 | 用户 | — | `GET/PUT /api/user`、`POST /api/upload-avatar` | `GET /api/admin/users`、`PUT /api/admin/users/{id}/role` |
-| 文章 | `GET /api/posts`、`GET /api/posts/{slug}` | — | `GET/POST /api/admin/posts`、`GET /api/admin/posts/slug/{slug}`、`GET/PUT/DELETE /api/admin/posts/_id/{id}`、`POST /api/admin/posts/_id/{id}/restore` |
+| 文章 | `GET /api/posts`、`GET /api/posts/{slug}`、`GET /api/posts/dates` | — | `GET/POST /api/admin/posts`、`GET /api/admin/posts/slug/{slug}`、`GET/PUT/DELETE /api/admin/posts/_id/{id}`、`POST /api/admin/posts/_id/{id}/restore` |
 | 分类 | `GET /api/categories` | — | `POST /api/admin/categories`、`PUT/DELETE /api/admin/categories/_id/{id}` |
 | 标签 | `GET /api/tags` | — | `POST /api/admin/tags`、`DELETE /api/admin/tags/_id/{id}` |
 | 页面 | `GET /api/pages`、`GET /api/pages/{slug}`（可选认证） | — | `POST /api/admin/pages`、`GET/PUT/DELETE /api/admin/pages/_id/{id}` |

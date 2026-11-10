@@ -16,13 +16,14 @@ use axum::Json;
 use axum::body::Bytes;
 use axum::extract::rejection::BytesRejection;
 use axum::extract::{Path, Query, State};
+use axum::http::{HeaderMap, HeaderValue, header};
 use serde::Deserialize;
 
 use crate::error::AppError;
 use crate::middleware::auth::{CurrentUser, resolve_current_user};
 use crate::models::{
     AdminPostListResponse, CategoryDto, CategoryRow, MessageResponse, POST_STATUS_DRAFT,
-    POST_STATUS_HIDDEN, POST_STATUS_PUBLISHED, PostDto, PostRow, PostTagRow,
+    POST_STATUS_HIDDEN, POST_STATUS_PUBLISHED, PostDateCountDto, PostDto, PostRow, PostTagRow,
     PublicPostListResponse, ROLE_ADMIN, TagDto, UserDto, UserRow,
 };
 use crate::repo::posts::{self, PostFilter};
@@ -86,6 +87,28 @@ pub async fn get_posts(
         .collect();
 
     Ok(Json(PublicPostListResponse { list, page, total }))
+}
+
+/// `GET /api/posts/dates` — the publication days the calendar renders.
+///
+/// Bare array like `/api/categories`; `count` is available for future heatmaps
+/// but the frontend currently only reads `date`. The aggregate changes only
+/// when a post is published, so it is safe to cache for a minute.
+pub async fn get_post_dates(
+    State(state): State<SharedState>,
+) -> Result<(HeaderMap, Json<Vec<PostDateCountDto>>), AppError> {
+    let rows = posts::list_dates(&state.db).await.map_err(internal)?;
+
+    let mut headers = HeaderMap::new();
+    headers.insert(
+        header::CACHE_CONTROL,
+        HeaderValue::from_static("public, max-age=60"),
+    );
+
+    Ok((
+        headers,
+        Json(rows.into_iter().map(PostDateCountDto::from_row).collect()),
+    ))
 }
 
 #[derive(Debug, Default, Deserialize)]

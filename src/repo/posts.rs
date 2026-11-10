@@ -13,7 +13,7 @@
 use sqlx::mysql::MySql;
 use sqlx::{MySqlPool, QueryBuilder, Transaction};
 
-use crate::models::{CategoryRow, PostRow, PostTagRow, TagRow, UserRow};
+use crate::models::{CategoryRow, PostDateCountRow, PostRow, PostTagRow, TagRow, UserRow};
 
 /// Filters for the public and admin post lists.
 ///
@@ -110,6 +110,26 @@ pub async fn list(
     builder.push(" OFFSET ");
     builder.push_bind(offset);
     builder.build_query_as::<PostRow>().fetch_all(pool).await
+}
+
+/// `GET /api/posts/dates`: one row per publication day.
+///
+/// Only public rows count (`deleted_at`, `status`, `is_deleted`). `DATE()`
+/// groups the stored wall clock, so the result matches the day the frontend
+/// derives from `created_at`; the session timezone is not converted.
+pub async fn list_dates(pool: &MySqlPool) -> Result<Vec<PostDateCountRow>, sqlx::Error> {
+    sqlx::query_as::<_, PostDateCountRow>(
+        "SELECT DATE(p.created_at) AS post_date, COUNT(*) AS post_count \
+         FROM posts p \
+         WHERE p.deleted_at IS NULL \
+           AND p.status = 'published' \
+           AND p.is_deleted = 0 \
+           AND p.created_at IS NOT NULL \
+         GROUP BY DATE(p.created_at) \
+         ORDER BY post_date DESC",
+    )
+    .fetch_all(pool)
+    .await
 }
 
 pub async fn find_by_slug(pool: &MySqlPool, slug: &str) -> Result<Option<PostRow>, sqlx::Error> {

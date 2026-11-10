@@ -57,12 +57,14 @@
 | 搜索 `highlights` 字段 | 仍不返回（与 Go 一致）；前端 `highlights?.[0]` 继续走 fallback | 无新增差异 |
 | TTS 上游请求头 | 不带 `Accept-Encoding: gzip`，User-Agent 不同 | 上游只依赖 `Content-Type`/`Authorization`/JSON body，API 响应不变 |
 | 日志格式 | JSON 文件日志 + 控制台；请求日志字段对齐 Go | 巡检脚本若依赖 Go 文本格式需调整 |
+| 新增只读端点 `GET /api/posts/dates` | 首页日历改用日期聚合（方案 A，2026-11-10 新增），Go 基线无此端点；响应为裸数组 `[{date,count}]`，只统计 published/未删除文章 | 增量接口；旧前端不调用，回滚只需前端回退 |
 
 ## 4. 完全一致的契约
 
 以下内容在重放测试中逐字段一致，无需前端/调用方改动：
 
-- 43 个端点（含 `/api/hello`、`/uploads/*`、`/v1/audio/speech`）的路径、方法与认证层级。
+- 43 个 Go 基线端点（含 `/api/hello`、`/uploads/*`、`/v1/audio/speech`）的路径、方法与认证层级；
+  新增的 `GET /api/posts/dates` 见第 3 节。
 - 成功响应形状：列表 `{list,total,page[,page_size]}`、分类/标签/评论裸数组、详情裸对象；
   **没有** `{data:...}` 包装。
 - 错误体 `{"error":"..."}` 与固定文案（401/403/404/400/429/500）。

@@ -6,14 +6,14 @@ pub mod go_time;
 
 pub use dto::{
     AdminCommentListResponse, AdminPostListResponse, AvatarResponse, CategoryCountDto, CategoryDto,
-    CommentDto, LoginResponse, MessageResponse, NotifyResponse, PageDto, PageListResponse, PostDto,
-    PublicPostListResponse, SearchCategoryDto, SearchResponse, SearchResultDto, SearchTagDto,
-    SubscriptionDto, SubscriptionListResponse, TagCountDto, TagDto, UserDto, UserListResponse,
-    UserSummary,
+    CommentDto, LoginResponse, MessageResponse, NotifyResponse, PageDto, PageListResponse,
+    PostDateCountDto, PostDto, PublicPostListResponse, SearchCategoryDto, SearchResponse,
+    SearchResultDto, SearchTagDto, SubscriptionDto, SubscriptionListResponse, TagCountDto, TagDto,
+    UserDto, UserListResponse, UserSummary,
 };
 pub use entities::{
-    CategoryCountRow, CategoryRow, CommentRow, PageRow, PostRow, PostTagRow, SubscriptionRow,
-    TagCountRow, TagRow, UserRow,
+    CategoryCountRow, CategoryRow, CommentRow, PageRow, PostDateCountRow, PostRow, PostTagRow,
+    SubscriptionRow, TagCountRow, TagRow, UserRow,
 };
 
 /// Frozen role/status values (lowercase strings, see C10).

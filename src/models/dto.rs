@@ -403,6 +403,26 @@ pub struct PageListResponse {
     pub total: i64,
 }
 
+/// One entry of `GET /api/posts/dates`: the calendar only needs the day and
+/// the number of posts published on it.
+#[derive(Debug, Clone, Serialize)]
+pub struct PostDateCountDto {
+    pub date: String,
+    pub count: i64,
+}
+
+impl PostDateCountDto {
+    /// `DATE(created_at)` groups the stored wall clock, so formatting the
+    /// `NaiveDate` directly keeps the same day the frontend reads from
+    /// `created_at`; no timezone conversion is applied.
+    pub fn from_row(row: super::entities::PostDateCountRow) -> Self {
+        Self {
+            date: row.post_date.format("%Y-%m-%d").to_string(),
+            count: row.post_count,
+        }
+    }
+}
+
 /// A comment as Go serializes the `models.Comment` struct.
 ///
 /// `post` is always an object (Q14): the public list and create responses leave
