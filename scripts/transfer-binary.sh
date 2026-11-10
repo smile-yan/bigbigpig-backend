@@ -314,6 +314,11 @@ if [ -f "$DEPLOY_PATH/smileyan-backend" ]; then
   # This copy serves as the rsync basis and, when a patch is used, as the
   # decompression dictionary.
   cp -f "$DEPLOY_PATH/smileyan-backend" /tmp/smileyan-deploy/smileyan-backend
+  # The deployed copy may lack the executable bit (e.g. deployed from a
+  # tarball that preserved a non-executable mode). The staging copy feeds
+  # the deployment tarball, whose deploy script requires an executable
+  # binary, so always normalize the mode here.
+  chmod +x /tmp/smileyan-deploy/smileyan-backend
   printf 'sha=%s\n' "$(sha256sum /tmp/smileyan-deploy/smileyan-backend | awk '{print $1}')"
 else
   printf 'sha=NO_BASIS\n'
