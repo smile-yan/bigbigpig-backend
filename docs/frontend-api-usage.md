@@ -6,6 +6,9 @@
 >
 > 目的：`docs/api.md` 的“通用 `{data:...}` 包装”与实际代码不符。本文件以**真实前端调用**为准，
 > 冻结 Rust 重写必须满足的路径、请求字段与响应字段。
+>
+> 2026-11-10 更新：首页日历改用新增的 `GET /api/posts/dates`（方案 A），
+> 不再用 `GET /api/posts?page_size=1000` 拉取全量文章。
 
 ## 1. 基础配置
 
@@ -23,13 +26,13 @@
 | POST | `/api/login` | `App.vue:174` | `{email, code}` |
 | GET | `/api/user` | `store/user.js:36` | 无 |
 | PUT | `/api/user` | `App.vue:203` | `{nickname}`（从不发送 avatar） |
-| GET | `/api/posts` | `Home.vue:191` | `{page_size:1000}` |
+| GET | `/api/posts/dates` | `Home.vue:192` | 无 |
 | GET | `/api/posts` | `Home.vue:211` | `{page, page_size, category_id?, tag_id?}` |
 | GET | `/api/posts` | `Home.vue:218` | `{page:1, page_size:100, start_date, end_date}` |
 | GET | `/api/posts` | `AdminSubscriptions.vue:82` | `{page_size:100}`（管理员 token） |
 | GET | `/api/posts/:slug` | `Post.vue:306` | path |
-| GET | `/api/categories` | `Home.vue:179`、`AdminPosts.vue:140`、`Editor.vue:784`、`AdminCategories.vue:64` | 无 |
-| GET | `/api/tags` | `Home.vue:184`、`AdminPosts.vue:149`、`Editor.vue:793`、`AdminTags.vue:52` | 无 |
+| GET | `/api/categories` | `Home.vue:181`、`AdminPosts.vue:140`、`Editor.vue:784`、`AdminCategories.vue:64` | 无 |
+| GET | `/api/tags` | `Home.vue:186`、`AdminPosts.vue:149`、`Editor.vue:793`、`AdminTags.vue:52` | 无 |
 | GET | `/api/pages` | `App.vue:138` | 无 |
 | GET | `/api/pages` | `AdminPages.vue:89` | `{page, page_size}` |
 | GET | `/api/pages/:slug` | `Page.vue:31` | path |
@@ -84,6 +87,7 @@
 | GET `/api/pages`（`AdminPages`） | `list[].{id,title,slug,content,status,created_at}`、`total` |
 | GET `/api/pages/:slug` | `title`、`html_content` |
 | GET `/api/posts` | `list`、`total`；item：`id,slug,title,cover_image,created_at,category.name,view_count,excerpt,highlights?[0],tags[].{id,name}`；管理员视图还读 `status` |
+| GET `/api/posts/dates` | 裸数组；`[].{date,count}`（日历当前只读 `date`） |
 | GET `/api/posts/:slug` | `id,title,created_at,category.name,view_count,tags[],html_content,content` |
 | GET `/api/categories` | 裸数组；`id,name,post_count`；管理页读 `slug,description,sort` |
 | GET `/api/tags` | 裸数组；`id,name,post_count` |
@@ -103,7 +107,7 @@
 
 1. **没有 `{data:...}` 包装**。所有成功响应保持裸对象/数组。
 2. **`list` 不能是 `null`**：多个调用点无空值保护地 `.forEach`/`.filter`。Go 的空结果行为需逐端点用夹具确认；Rust 对前端实际消费的列表输出 `[]` 更安全，但契约测试要以 Go 夹具为准并记录已批准差异。
-3. **`/api/categories`、`/api/tags`、`/api/comments` 是裸数组**，不要统一为分页对象。
+3. **`/api/categories`、`/api/tags`、`/api/comments`、`/api/posts/dates` 是裸数组**，不要统一为分页对象。
 4. **`comment.user` 必须是对象**，即使 Preload 缺失或用户被软删；保持 Go 的零值 `User` 形状。
 5. **`post.category` 未 Preload/分类软删时是零值对象**，不是 `null`（Go 的 `omitempty` 对结构体无效）。Rust 若要改 `null`，需前端确认并记录差异。
 6. **`post_count` 必须存在**，且只统计 `published AND is_deleted=0`。

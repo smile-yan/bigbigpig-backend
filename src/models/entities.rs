@@ -4,7 +4,7 @@
 //! Nullable columns are `Option` so a NULL in an older production row cannot
 //! fail decoding; the DTO layer substitutes the same zero values Go renders.
 
-use chrono::NaiveDateTime;
+use chrono::{NaiveDate, NaiveDateTime};
 
 #[derive(Debug, Clone, sqlx::FromRow)]
 pub struct UserRow {
@@ -76,6 +76,13 @@ pub struct PostRow {
     pub is_deleted: Option<bool>,
     pub category_id: Option<u64>,
     pub author_id: Option<u64>,
+}
+
+/// One publication day of the `/api/posts/dates` aggregate.
+#[derive(Debug, Clone, sqlx::FromRow)]
+pub struct PostDateCountRow {
+    pub post_date: NaiveDate,
+    pub post_count: i64,
 }
 
 #[derive(Debug, Clone, sqlx::FromRow)]

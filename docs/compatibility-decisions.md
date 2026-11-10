@@ -560,3 +560,28 @@ TTS：前端使用浏览器 `speechSynthesis`，没有调用 `/v1/audio/speech`�
 
 **不变量**：数据库结构、Redis key/TTL、JWT secret 与 claims、`config.yaml`
 旧字段均未改变；回滚不需要数据迁移。
+
+## 13. 新增接口：`GET /api/posts/dates`（2026-11-10，方案 A）
+
+首页日历原先在 `smileyan-frontend/src/views/Home.vue` 用
+`GET /api/posts?page_size=1000` 拉全量文章（含 `content`/`html_content`），
+与列表请求并行发出：1.787 MB / 17 s，且超过 1000 篇后静默漏日期。方案 A 新增
+只读日期聚合端点，**不改动任何既有端点契约**。
+
+| 项 | 内容 |
+|---|---|
+| 路径 | `GET /api/posts/dates`（公共、无认证） |
+| 响应 | 裸数组，按日期倒序：`[{"date":"2026-11-09","count":2}, ...]`；空库为 `[]` |
+| 过滤 | `deleted_at IS NULL AND status='published' AND is_deleted=0 AND created_at IS NOT NULL` |
+| 时区 | `DATE(created_at)` 按数据库存储的墙钟日期分组，与 `server.timezone` 及前端 `dayjs(created_at)` 一致，不做 UTC 转换 |
+| 缓存 | `Cache-Control: public, max-age=60`；前端另有模块级 Promise 缓存（失败不缓存） |
+| 路由 | 静态段 `/posts/dates` 注册在 `/posts/{slug}` 之前；若线上存在 slug=`dates` 的文章会被抢占，上线前执行 `SELECT 1 FROM posts WHERE slug='dates'` 检查 |
+| 索引 | 不新增；现有 `idx_posts_status`/`idx_posts_is_deleted` 足够博客量级 |
+| 实现 | `repo/posts.rs::list_dates`（`PostDateCountRow`）+ `handlers/posts.rs::get_post_dates` + `PostDateCountDto` |
+| 测试 | `tests/post_dates_contract.rs`：仅 published、同日合并计数、草稿/隐藏/`is_deleted`/软删不计入、空库 `[]`、NULL 时间戳、跨零点不偏移、Content-Type |
+
+前端改动：`Home.vue` 的 `loadPostDates` 改调新接口；模块级 `postDatesPromise`
+在 SPA 生命周期内复用，从文章页返回首页不再重复请求；`page_size: 1000` 已移除。
+
+回滚：前端恢复旧的 `loadPostDates` 即可（会重新出现双请求）；后端新增路由为
+增量，可保留。发布顺序仍建议后端先行，前端先上线遇 404 时日历降级为无圆点。
