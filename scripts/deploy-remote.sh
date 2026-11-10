@@ -31,6 +31,9 @@
 #   config.yaml / config.yaml.prev
 #   start.sh stop.sh restart.sh rollback.sh
 #   .env (0600)  logs/  uploads/
+#   .deployed                   "tag sha256" of the live binary; read by
+#                               scripts/transfer-binary.sh to pick the zstd
+#                               patch dictionary (see the release workflow)
 #
 # The generated stop/rollback scripts only touch this directory's PID and its
 # own port. Never `pkill -f smileyan-backend`: staging and production may run
@@ -344,6 +347,15 @@ if [ "$HEALTHY" != "1" ]; then
   tail -n 50 "$DEPLOY_PATH/logs/app.log" >&2 || true
   exit 1
 fi
+
+# Record what is running so the next release can fetch the byte-identical
+# binary from GitHub and build a zstd patch against it instead of pushing the
+# whole file over the runner -> China link. Atomic move: a crash must never
+# leave a half-written file behind. A stale entry is not dangerous -- the
+# consumer verifies the SHA256 and falls back to probing the latest releases.
+printf '%s %s\n' "$RELEASE_TAG" "$(sha256 "$DEPLOY_PATH/smileyan-backend")" \
+  > "$DEPLOY_PATH/.deployed.tmp.$$"
+mv -f "$DEPLOY_PATH/.deployed.tmp.$$" "$DEPLOY_PATH/.deployed"
 
 echo "Deployed $RELEASE_TAG to $DEPLOY_PATH on port $APP_PORT"
 echo "  binary : $(sha256 "$DEPLOY_PATH/smileyan-backend")"

@@ -11,13 +11,15 @@ name: Release
 # - Auto-generates a changelog from grouped PRs / commits since the previous tag.
 # - For stable (non-prerelease) tags, deploys to every server in the
 #   SERVERS_CONFIG repository variable over SSH, in parallel. The deploy job
-#   extracts the release tarball, stages the currently deployed binary on the
-#   server as an rsync basis, and transfers only the changed blocks. A
-#   byte-identical binary (common for CI-only tags) is skipped entirely, so the
-#   slow GitHub-runner -> China link is no longer the critical path. The small
-#   config.yaml / deploy-remote.sh files are uploaded separately, the SHA256 of
-#   the transferred binary is verified on the server, and the existing
-#   deploy-remote.sh runs unchanged (PID/port-scoped stop/rollback contract).
+#   extracts the release tarball, then sends the binary as a zstd patch built
+#   against the deployed one (scripts/transfer-binary.sh), which is ~5% of the
+#   file instead of the ~28% an rsync block delta can do on a rebuilt Rust
+#   binary. A byte-identical binary (common for CI-only tags) is skipped
+#   entirely. The small config.yaml / deploy-remote.sh files are uploaded
+#   separately, the SHA256 of the transferred binary is verified on the server,
+#   and the existing deploy-remote.sh runs unchanged (PID/port-scoped
+#   stop/rollback contract). rsync delta remains the fallback whenever no
+#   matching basis release can be found.
 #
 # No application secret is needed to build: the Rust binary resolves
 # DB/Redis/email/TTS configuration at runtime. DEPLOY_SSH_KEY is consumed by
@@ -425,58 +427,26 @@ jobs:
           ssh-keyscan -p "${{ matrix.server.port }}" \
             -H "${{ matrix.server.addr }}" >> ~/.ssh/known_hosts
 
-      - name: Transfer binary with rsync delta
-        # The runner -> China link is the release bottleneck (~12-20 KB/s), so
-        # never send the whole binary when only a few blocks changed:
-        #   1. copy the currently deployed binary to /tmp as an rsync basis;
-        #   2. rsync only the changed blocks (a byte-identical binary costs a
-        #      few KB of checksums and is skipped outright);
-        #   3. verify SHA256 before the deploy script is allowed to swap it in.
-        # The copy lives outside DEPLOY_PATH, so the running process and the
-        # rollback target (.prev) are untouched until deploy-remote.sh runs.
+      - name: Transfer binary (zstd patch, rsync fallback)
+        # See scripts/transfer-binary.sh for the full rationale and for the
+        # measured numbers. Short version: the runner -> China link is the
+        # release bottleneck (13.7-16.0 KB/s on v0.0.11), a rebuilt Rust binary
+        # only matches ~17% of rsync's 32 KiB blocks (6.5 MiB on the wire), and
+        # a zstd --patch-from dictionary built from the deployed binary brings
+        # the same upgrade down to ~1 MiB. The script stages the binary in
+        # /tmp/smileyan-deploy, leaving DEPLOY_PATH and the .prev rollback
+        # target untouched until deploy-remote.sh runs.
         env:
           SERVER_NAME: ${{ matrix.server.name }}
           SERVER_DEPLOY_PATH: ${{ matrix.server.deploy_path }}
           SSH_ADDR: ${{ matrix.server.addr }}
           SSH_PORT: ${{ matrix.server.port }}
           SSH_USER: ${{ matrix.server.user }}
-        run: |
-          set -euo pipefail
-          command -v rsync >/dev/null || {
-            echo "ERROR: rsync is required on the runner" >&2
-            exit 1
-          }
-
-          NEW_SHA=$(sha256sum dist/release/smileyan-backend | awk '{print $1}')
-          REMOTE_SHA=$(ssh -p "$SSH_PORT" \
-            -o BatchMode=yes \
-            -o ServerAliveInterval=30 -o ServerAliveCountMax=10 \
-            "$SSH_USER@$SSH_ADDR" \
-            env DEPLOY_PATH="$SERVER_DEPLOY_PATH" bash -s <<'REMOTE' | tail -n 1
-          set -euo pipefail
-          rm -rf /tmp/smileyan-deploy
-          mkdir -p /tmp/smileyan-deploy
-          if [ -f "$DEPLOY_PATH/smileyan-backend" ]; then
-            cp -f "$DEPLOY_PATH/smileyan-backend" /tmp/smileyan-deploy/smileyan-backend
-            sha256sum /tmp/smileyan-deploy/smileyan-backend | awk '{print $1}'
-          else
-            echo NO_BASIS
-          fi
-          REMOTE
-          )
-
-          echo ">>> [$SERVER_NAME] deployed binary sha256: $REMOTE_SHA"
-          echo ">>> [$SERVER_NAME] release  binary sha256: $NEW_SHA"
-
-          if [ "$REMOTE_SHA" = "$NEW_SHA" ]; then
-            echo ">>> [$SERVER_NAME] binary already deployed; skipping transfer"
-          else
-            rsync -z --compress-level=6 --block-size=32768 --partial --stats \
-              --timeout=300 \
-              -e "ssh -p $SSH_PORT -o BatchMode=yes -o ServerAliveInterval=30 -o ServerAliveCountMax=10" \
-              dist/release/smileyan-backend \
-              "$SSH_USER@$SSH_ADDR:/tmp/smileyan-deploy/smileyan-backend"
-          fi
+          RELEASE_TAG: ${{ github.ref_name }}
+          LOCAL_BINARY: dist/release/smileyan-backend
+          GH_REPO: ${{ github.repository }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: bash scripts/transfer-binary.sh
 
       - name: Upload config and deploy script
         # Two tiny files (~14 KB total). Sent as one streamed tar so there is no
