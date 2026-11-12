@@ -70,60 +70,6 @@ pub async fn admin_middleware(
     }
 }
 
-/// Content-management routes (`/api/admin/posts*`, `/api/admin/pages*`):
-/// an admin JWT works as before, and a valid `X-API-Key` is accepted in its
-/// place so key holders can create/edit posts and pages (plus the reads the
-/// editor needs).
-///
-/// Policy: keys authenticate only `GET`/`POST`/`PUT` — `DELETE` and any other
-/// method always fall through to the admin-JWT check. Without a valid key the
-/// behavior is byte-identical to [`admin_middleware`], so existing token-based
-/// clients see the same 401/403 responses.
-///
-/// A key-authenticated request runs as the synthetic admin identity so the
-/// handlers that resolve `CurrentUser` (e.g. `create_post` attributing an
-/// author) keep working unchanged; `last_used_at` is updated best-effort.
-pub async fn admin_or_api_key_middleware(
-    State(state): State<SharedState>,
-    mut request: Request,
-    next: Next,
-) -> Response {
-    if matches!(
-        request.method(),
-        &axum::http::Method::GET | &axum::http::Method::POST | &axum::http::Method::PUT
-    ) && let Some(key) = api_key_from_header(request.headers())
-        && let Ok(Some(row)) = crate::repo::api_keys::find_active_by_key(&state.db, &key).await
-    {
-        let pool = state.db.clone();
-        let key_id = row.id;
-        tokio::spawn(async move {
-            if let Err(err) = crate::repo::api_keys::touch(&pool, key_id).await {
-                tracing::warn!(error = ?err, "Failed to update api key last_used_at");
-            }
-        });
-        request
-            .extensions_mut()
-            .insert(CurrentUser::synthetic_admin());
-        return next.run(request).await;
-    }
-
-    admin_middleware(State(state), request, next).await
-}
-
-/// Reads `X-API-Key`, ignoring empty and absurdly long values (our keys are
-/// 64 hex chars) so they can never reach the database lookup.
-fn api_key_from_header(headers: &HeaderMap) -> Option<String> {
-    let value = headers
-        .get("x-api-key")
-        .map(|value| String::from_utf8_lossy(value.as_bytes()).into_owned())
-        .unwrap_or_default();
-    if value.is_empty() || value.len() > 128 {
-        None
-    } else {
-        Some(value)
-    }
-}
-
 /// Optional authentication used by the public page routes (Q4).
 ///
 /// A valid token populates `CurrentUser`; a missing or invalid one leaves the

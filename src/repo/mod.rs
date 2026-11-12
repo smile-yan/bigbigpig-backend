@@ -1,6 +1,5 @@
 //! Repository layer: all SQL lives here.
 
-pub mod api_keys;
 pub mod categories;
 pub mod comments;
 pub mod pages;

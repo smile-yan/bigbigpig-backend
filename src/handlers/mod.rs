@@ -1,4 +1,3 @@
-pub mod api_keys;
 pub mod auth;
 pub mod categories;
 pub mod comments;

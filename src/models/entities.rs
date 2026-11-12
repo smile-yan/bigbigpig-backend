@@ -175,14 +175,3 @@ pub struct PageRow {
     pub html_content: Option<String>,
     pub status: Option<String>,
 }
-
-#[derive(Debug, Clone, sqlx::FromRow)]
-pub struct ApiKeyRow {
-    pub id: u64,
-    pub created_at: Option<NaiveDateTime>,
-    pub updated_at: Option<NaiveDateTime>,
-    pub name: Option<String>,
-    pub api_key: String,
-    pub expires_at: NaiveDateTime,
-    pub last_used_at: Option<NaiveDateTime>,
-}

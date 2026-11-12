@@ -19,9 +19,7 @@ use tower_http::catch_panic::CatchPanicLayer;
 use tower_http::services::ServeDir;
 
 use crate::handlers;
-use crate::middleware::auth::{
-    admin_middleware, admin_or_api_key_middleware, auth_middleware, optional_auth_middleware,
-};
+use crate::middleware::auth::{admin_middleware, auth_middleware, optional_auth_middleware};
 use crate::middleware::request_log::request_log;
 use crate::state::SharedState;
 
@@ -68,11 +66,6 @@ pub fn build_router(state: SharedState) -> Router {
     // The fallback is part of the router, so Auth -> Admin still runs for
     // `/api/admin/*` routes that later phases have not implemented yet. Gin
     // returns 401/403 there before its 404 handler.
-    //
-    // The content routes (posts/pages reads + create/update) are split out:
-    // they accept an admin JWT or a valid `X-API-Key`, while everything else
-    // stays admin-JWT only. Keys never authorize DELETE: the middleware only
-    // accepts GET/POST/PUT and falls through to the admin check otherwise.
     let admin_content = Router::new()
         .route(
             "/posts",
@@ -101,7 +94,7 @@ pub fn build_router(state: SharedState) -> Router {
         )
         .route_layer(middleware::from_fn_with_state(
             admin_content_state,
-            admin_or_api_key_middleware,
+            admin_middleware,
         ));
 
     let admin_restricted = Router::new()
@@ -146,15 +139,6 @@ pub fn build_router(state: SharedState) -> Router {
             delete(handlers::subscriptions::delete_subscription),
         )
         .route("/notify", post(handlers::subscriptions::notify_subscribers))
-        // API keys (the management page itself is admin-only)
-        .route(
-            "/keys",
-            get(handlers::api_keys::get_keys).post(handlers::api_keys::create_key),
-        )
-        .route(
-            "/keys/_id/{id}",
-            put(handlers::api_keys::update_key).delete(handlers::api_keys::delete_key),
-        )
         .fallback(not_found)
         .layer(middleware::from_fn_with_state(
             admin_group_state,
