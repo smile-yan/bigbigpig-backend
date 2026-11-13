@@ -271,6 +271,10 @@ if [ "$ACTUAL_SHA" != "$EXPECTED_SHA" ]; then
   exit 1
 fi
 mv -f smileyan-backend.new smileyan-backend
+# zstd -d -o creates the file fresh with default permissions (0644), so the
+# swap above loses the executable bit the staging copy is required to have.
+# Normalize the mode exactly like the inspect step does for the basis copy.
+chmod +x smileyan-backend
 rm -f smileyan-backend.patch.zst
 echo PATCH_OK
 REMOTE

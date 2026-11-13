@@ -490,6 +490,11 @@ jobs:
           fi
           test -f config.yaml
           test -x deploy-remote.sh
+          # The staged binary must be executable: every transfer path is
+          # supposed to normalize the mode, but a missed path only shows up
+          # as a failed remote deploy, so enforce it here at tarball assembly.
+          chmod +x smileyan-backend
+          test -x smileyan-backend
           tar -czf /tmp/smileyan-backend-deploy.tar.gz \
             smileyan-backend config.yaml deploy-remote.sh
           echo "OK: transfer verified (sha256 $ACTUAL_SHA); deployment tarball assembled"
