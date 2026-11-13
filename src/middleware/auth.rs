@@ -20,7 +20,8 @@ use axum::response::{IntoResponse, Response};
 use crate::config::AppConfig;
 use crate::error::AppError;
 use crate::models::ROLE_ADMIN;
-use crate::repo::users;
+use crate::repo::{api_keys, users};
+use crate::services::api_key::{hash_api_key, looks_like_api_key};
 use crate::services::token::decode_claims;
 use crate::state::{AppState, SharedState};
 
@@ -67,6 +68,77 @@ pub async fn admin_middleware(
         }
         Ok(_) => AppError::Forbidden("Admin access required").into_response(),
         Err(err) => err.into_response(),
+    }
+}
+
+/// Content-management routes: an admin JWT works as before, and a valid API
+/// token is accepted in its place.
+///
+/// A token may only use the methods it is scoped for: `GET` (reads needed by
+/// the editor), `POST` and `PUT`. `DELETE` and every other method fall through
+/// to [`admin_middleware`], so tokens can never delete content even though the
+/// delete handlers share paths with their read/update counterparts.
+///
+/// A token-authenticated request runs as the synthetic admin identity so
+/// handlers that resolve `CurrentUser` (e.g. `create_post` attributing an
+/// author) keep working unchanged; `last_used_at` is updated best-effort.
+pub async fn admin_or_api_key_middleware(
+    State(state): State<SharedState>,
+    mut request: Request,
+    next: Next,
+) -> Response {
+    if api_key_method_allowed(request.method())
+        && let Some(key) = api_key_from_request(request.headers())
+    {
+        match api_keys::find_active_by_hash(&state.db, &hash_api_key(&key)).await {
+            Ok(Some(row)) => {
+                if let Err(err) = api_keys::touch(&state.db, row.id).await {
+                    tracing::warn!(
+                        error = ?err,
+                        key_id = row.id,
+                        "Failed to update api key last_used_at"
+                    );
+                }
+                request
+                    .extensions_mut()
+                    .insert(CurrentUser::synthetic_admin());
+                return next.run(request).await;
+            }
+            Ok(None) => {}
+            Err(err) => tracing::error!(error = ?err, "Failed to look up API key"),
+        }
+    }
+
+    admin_middleware(State(state), request, next).await
+}
+
+fn api_key_method_allowed(method: &axum::http::Method) -> bool {
+    method == axum::http::Method::GET
+        || method == axum::http::Method::POST
+        || method == axum::http::Method::PUT
+}
+
+/// Reads the token from `X-API-Key`, or from `Authorization: Bearer sk_...`.
+///
+/// Browser clients should use the `Authorization` header: the frozen CORS
+/// contract only whitelists `Origin,Content-Type,Authorization`.
+fn api_key_from_request(headers: &HeaderMap) -> Option<String> {
+    if let Some(value) = headers.get("x-api-key") {
+        let value = String::from_utf8_lossy(value.as_bytes()).into_owned();
+        if value.is_empty() || value.len() > 128 {
+            return None;
+        }
+        return Some(value);
+    }
+
+    let auth_header = headers
+        .get(header::AUTHORIZATION)
+        .map(|value| String::from_utf8_lossy(value.as_bytes()).into_owned())?;
+    let parts: Vec<&str> = auth_header.split(' ').collect();
+    if parts.len() == 2 && parts[0] == "Bearer" && looks_like_api_key(parts[1]) {
+        Some(parts[1].to_string())
+    } else {
+        None
     }
 }
 
@@ -229,5 +301,36 @@ mod tests {
             crate::services::token::generate_dev_token("secret", "other", 60).expect("token");
         let user = authenticate(&cfg, &headers(&format!("Bearer {token}"))).expect("valid");
         assert_eq!(user.id, 0, "non-matching dev token falls through to claims");
+    }
+
+    #[test]
+    fn api_key_methods_exclude_delete() {
+        use axum::http::Method;
+
+        assert!(api_key_method_allowed(&Method::GET));
+        assert!(api_key_method_allowed(&Method::POST));
+        assert!(api_key_method_allowed(&Method::PUT));
+        assert!(!api_key_method_allowed(&Method::DELETE));
+        assert!(!api_key_method_allowed(&Method::PATCH));
+    }
+
+    #[test]
+    fn api_key_can_come_from_either_header() {
+        let x_api_key = {
+            let mut headers = HeaderMap::new();
+            headers.insert("x-api-key", HeaderValue::from_static("sk_abc"));
+            headers
+        };
+        assert_eq!(api_key_from_request(&x_api_key).as_deref(), Some("sk_abc"));
+
+        let bearer = headers("Bearer sk_def");
+        assert_eq!(api_key_from_request(&bearer).as_deref(), Some("sk_def"));
+
+        // A JWT bearer value is never treated as an API key, so the middleware
+        // does not issue an unnecessary database lookup.
+        assert_eq!(api_key_from_request(&headers("Bearer eyJhbGci")), None);
+
+        // The bearer format is still exactly one space, like `authenticate`.
+        assert_eq!(api_key_from_request(&headers("Bearer  sk_abc")), None);
     }
 }

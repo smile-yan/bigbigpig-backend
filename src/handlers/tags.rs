@@ -64,6 +64,62 @@ pub async fn create_tag(
     Ok((StatusCode::CREATED, Json(TagDto::from_row(row, state.tz))))
 }
 
+#[derive(Debug, Default, Deserialize)]
+struct UpdateTagRequest {
+    #[serde(default)]
+    name: String,
+    #[serde(default)]
+    slug: String,
+}
+
+/// `PUT /api/admin/tags/_id/:id`
+///
+/// Empty fields leave the current value unchanged, mirroring the category
+/// update handler. Tag slugs are unique, so a collision is a 400 instead of a
+/// leaked database error.
+pub async fn update_tag(
+    State(state): State<SharedState>,
+    Path(raw_id): Path<String>,
+    body: Result<Bytes, BytesRejection>,
+) -> Result<Json<TagDto>, AppError> {
+    let id = parse_gin_int(&raw_id);
+    if id <= 0 {
+        return Err(AppError::NotFound("Tag not found"));
+    }
+
+    let request: UpdateTagRequest = parse_body(&body)?;
+    let Some(mut row) = tags::find_by_id(&state.db, id as u64)
+        .await
+        .map_err(internal)?
+    else {
+        return Err(AppError::NotFound("Tag not found"));
+    };
+
+    if !request.name.is_empty() {
+        row.name = request.name;
+    }
+    if !request.slug.is_empty() && request.slug != row.slug {
+        if tags::slug_exists(&state.db, &request.slug, row.id)
+            .await
+            .map_err(internal)?
+        {
+            return Err(AppError::BadRequest("Slug already exists"));
+        }
+        row.slug = request.slug;
+    }
+
+    if let Err(err) = tags::update(&state.db, row.id, &row.name, &row.slug).await {
+        return Err(AppError::internal_msg("Failed to update tag", err));
+    }
+
+    let row = tags::find_by_id(&state.db, row.id)
+        .await
+        .map_err(internal)?
+        .ok_or_else(|| AppError::NotFound("Tag not found"))?;
+
+    Ok(Json(TagDto::from_row(row, state.tz)))
+}
+
 /// `DELETE /api/admin/tags/_id/:id` — soft delete.
 pub async fn delete_tag(
     State(state): State<SharedState>,

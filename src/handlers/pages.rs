@@ -65,6 +65,38 @@ pub async fn get_pages(
     }))
 }
 
+/// `GET /api/admin/pages` — the management list, drafts included.
+///
+/// The public list only shows published pages unless the caller is an admin
+/// JWT. API tokens are not admin JWTs, so they use this route to see drafts.
+pub async fn get_admin_pages(
+    State(state): State<SharedState>,
+    Query(query): Query<PageListQuery>,
+) -> Result<Json<PageListResponse>, AppError> {
+    let page = query.page.as_deref().map(parse_digits_prefix).unwrap_or(1);
+    let page_size = query
+        .page_size
+        .as_deref()
+        .map(parse_digits_prefix)
+        .unwrap_or(20);
+
+    let offset = (page - 1).wrapping_mul(page_size);
+    let limit = if page_size < 0 { i64::MAX } else { page_size };
+
+    let total = pages::count(&state.db, false).await.map_err(internal)?;
+    let rows = pages::list(&state.db, false, limit, offset.max(0))
+        .await
+        .map_err(internal)?;
+
+    Ok(Json(PageListResponse {
+        list: rows
+            .into_iter()
+            .map(|row| PageDto::from_row(row, state.tz))
+            .collect(),
+        total,
+    }))
+}
+
 /// `GET /api/pages/:slug`
 pub async fn get_page(
     State(state): State<SharedState>,

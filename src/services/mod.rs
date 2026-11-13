@@ -1,5 +1,6 @@
 //! Domain services used by the HTTP handlers.
 
+pub mod api_key;
 pub mod email;
 pub mod markdown;
 pub mod params;

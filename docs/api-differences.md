@@ -60,6 +60,9 @@
 | 新增只读端点 `GET /api/posts/dates` | 首页日历改用日期聚合（方案 A，2026-11-10 新增），Go 基线无此端点；响应为裸数组 `[{date,count}]`，只统计 published/未删除文章 | 增量接口；旧前端不调用，回滚只需前端回退 |
 | 新增只读端点 `GET /api/posts/summary` | 首页列表改用轻量卡片端点（2026-11-10 新增），Go 基线无此端点；参数与 `GET /api/posts` 相同，但不返回 `content`/`html_content`/`author`，分类随主查询 JOIN，`category` 缺失时为 `null`、`tags` 恒为 `[]`；`excerpt` 为空时仍从正文前缀生成 | 增量接口；`AdminSubscriptions.vue` 仍用 `/api/posts`，回滚只需前端改回原路径 |
 | 新增只读端点 `GET /api/admin/posts/summary` | 后台文章列表改用轻量表格端点（2026-11-10 新增），Go 基线无此端点；认证与参数同 `GET /api/admin/posts`，但只返回 `id/created_at/title/slug/status/view_count`，不返回正文、摘要、封面及分类/标签/作者关联 | 增量接口；`GET /api/admin/posts` 契约不变，回滚只需前端改回原路径 |
+| 新增只读端点 `GET /api/admin/pages` | 令牌/管理员 JWT 的页面管理列表（2026-11-13 新增），Go 基线无此端点；返回全部未删除页面（含草稿），参数与公共 `GET /api/pages` 一致 | 增量接口；公共页面接口契约不变 |
+| 新增更新端点 `PUT /api/admin/tags/_id/{id}` | 标签管理需要更新能力（2026-11-13 新增），Go 基线只有创建/删除；空字段保持原值，slug 冲突返回 400 `Slug already exists` | 增量接口；创建/删除契约不变 |
+| 新增 API 令牌 `GET/POST /api/admin/keys`、`PUT/DELETE /api/admin/keys/_id/{id}` | 管理员可创建 1–365 天有效的 API 令牌（2026-11-13 新增）。数据库只存 SHA-256 哈希，明文只在创建响应中返回；令牌可创建/更新文章与页面、管理标签/分类、读取并审核评论，但不可执行任何删除或访问用户/订阅/通知/令牌管理 | 增量接口；令牌只通过 `Authorization: Bearer sk_...` 或 `X-API-Key` 在内容路由生效，管理员 JWT 行为不变 |
 
 ## 4. 完全一致的契约
 

@@ -19,7 +19,9 @@ use tower_http::catch_panic::CatchPanicLayer;
 use tower_http::services::ServeDir;
 
 use crate::handlers;
-use crate::middleware::auth::{admin_middleware, auth_middleware, optional_auth_middleware};
+use crate::middleware::auth::{
+    admin_middleware, admin_or_api_key_middleware, auth_middleware, optional_auth_middleware,
+};
 use crate::middleware::request_log::request_log;
 use crate::state::SharedState;
 
@@ -66,6 +68,13 @@ pub fn build_router(state: SharedState) -> Router {
     // The fallback is part of the router, so Auth -> Admin still runs for
     // `/api/admin/*` routes that later phases have not implemented yet. Gin
     // returns 401/403 there before its 404 handler.
+    //
+    // `admin_content` is the surface an API token may use: reads needed by the
+    // editor, create/update, tag/category management and comment moderation.
+    // The middleware only accepts GET/POST/PUT for a token, so the DELETE
+    // methods registered on the same paths still require an admin JWT.
+    // Anything added here also becomes token-accessible (except DELETE):
+    // sensitive operations belong in `admin_restricted` below.
     let admin_content = Router::new()
         .route(
             "/posts",
@@ -85,25 +94,15 @@ pub fn build_router(state: SharedState) -> Router {
                 .put(handlers::posts::update_post)
                 .delete(handlers::posts::delete_post),
         )
-        .route("/pages", post(handlers::pages::create_page))
+        .route(
+            "/pages",
+            get(handlers::pages::get_admin_pages).post(handlers::pages::create_page),
+        )
         .route(
             "/pages/_id/{id}",
             get(handlers::pages::get_page_by_id)
                 .put(handlers::pages::update_page)
                 .delete(handlers::pages::delete_page),
-        )
-        .route_layer(middleware::from_fn_with_state(
-            admin_content_state,
-            admin_middleware,
-        ));
-
-    let admin_restricted = Router::new()
-        .route("/users", get(handlers::users::get_users))
-        .route("/users/{id}/role", put(handlers::users::update_user_role))
-        // Posts (admin-only operations)
-        .route(
-            "/posts/_id/{id}/restore",
-            post(handlers::posts::restore_post),
         )
         // Categories
         .route("/categories", post(handlers::categories::create_category))
@@ -114,8 +113,11 @@ pub fn build_router(state: SharedState) -> Router {
         )
         // Tags
         .route("/tags", post(handlers::tags::create_tag))
-        .route("/tags/_id/{id}", delete(handlers::tags::delete_tag))
-        // Comments
+        .route(
+            "/tags/_id/{id}",
+            put(handlers::tags::update_tag).delete(handlers::tags::delete_tag),
+        )
+        // Comments (read + moderation; deletion stays admin-only below)
         .route("/comments", get(handlers::comments::get_admin_comments))
         .route(
             "/comments/_id/{id}/approve",
@@ -125,6 +127,20 @@ pub fn build_router(state: SharedState) -> Router {
             "/comments/_id/{id}/reject",
             post(handlers::comments::reject_comment),
         )
+        .route_layer(middleware::from_fn_with_state(
+            admin_content_state,
+            admin_or_api_key_middleware,
+        ));
+
+    let admin_restricted = Router::new()
+        .route("/users", get(handlers::users::get_users))
+        .route("/users/{id}/role", put(handlers::users::update_user_role))
+        // Posts (admin-only operations)
+        .route(
+            "/posts/_id/{id}/restore",
+            post(handlers::posts::restore_post),
+        )
+        // Comment deletion
         .route(
             "/comments/_id/{id}",
             delete(handlers::comments::delete_comment),
@@ -139,6 +155,16 @@ pub fn build_router(state: SharedState) -> Router {
             delete(handlers::subscriptions::delete_subscription),
         )
         .route("/notify", post(handlers::subscriptions::notify_subscribers))
+        // API token management (admin JWT only; a token cannot mint or revoke
+        // another token)
+        .route(
+            "/keys",
+            get(handlers::api_keys::get_keys).post(handlers::api_keys::create_key),
+        )
+        .route(
+            "/keys/_id/{id}",
+            put(handlers::api_keys::update_key).delete(handlers::api_keys::delete_key),
+        )
         .fallback(not_found)
         .layer(middleware::from_fn_with_state(
             admin_group_state,

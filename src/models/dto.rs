@@ -620,3 +620,41 @@ pub struct NotifyResponse {
     pub count: usize,
     pub message: &'static str,
 }
+
+/// An admin-issued API token. `api_key` is `Some` only in the creation
+/// response: the database stores a hash, so the plaintext can never be
+/// recovered through the management list.
+#[derive(Debug, Clone, Serialize)]
+pub struct ApiKeyDto {
+    pub id: u64,
+    pub created_at: String,
+    pub updated_at: String,
+    pub name: String,
+    pub expires_at: String,
+    pub last_used_at: String,
+    /// Computed against the database clock so the table flags expired tokens
+    /// without depending on the client's timezone.
+    pub expired: bool,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub api_key: Option<String>,
+}
+
+impl ApiKeyDto {
+    pub fn from_row(
+        row: super::entities::ApiKeyRow,
+        tz: Tz,
+        now: chrono::NaiveDateTime,
+        api_key: Option<String>,
+    ) -> Self {
+        Self {
+            id: row.id,
+            created_at: go_time::format_opt(row.created_at, tz),
+            updated_at: go_time::format_opt(row.updated_at, tz),
+            name: row.name.unwrap_or_default(),
+            expires_at: go_time::format(row.expires_at, tz),
+            last_used_at: go_time::format_opt(row.last_used_at, tz),
+            expired: row.expires_at <= now,
+            api_key,
+        }
+    }
+}

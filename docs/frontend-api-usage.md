@@ -17,6 +17,12 @@
 > 2026-11-10 更新：后台文章列表改用新增的 `GET /api/admin/posts/summary`
 > （不再返回 `content`/`html_content`，也不再预加载分类/标签/作者，只保留表格
 > 渲染的字段）；请求参数与 `GET /api/admin/posts` 完全一致。
+>
+> 2026-11-13 更新：后台新增“令牌管理”页（`AdminKeys.vue`），并给标签管理补上
+> 编辑入口。新增前端调用：`GET/POST /api/admin/keys`、
+> `PUT/DELETE /api/admin/keys/_id/:id`、`PUT /api/admin/tags/_id/:id`。
+> 这些是增量接口，不改变既有端点契约；令牌的权限与调用方式见 README
+> 的「API 令牌」小节。
 
 ## 1. 基础配置
 
@@ -59,16 +65,22 @@
 | POST | `/api/admin/categories` | `AdminCategories.vue:93` | `{name, slug, description, sort}` |
 | PUT | `/api/admin/categories/_id/:id` | `AdminCategories.vue:91` | 同上 |
 | DELETE | `/api/admin/categories/_id/:id` | `AdminCategories.vue:80` | path |
-| POST | `/api/admin/tags` | `AdminTags.vue:69` | `{name, slug}` |
-| DELETE | `/api/admin/tags/_id/:id` | `AdminTags.vue:59` | path |
+| POST | `/api/admin/tags` | `AdminTags.vue` | `{name, slug}` |
+| PUT | `/api/admin/tags/_id/:id` | `AdminTags.vue`（2026-11-13 新增） | `{name, slug}` |
+| DELETE | `/api/admin/tags/_id/:id` | `AdminTags.vue` | path |
 | POST | `/api/admin/pages` | `AdminPages.vue:125` | `{title, slug, content, status}` |
 | PUT | `/api/admin/pages/_id/:id` | `AdminPages.vue:123` | 同上 |
 | DELETE | `/api/admin/pages/_id/:id` | `AdminPages.vue:112` | path |
 | GET | `/api/admin/subscriptions` | `AdminSubscriptions.vue:74` | `{page, page_size}` |
 | DELETE | `/api/admin/subscriptions/_id/:id` | `AdminSubscriptions.vue:91` | path |
 | POST | `/api/admin/notify` | `AdminSubscriptions.vue:109` | `{post_id}` |
+| GET | `/api/admin/keys` | `AdminKeys.vue`（2026-11-13 新增） | 无 |
+| POST | `/api/admin/keys` | `AdminKeys.vue`（2026-11-13 新增） | `{name, expires_in_days}`（1–365） |
+| PUT | `/api/admin/keys/_id/:id` | `AdminKeys.vue`（2026-11-13 新增） | `{name, expires_in_days}` |
+| DELETE | `/api/admin/keys/_id/:id` | `AdminKeys.vue`（2026-11-13 新增） | path（撤销令牌） |
 
-**路径全部存在**于 `routes/routes.go`，没有调用未注册端点。
+Go 基线的路径全部存在于 `routes/routes.go`，没有调用未注册端点；2026-11-13
+新增的令牌管理与标签编辑接口是增量接口。
 
 前端**未调用**的 Go 端点：
 

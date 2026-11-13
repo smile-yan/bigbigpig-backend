@@ -13,9 +13,10 @@
 - 前端（Vue 3）无需为后端实现做任何修改；2026-11-10 的首页优化
   （方案 A，调用新增的 `/api/posts/dates` 与 `/api/posts/summary`）属于独立的前端改动。
 
-> 当前实现已完成 Phase 0–8，共 46 个 API 端点（另有 `/uploads/*` 静态文件路由）；
-> 其中 `GET /api/posts/dates`、`GET /api/posts/summary` 与
-> `GET /api/admin/posts/summary` 为新增端点，其余 43 个保持原有契约。
+> 当前实现已完成 Phase 0–8，共 52 个 API 端点（另有 `/uploads/*` 静态文件路由）；
+> 其中 `GET /api/posts/dates`、`GET /api/posts/summary`、
+> `GET /api/admin/posts/summary` 以及 2026-11-13 新增的 6 个令牌/管理端点为
+> 增量接口，其余 43 个保持原有契约。
 > `tests/contract_full.rs` 会按采集顺序重放全部 172 个 HTTP、8 封邮件和 13 个
 > note 夹具。
 
@@ -42,6 +43,9 @@
 - **认证与用户**：邮箱验证码登录（Redis 600 秒 TTL + 邮箱/IP 限流）、
   HS256 JWT、当前用户信息、头像上传、管理员用户列表与角色修改、`genjwt`
   开发工具。
+- **API 令牌**：管理员可在后台创建 1–365 天有效的令牌；数据库只存 SHA-256
+  哈希，明文仅展示一次；令牌可创建/更新文章与页面、管理标签/分类、读取并
+  审核评论，但不具备删除能力。
 - **内容管理**：文章、分类、标签、页面的公共与管理员 CRUD；分页、分类/标签/
   关键词/日期筛选；中文 slug 生成；文章与页面的软删除/恢复；浏览计数。
 - **Markdown**：基于 comrak（GFM、Linkify、Typographer），渲染后处理保持
@@ -324,10 +328,11 @@ advisories、licenses、bans、sources 四节。
 
 ## API 概览
 
-共 46 个 API 端点（另有 `/uploads/*` 静态文件路由），路径、方法与认证层级
+共 52 个 API 端点（另有 `/uploads/*` 静态文件路由），路径、方法与认证层级
 保持稳定；其中 2026-11-10 新增的是首页用的 `GET /api/posts/dates`（日历聚合）、
 `GET /api/posts/summary`（轻量文章卡片）与后台列表用的
-`GET /api/admin/posts/summary`（轻量表格行）。
+`GET /api/admin/posts/summary`（轻量表格行）。2026-11-13 新增后台 API 令牌管理
+（`/api/admin/keys*`）、`GET /api/admin/pages` 与 `PUT /api/admin/tags/_id/{id}`。
 
 | 资源 | 公共 | 需登录 | 管理员 |
 |---|---|---|---|
@@ -336,13 +341,41 @@ advisories、licenses、bans、sources 四节。
 | 用户 | — | `GET/PUT /api/user`、`POST /api/upload-avatar` | `GET /api/admin/users`、`PUT /api/admin/users/{id}/role` |
 | 文章 | `GET /api/posts`、`GET /api/posts/summary`、`GET /api/posts/{slug}`、`GET /api/posts/dates` | — | `GET/POST /api/admin/posts`、`GET /api/admin/posts/summary`、`GET /api/admin/posts/slug/{slug}`、`GET/PUT/DELETE /api/admin/posts/_id/{id}`、`POST /api/admin/posts/_id/{id}/restore` |
 | 分类 | `GET /api/categories` | — | `POST /api/admin/categories`、`PUT/DELETE /api/admin/categories/_id/{id}` |
-| 标签 | `GET /api/tags` | — | `POST /api/admin/tags`、`DELETE /api/admin/tags/_id/{id}` |
-| 页面 | `GET /api/pages`、`GET /api/pages/{slug}`（可选认证） | — | `POST /api/admin/pages`、`GET/PUT/DELETE /api/admin/pages/_id/{id}` |
+| 标签 | `GET /api/tags` | — | `POST /api/admin/tags`、`PUT/DELETE /api/admin/tags/_id/{id}` |
+| 页面 | `GET /api/pages`、`GET /api/pages/{slug}`（可选认证） | — | `GET/POST /api/admin/pages`、`GET/PUT/DELETE /api/admin/pages/_id/{id}` |
 | 评论 | `GET /api/comments` | `POST /api/comments` | `GET /api/admin/comments`、`POST /api/admin/comments/_id/{id}/approve`、`POST /api/admin/comments/_id/{id}/reject`、`DELETE /api/admin/comments/_id/{id}` |
 | 订阅 | `POST /api/subscribe`、`GET /api/unsubscribe` | — | `GET /api/admin/subscriptions`、`DELETE /api/admin/subscriptions/_id/{id}`、`POST /api/admin/notify` |
 | 搜索 | `GET /api/search` | — | — |
 | TTS | — | `POST /v1/audio/speech` | — |
+| API 令牌 | — | — | `GET/POST /api/admin/keys`、`PUT/DELETE /api/admin/keys/_id/{id}`（仅管理员 JWT） |
 | 静态文件 | `GET /uploads/*` | — | — |
+
+### API 令牌
+
+管理员可在后台“令牌管理”页面创建有效期为 1–365 天的 API 令牌。数据库只保存
+SHA-256 哈希，明文仅在创建响应中返回一次；丢失后只能重新创建。
+
+调用时支持两种请求头（浏览器端推荐第一种，CORS 白名单只包含
+`Authorization`）：
+
+```bash
+curl -H "Authorization: Bearer sk_..." \
+  https://smileyan.cn/api/admin/posts/summary
+
+curl -H "X-API-Key: sk_..." \
+  https://smileyan.cn/api/admin/posts/summary
+```
+
+令牌权限固定且**不包含删除**：
+
+- 文章：读取后台列表/详情、创建、更新；
+- 页面：读取后台列表/详情、创建、更新；
+- 标签：创建、更新；
+- 分类：创建、更新；
+- 评论：读取后台列表、通过/拒绝审核。
+
+所有 `DELETE`、用户角色、订阅、通知、文章恢复、头像上传、TTS 以及令牌管理
+接口都只接受管理员 JWT；令牌访问会返回 401。
 
 ### 响应约定
 

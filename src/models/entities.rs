@@ -175,3 +175,17 @@ pub struct PageRow {
     pub html_content: Option<String>,
     pub status: Option<String>,
 }
+
+/// An admin-issued API token. The `api_key` column stores the SHA-256 hash of
+/// the token, never the token itself; `api_key_hash` makes that explicit at
+/// every call site.
+#[derive(Debug, Clone, sqlx::FromRow)]
+pub struct ApiKeyRow {
+    pub id: u64,
+    pub created_at: Option<NaiveDateTime>,
+    pub updated_at: Option<NaiveDateTime>,
+    pub name: Option<String>,
+    pub api_key_hash: String,
+    pub expires_at: NaiveDateTime,
+    pub last_used_at: Option<NaiveDateTime>,
+}
