@@ -141,6 +141,70 @@ pub struct PostTagRow {
     pub slug: String,
 }
 
+/// One row of `post_relations` (see migrations/0003_post_relations.sql).
+#[derive(Debug, Clone, sqlx::FromRow)]
+pub struct RelationRow {
+    pub id: u64,
+    pub created_at: Option<NaiveDateTime>,
+    pub updated_at: Option<NaiveDateTime>,
+    pub post_id: u64,
+    pub related_post_id: u64,
+    pub relation_type: String,
+}
+
+/// One card of the public related-posts list: a relation row joined with the
+/// related post's summary columns. `rel_id` keeps the admin's creation order
+/// stable across the two unioned directions.
+#[derive(Debug, Clone, sqlx::FromRow)]
+pub struct RelatedSummaryRow {
+    pub rel_id: u64,
+    pub id: u64,
+    pub created_at: Option<NaiveDateTime>,
+    pub title: String,
+    pub slug: String,
+    pub excerpt: Option<String>,
+    pub cover_image: Option<String>,
+    pub view_count: Option<i64>,
+    pub category_id: Option<u64>,
+    /// `categories.name` from the join; `None` when the category is missing or
+    /// soft-deleted.
+    pub category_name: Option<String>,
+}
+
+impl From<RelatedSummaryRow> for PostSummaryRow {
+    /// The related list reuses the summary card columns, so a related row
+    /// feeds the same DTO assembly as the home page (minus `rel_id`).
+    fn from(row: RelatedSummaryRow) -> Self {
+        Self {
+            id: row.id,
+            created_at: row.created_at,
+            title: row.title,
+            slug: row.slug,
+            excerpt: row.excerpt,
+            cover_image: row.cover_image,
+            view_count: row.view_count,
+            category_id: row.category_id,
+            category_name: row.category_name,
+        }
+    }
+}
+
+/// One row of the admin relation table: the relation plus both posts' titles
+/// and slugs (LEFT JOIN, so a hard-deleted post still leaves an editable row).
+#[derive(Debug, Clone, sqlx::FromRow)]
+pub struct RelationAdminRow {
+    pub id: u64,
+    pub created_at: Option<NaiveDateTime>,
+    pub updated_at: Option<NaiveDateTime>,
+    pub post_id: u64,
+    pub related_post_id: u64,
+    pub relation_type: String,
+    pub post_title: Option<String>,
+    pub post_slug: Option<String>,
+    pub related_post_title: Option<String>,
+    pub related_post_slug: Option<String>,
+}
+
 #[derive(Debug, Clone, sqlx::FromRow)]
 pub struct CommentRow {
     pub id: u64,
