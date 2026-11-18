@@ -1,9 +1,10 @@
 # Supply-chain policy for `cargo deny check` (Phase 7).
 #
-# - Advisories: the two ignored entries are unreachable (HS256-only JWT and
-#   RSA public-key password exchange); see .cargo/audit.toml for the details.
-#   `cargo deny` resolves only the features this workspace enables, so it
-#   never sees lockfile-only crates such as the unused sqlx `sqlite` driver.
+# - Advisories: ignored entries are either unreachable (HS256-only JWT and
+#   RSA public-key password exchange; see .cargo/audit.toml) or unmaintained
+#   notices with no known vulnerability and no fixed release. `cargo deny`
+#   resolves only the features this workspace enables, so it never sees
+#   lockfile-only crates such as the unused sqlx `sqlite` driver.
 # - Licenses: permissive licenses only; GPL/AGPL/SSPL and unknown licenses
 #   fail the check.
 # - Sources: crates.io only; no git or unknown registries.
@@ -21,6 +22,13 @@ ignore = [
     # It is not linked into the production binary and has no known
     # vulnerability, only an unmaintained notice.
     "RUSTSEC-2026-0440",
+    # Unmaintained only (no known vulnerability) and no fixed release.
+    # chrono is a direct dependency for the Go-time contract, also pulled in
+    # by sqlx's and tracing-subscriber's `chrono` features; chrono-tz is a
+    # direct dependency for timezone parsing. Migration to jiff/time is
+    # tracked as a separate follow-up in docs/security-checklist.md.
+    "RUSTSEC-2026-0543",
+    "RUSTSEC-2026-0555",
 ]
 yanked = "deny"
 
