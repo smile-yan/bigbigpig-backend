@@ -4,6 +4,7 @@ pub mod api_keys;
 pub mod categories;
 pub mod comments;
 pub mod pages;
+pub mod post_relations;
 pub mod posts;
 pub mod subscriptions;
 pub mod tags;

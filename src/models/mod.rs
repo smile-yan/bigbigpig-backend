@@ -8,15 +8,17 @@ pub use dto::{
     AdminCommentListResponse, AdminPostListResponse, AdminPostSummaryDto,
     AdminPostSummaryListResponse, ApiKeyDto, AvatarResponse, CategoryCountDto, CategoryDto,
     CommentDto, LoginResponse, MessageResponse, NotifyResponse, PageDto, PageListResponse,
-    PostDateCountDto, PostDto, PostSummaryCategoryDto, PostSummaryDto, PostSummaryTagDto,
-    PublicPostListResponse, PublicPostSummaryListResponse, SearchCategoryDto, SearchResponse,
-    SearchResultDto, SearchTagDto, SubscriptionDto, SubscriptionListResponse, TagCountDto, TagDto,
-    UserDto, UserListResponse, UserSummary,
+    PostDateCountDto, PostDto, PostRelationDto, PostRelationListResponse, PostSummaryCategoryDto,
+    PostSummaryDto, PostSummaryTagDto, PublicPostListResponse, PublicPostSummaryListResponse,
+    RelatedPostListResponse, SearchCategoryDto, SearchResponse, SearchResultDto, SearchTagDto,
+    SubscriptionDto, SubscriptionListResponse, TagCountDto, TagDto, UserDto, UserListResponse,
+    UserSummary,
 };
 pub use entities::{
     AdminPostSummaryRow, ApiKeyRow, CategoryCountRow, CategoryRow, CommentRow, PageRow,
     PostContentPreviewRow, PostDateCountRow, PostRow, PostSummaryRow, PostSummaryTagRow,
-    PostTagRow, SubscriptionRow, TagCountRow, TagRow, UserRow,
+    PostTagRow, RelatedSummaryRow, RelationAdminRow, RelationRow, SubscriptionRow, TagCountRow,
+    TagRow, UserRow,
 };
 
 /// Frozen role/status values (lowercase strings, see C10).

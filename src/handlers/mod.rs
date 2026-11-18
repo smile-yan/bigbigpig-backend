@@ -4,6 +4,7 @@ pub mod categories;
 pub mod comments;
 pub mod hello;
 pub mod pages;
+pub mod post_relations;
 pub mod posts;
 pub mod search;
 pub mod subscriptions;

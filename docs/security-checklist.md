@@ -33,18 +33,22 @@
 | 日志不含敏感信息 | ✅ | 请求日志仅 `method/path/ip/status`；JWT、验证码、密码、TTS key 不写日志 |
 | panic 不泄露 | ✅ | `CatchPanicLayer` 返回 500；`AppError` 不把 sqlx/Redis 原始错误返回客户端 |
 | 错误响应统一 | ✅ | 全部 `{"error":"..."}`；内部错误记录日志，对外固定 `Internal server error` |
-| 依赖漏洞 | ✅ | `cargo audit` exit 0（1 条 unmaintained 警告，见下）；`cargo deny check` advisories/bans/licenses/sources 全绿 |
+| 依赖漏洞 | ✅ | `cargo audit` exit 0（3 条 unmaintained 警告，见下）；`cargo deny check` advisories/bans/licenses/sources 全绿（unmaintained 公告已显式忽略） |
 | 依赖许可证 | ✅ | `deny.toml` 只允许 MIT/Apache/BSD/ISC/Unicode/Zlib/MPL/CC0/Unlicense/BSL；GPL/AGPL/未知许可证直接失败 |
 | 依赖来源 | ✅ | 仅 crates.io；禁止 git / 未知 registry；禁止 wildcard 版本 |
 
 ## 依赖审计结果
 
-`cargo audit`（2026-11-05，exit 0）：
+`cargo audit`（2026-11-18，exit 0）：
 
 ```text
-Warning: 1 allowed warning found
+Warning: 3 allowed warnings found
 RUSTSEC-2026-0440  astral-tokio-tar 0.6.4  unmaintained
   └── testcontainers 0.27.3 (dev-dependency only)
+RUSTSEC-2026-0543  chrono 0.4.45  unmaintained
+  └── smileyan-backend (direct), sqlx-core, tracing-subscriber
+RUSTSEC-2026-0555  chrono-tz 0.10.4  unmaintained
+  └── smileyan-backend (direct)
 ```
 
 `cargo deny check`：
@@ -60,6 +64,8 @@ advisories ok, bans ok, licenses ok, sources ok
 | RUSTSEC-2023-0071（rsa Marvin） | 服务只做 HS256；sqlx 的 `mysql-rsa` 只用 RSA 公钥做 MySQL 密码交换，不涉及私钥运算 |
 | RUSTSEC-2026-0387（crypto-bigint 时序） | jsonwebtoken 的 ECDSA 依赖，HS256 路径不可达 |
 | RUSTSEC-2026-0440（astral-tokio-tar） | 仅 `testcontainers`（dev）使用，不进入生产二进制 |
+| RUSTSEC-2026-0543（chrono） | 仅 unmaintained 公告，无已知漏洞、无修复版本；Go 时间序列化契约的直接依赖，也被 sqlx / tracing-subscriber 的 `chrono` feature 引入。迁移到 jiff/time 列为后续项 |
+| RUSTSEC-2026-0555（chrono-tz） | 仅 unmaintained 公告，无已知漏洞、无修复版本；直接依赖，用于配置时区与 `models/go_time.rs`，随 chrono 迁移一并处理 |
 
 Phase 7 同时移除了 `comrak` 的默认 feature（`cli` + `syntect-onig`），因此
 `bincode`/`yaml-rust`/`onig` 不再进入依赖图；Markdown golden 25 例仍然全绿。
@@ -80,6 +86,10 @@ Phase 7 同时移除了 `comrak` 的默认 feature（`cli` + `syntect-onig`）�
 6. **JWT 存储**：前端把 token 放 localStorage（既有实现），存在 XSS 读取风险；
    CORS 为 `*` 是公开博客的既有契约。若未来引入敏感写操作，建议改为 HttpOnly
    Cookie + 明确 Origin 白名单。
+7. **时间库维护状态**：RustSec 于 2026-11-17 将 `chrono`/`chrono-tz` 标记为
+   unmaintained（无已知漏洞、无修复版本），当前在 `deny.toml` 显式忽略。
+   后续应评估迁移到 `jiff` 或 `time`；迁移需同时替换 sqlx 的 `chrono`
+   feature 并保持 Go 时间输出契约（`+08:00`、DATETIME(3) 0–3 位小数）。
 
 ## 复现
 

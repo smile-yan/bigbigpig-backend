@@ -117,6 +117,17 @@ pub fn build_router(state: SharedState) -> Router {
             "/tags/_id/{id}",
             put(handlers::tags::update_tag).delete(handlers::tags::delete_tag),
         )
+        // Post relations (related-posts curation; deletion stays admin-only)
+        .route(
+            "/post-relations",
+            get(handlers::post_relations::get_admin_post_relations)
+                .post(handlers::post_relations::create_post_relation),
+        )
+        .route(
+            "/post-relations/_id/{id}",
+            put(handlers::post_relations::update_post_relation)
+                .delete(handlers::post_relations::delete_post_relation),
+        )
         // Comments (read + moderation; deletion stays admin-only below)
         .route("/comments", get(handlers::comments::get_admin_comments))
         .route(
@@ -198,6 +209,10 @@ pub fn build_router(state: SharedState) -> Router {
         .route("/posts/dates", get(handlers::posts::get_post_dates))
         .route("/posts/summary", get(handlers::posts::get_posts_summary))
         .route("/posts/{slug}", get(handlers::posts::get_post))
+        .route(
+            "/posts/{slug}/related",
+            get(handlers::post_relations::get_related_posts),
+        )
         .route("/search", get(handlers::search::search))
         .route("/categories", get(handlers::categories::get_categories))
         .route("/tags", get(handlers::tags::get_tags))

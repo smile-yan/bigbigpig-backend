@@ -658,3 +658,56 @@ impl ApiKeyDto {
         }
     }
 }
+
+/// `GET /api/posts/{slug}/related`: the curated related-posts card list.
+/// Items reuse [`PostSummaryDto`] so the detail-page widget and the "view
+/// all" page render the same shape as the home page.
+#[derive(Debug, Clone, Serialize)]
+pub struct RelatedPostListResponse {
+    pub list: Vec<PostSummaryDto>,
+    pub page: i64,
+    pub total: i64,
+}
+
+/// One row of `GET /api/admin/post-relations`, the relation management table.
+/// A hard-deleted post renders as empty strings instead of dropping the row,
+/// so the relation stays visible and deletable in the admin table.
+#[derive(Debug, Clone, Serialize)]
+pub struct PostRelationDto {
+    pub id: u64,
+    pub created_at: String,
+    pub updated_at: String,
+    pub post_id: u64,
+    pub post_title: String,
+    pub post_slug: String,
+    pub related_post_id: u64,
+    pub related_post_title: String,
+    pub related_post_slug: String,
+    pub relation_type: String,
+}
+
+impl PostRelationDto {
+    pub fn from_row(row: super::entities::RelationAdminRow, tz: Tz) -> Self {
+        Self {
+            id: row.id,
+            created_at: go_time::format_opt(row.created_at, tz),
+            updated_at: go_time::format_opt(row.updated_at, tz),
+            post_id: row.post_id,
+            post_title: row.post_title.unwrap_or_default(),
+            post_slug: row.post_slug.unwrap_or_default(),
+            related_post_id: row.related_post_id,
+            related_post_title: row.related_post_title.unwrap_or_default(),
+            related_post_slug: row.related_post_slug.unwrap_or_default(),
+            relation_type: row.relation_type,
+        }
+    }
+}
+
+/// `GET /api/admin/post-relations`: same envelope as the admin list.
+#[derive(Debug, Clone, Serialize)]
+pub struct PostRelationListResponse {
+    pub list: Vec<PostRelationDto>,
+    pub page: i64,
+    pub page_size: i64,
+    pub total: i64,
+}
