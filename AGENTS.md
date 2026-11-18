@@ -106,7 +106,9 @@ Q23、Q24、Q25、Q26、Q27，以及 `tag_ids: []` 加载全部标签。详见
   `deploy-remote.sh`；`config.yaml` 为 `mode: prod`，staging 的 8081 由
   `APP_PORT` 在服务端改写。
 - TTS 三个环境变量只在非空时写入 `.env`，不要把空 key 或 key 值写进日志。
-- 回滚不需要动数据库/Redis；migrations 只做 `CREATE TABLE IF NOT EXISTS`。
+- 回滚不需要动数据库/Redis；迁移必须向后兼容旧二进制（baseline 为
+  `CREATE TABLE IF NOT EXISTS`，之后的 `ALTER` 只做扩容/加列，见
+  `migrations/0004_html_content_mediumtext.sql`）。
 
 ## 文档索引
 

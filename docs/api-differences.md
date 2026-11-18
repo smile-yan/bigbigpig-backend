@@ -63,6 +63,7 @@
 | 新增只读端点 `GET /api/admin/pages` | 令牌/管理员 JWT 的页面管理列表（2026-11-13 新增），Go 基线无此端点；返回全部未删除页面（含草稿），参数与公共 `GET /api/pages` 一致 | 增量接口；公共页面接口契约不变 |
 | 新增更新端点 `PUT /api/admin/tags/_id/{id}` | 标签管理需要更新能力（2026-11-13 新增），Go 基线只有创建/删除；空字段保持原值，slug 冲突返回 400 `Slug already exists` | 增量接口；创建/删除契约不变 |
 | 新增 API 令牌 `GET/POST /api/admin/keys`、`PUT/DELETE /api/admin/keys/_id/{id}` | 管理员可创建 1–365 天有效的 API 令牌（2026-11-13 新增）。数据库只存 SHA-256 哈希，明文只在创建响应中返回；令牌可创建/更新文章与页面、管理标签/分类、读取并审核评论，但不可执行任何删除或访问用户/订阅/通知/令牌管理 | 增量接口；令牌只通过 `Authorization: Bearer sk_...` 或 `X-API-Key` 在内容路由生效，管理员 JWT 行为不变 |
+| `html_content` 列扩容 | `posts.html_content`、`pages.html_content` 由 `TEXT`（65,535 字节）扩为 `MEDIUMTEXT`（16 MiB），迁移 `0004_html_content_mediumtext.sql` 在启动时自动执行（2026-11-19 新增），修复长文渲染后 HTML 超限导致的 500（MySQL 1406）。Markdown 源 `content` 仍为 `TEXT`，API 2 MiB 请求体上限不变 | 仅放宽存储上限，端点/响应形状不变；回滚旧二进制无需回滚列类型（`MEDIUMTEXT` 对 `TEXT` 读取兼容） |
 
 ## 4. 完全一致的契约
 
@@ -74,7 +75,8 @@
   **没有** `{data:...}` 包装。
 - 错误体 `{"error":"..."}` 与固定文案（401/403/404/400/429/500）。
 - JWT：HS256、claims 字段、`SMILEYAN_BACKEND_JWT_SECRET` 互通；Go 与 Rust 双向可用。
-- 数据库表/列/索引不变；软删除、`Unscoped`、`post_tags`、`AUTO_INCREMENT` 行为一致。
+- 数据库表/列/索引不变（唯一例外是第 3 节的 `html_content` 扩容）；
+  软删除、`Unscoped`、`post_tags`、`AUTO_INCREMENT` 行为一致。
 - Redis key 与 TTL：`verification_code:*`、`rate_limit:email:*`、`rate_limit:ip:*`。
 - 环境变量名、`config.yaml` 字段（新增 `site_url`/`search`/`tts`，均有默认值）。
 - CORS、尾斜杠、404 文案、Content-Type（`application/json; charset=utf-8`）。
